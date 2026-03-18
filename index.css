@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+.leaflet-container { width: 100%; height: 100%; z-index: 0; }
+.leaflet-bottom { z-index: 0 !important; }
+
+/* 점 마커 배경 투명화 */
+.custom-dot-marker { background: transparent; border: none; }
+
+/* 라이브 사진 말풍선(Tooltip) 투명화 및 화살표 제거 */
+.photo-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
+.photo-tooltip::before { display: none !important; }
