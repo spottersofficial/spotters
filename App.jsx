@@ -127,16 +127,15 @@ const formatTimeAgo = (timestamp) => {
 const createPointMarker = (place) => {
   let bgColor = 'bg-neutral-500';
   let pulseEffect = '';
-  // 💡 [추가] 과하지 않은 깜빡임(breathe)을 위한 클래스 변수
+  // 💡 [추가] 눈에 띄지만 과하지 않은 깜빡임(breathe)을 위한 클래스 변수
   let breatheClass = '';
 
-  // 💡 혼잡도는 주황색, 마감/만차는 빨간색으로 구분!
   if (place.status === '마감' || place.status === '만차') {
     bgColor = 'bg-red-500'; 
-    breatheClass = 'animate-breathe'; // 💡 [적용] 마감/만차일 때 은은하게 깜빡임
+    breatheClass = 'animate-breathe'; // 💡 [적용] 은은하고 눈에 띄게 깜빡임
   } else if (place.status === '혼잡') {
     bgColor = 'bg-orange-500';
-    breatheClass = 'animate-breathe'; // 💡 [적용] 혼잡일 때 은은하게 깜빡임
+    breatheClass = 'animate-breathe'; // 💡 [적용] 은은하고 눈에 띄게 깜빡임
   } else if (place.status === '보통') {
     bgColor = 'bg-amber-400';
   } else if (place.status === '원활' || place.status === '여유') {
@@ -411,13 +410,13 @@ function App() {
         .photo-tooltip::before { display: none !important; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         
-        /* 💡 [추가] 과하지 않은 은은한 숨쉬기(깜빡임) 애니메이션 */
-        @keyframes breathe {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.4; transform: scale(1.05); }
+        /* 💡 [수정] 눈에 띄면서도 부드러운 깜빡임 애니메이션 (크기+투명도 조절) */
+        @keyframes noticeable-breathe {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.25); opacity: 0.75; }
         }
         .animate-breathe {
-          animation: breathe 2s ease-in-out infinite;
+          animation: noticeable-breathe 1.2s ease-in-out infinite;
         }
       `}</style>
 
@@ -492,7 +491,14 @@ function App() {
                   >
                     {place.hasImage && (
                       <Tooltip direction="top" offset={[0, -12]} opacity={1} className="photo-tooltip">
-                        <div className="relative w-[140px] h-[180px] rounded-[24px] overflow-hidden shadow-2xl border-[4px] border-white">
+                        {/* 💡 [수정완료] 툴팁 전체를 감싸는 div에 클릭 이벤트를 추가하여 사진 확대 범위를 확장 */}
+                        <div 
+                          className="relative w-[140px] h-[180px] rounded-[24px] overflow-hidden shadow-2xl border-[4px] border-white cursor-pointer active:scale-95 transition-transform"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExpandedImage(place);
+                          }}
+                        >
                           <img 
                             src={place.customImg || `/images/${place.no}.jpg`} 
                             alt={place.name} 
@@ -505,14 +511,7 @@ function App() {
                             {place.lastUpdated ? formatTimeAgo(place.lastUpdated) : 'LIVE'}
                           </div>
                           
-                          {/* 💡 [수정] 아래 정보 영역을 터치하면 사진이 커지도록 클릭 이벤트 추가 */}
-                          <div 
-                            className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 pt-8 flex flex-col items-center text-center cursor-pointer active:scale-95 transition-transform"
-                            onClick={(e) => {
-                              e.stopPropagation(); // 지도로 클릭이 넘어가는 것을 방지
-                              setExpandedImage(place); // 사진 확대 실행
-                            }}
-                          >
+                          <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 pt-8 flex flex-col items-center text-center">
                             <span className="text-white text-xs font-black block truncate w-full mb-0.5">{place.name}</span>
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${place.status === '마감' || place.status === '만차' ? 'bg-red-500/90 text-white' : place.status === '혼잡' ? 'bg-orange-500/90 text-white' : place.status === '보통' ? 'bg-amber-500/90 text-white' : 'bg-green-500/90 text-white'}`}>
                               {place.status} 
@@ -532,8 +531,15 @@ function App() {
             {/* 마커 클릭 시 하단에 뜨는 정보 팝업창 */}
             {selectedPlace && (
               <div className="absolute bottom-[88px] w-full px-4 z-40 animate-in slide-in-from-bottom-5">
-                <div className="bg-white rounded-[24px] shadow-2xl border border-neutral-100 p-4 relative overflow-hidden">
-                  <button onClick={() => setSelectedPlace(null)} className="absolute top-3 right-3 p-1.5 bg-neutral-100 rounded-full text-neutral-500 hover:bg-neutral-200 z-10">
+                {/* 💡 [수정완료] 하단 팝업창(하얀색 카드) 전체를 터치해도 사진이 확대되도록 클릭 이벤트 추가 */}
+                <div 
+                  className="bg-white rounded-[24px] shadow-2xl border border-neutral-100 p-4 relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
+                  onClick={() => setExpandedImage(selectedPlace)}
+                >
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setSelectedPlace(null); }} 
+                    className="absolute top-3 right-3 p-1.5 bg-neutral-100 rounded-full text-neutral-500 hover:bg-neutral-200 z-10"
+                  >
                     <XIcon className="w-4 h-4" />
                   </button>
                   
@@ -543,8 +549,7 @@ function App() {
                       <img 
                         src={selectedPlace.customImg || `/images/${selectedPlace.no}.jpg`} 
                         alt={selectedPlace.name} 
-                        className="w-20 h-20 rounded-[16px] object-cover shadow-sm shrink-0 cursor-pointer transition-transform hover:scale-105" 
-                        onClick={() => setExpandedImage(selectedPlace)}
+                        className="w-20 h-20 rounded-[16px] object-cover shadow-sm shrink-0" 
                         onError={(e) => { e.target.src = `https://picsum.photos/seed/${selectedPlace.no}/200/200`; }}
                       />
                     )}
