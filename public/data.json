@@ -183,7 +183,7 @@
     "no": 13,
     "type": "팝업스토어",
     "status": "진행예정",
-    "wait": 1,
+    "wait": 0,
     "time": "대기 없음",
     "name": "새로중앙박물관 팝업스토어",
     "address": "서울 성동구 연무장13길 11 1층",
@@ -191,7 +191,7 @@
     "lng": 127.05625,
     "hasImage": true,
     "labelPos": "right",
-    "lastUpdated": 1773926898051,
+    "lastUpdated": 1773927112853,
     "customImg": "/images/upload_13_1773926896662.jpg"
   },
   {
