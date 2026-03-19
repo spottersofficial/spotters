@@ -23,7 +23,8 @@ const SpottersLogo = ({ className }) => (
 
 const XIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
 const AlertCircleIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
-const ExternalLinkIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className}><path fillRule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clipRule="evenodd" /></svg>;
+
+// 💡 (수정완료: 쓰지 않는 ExternalLinkIcon 코드 삭제)
 
 const StorefrontIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg>;
 const CoffeeIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>;
@@ -70,8 +71,8 @@ const INITIAL_DATA = [
   
   // 💡 주차장 3곳 데이터 추가 (capacity: 총 주차면수 설정됨)
   { no: 30001, type: '주차장', status: '원활', wait: 50, capacity: 154, time: '총 154면 / 남은 50대', name: '팩토리얼 성수', address: '서울 성동구 연무장7길 13', lat: 37.543880, lng: 127.054350, hasImage: false, labelPos: 'bottom', lastUpdated: null, customImg: null },
-  { no: 30002, type: '주차장', status: '마감', wait: 20, capacity: 52, time: '총 70면 / 남은 0대', name: '무신사 E1', address: '서울 성동구 성수동2가 271-22', lat: 37.544650, lng: 127.055550, hasImage: false, labelPos: 'top', lastUpdated: null, customImg: null },
-  { no: 30003, type: '주차장', status: '원활', wait: 15, capacity: 43, time: '총 178면 / 남은 25대', name: '무신사 S1', address: '서울 성동구 성수동2가 324-2', lat: 37.542600, lng: 127.055950, hasImage: false, labelPos: 'right', lastUpdated: null, customImg: null }
+  { no: 30002, type: '주차장', status: '마감', wait: 0, capacity: 70, time: '총 52면 / 남은 20대', name: '무신사 E1', address: '서울 성동구 성수동2가 271-22', lat: 37.544650, lng: 127.055550, hasImage: false, labelPos: 'top', lastUpdated: null, customImg: null },
+  { no: 30003, type: '주차장', status: '원활', wait: 34, capacity: 178, time: '총 43면 / 남은 15대', name: '무신사 S1', address: '서울 성동구 성수동2가 324-2', lat: 37.542600, lng: 127.055950, hasImage: false, labelPos: 'right', lastUpdated: null, customImg: null }
 ];
 
 const adjustOverlappingCoordinates = (data) => {
@@ -174,7 +175,7 @@ const MapController = ({ center }) => {
   return null;
 };
 
-// --- 관리자(Admin) 전용 수정 패널 ---
+// --- 관리자(Admin) 전용 개별 수정 패널 ---
 const AdminRow = ({ place, onSave }) => {
   const isParking = place.type === '주차장';
   
@@ -262,20 +263,15 @@ function App() {
   const [expandedImage, setExpandedImage] = useState(null);
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [secretCount, setSecretCount] = useState(0);
-  const [tick, setTick] = useState(0); 
 
-  useEffect(() => {
-    const timer = setInterval(() => setTick(t => t + 1), 60000);
-    return () => clearInterval(timer);
-  }, []);
+  // 💡 (수정완료: 클라우드플레어 빌드 에러를 유발하던 쓰지않는 tick 변수 삭제)
 
-  // --- 데이터 로드 (이제 서울시 자동 API는 없고 파일에서 모두 불러옴) ---
+  // --- 데이터 로드 ---
   useEffect(() => {
     fetch('/data.json')
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {
-          // 기존 INITIAL_DATA와 GitHub에서 불러온 데이터를 덮어씌움
           const mergedData = INITIAL_DATA.map(initPlace => {
             const savedPlace = data.find(p => p.no === initPlace.no);
             return savedPlace ? { ...initPlace, ...savedPlace } : initPlace;
