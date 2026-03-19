@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Tooltip, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import 'leaflet/dist/leaflet.css'; // 지도 깨짐 방지 CSS
+import 'leaflet/dist/leaflet.css';
 
 // --- [디자인 시스템 1] Color Palette ---
 const BRAND_GRADIENT = "bg-gradient-to-br from-[#5E2A8C] to-[#FF8C00]";
 const BRAND_TEXT_GRADIENT = "bg-gradient-to-br from-[#5E2A8C] to-[#FF8C00] bg-clip-text text-transparent";
 const PURPLE_COLOR = "#5E2A8C";
 
-// --- [디자인 시스템 2] 확정된 로고 (날렵한 S-Lightning) ---
+// --- [디자인 시스템 2] 로고 및 아이콘 ---
 const SpottersLogo = ({ className }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" className={className}>
     <defs>
@@ -23,15 +23,14 @@ const SpottersLogo = ({ className }) => (
 
 const XIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
 const AlertCircleIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
-const ExternalLinkIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className}><path fillRule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clipRule="evenodd" /><path fillRule="evenodd" d="M10.75 2.75a.75.75 0 000 1.5h3.69L8.22 10.47a.75.75 0 101.06 1.06l6.22-6.22v3.69a.75.75 0 001.5 0v-5a.75.75 0 00-.75-.75h-5z" clipRule="evenodd" /></svg>;
+const ExternalLinkIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className}><path fillRule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clipRule="evenodd" /></svg>;
 
-// --- [바텀 네비게이션용 아이콘 추가] ---
 const StorefrontIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg>;
 const CoffeeIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>;
 const ParkingIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>;
 const BookOpenIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
 
-// --- 초기 데이터 (통신 실패 시 사용할 기본값) ---
+// --- 초기 상점 & 주차장 통합 데이터 ---
 const INITIAL_DATA = [
   { no: 1, type: '팝업스토어', status: '혼잡', wait: 30, time: '30분 내외', name: '프리카 성수 팝업', address: '서울 성동구 연무장13길 4 1층', lat: 37.544722, lng: 127.056111, hasImage: true, labelPos: 'top', lastUpdated: null, customImg: null },
   { no: 2, type: '팝업스토어', status: '마감', wait: 0, time: '불가', name: '이클립스 월드', address: '서울 성동구 성수이로 88 남정빌딩', lat: 37.543056, lng: 127.056944, hasImage: true, labelPos: 'right', lastUpdated: null, customImg: null },
@@ -68,22 +67,21 @@ const INITIAL_DATA = [
   { no: 33, type: '상점', status: '원활', wait: 0, time: '대기 없음', name: '리얼월드성수', address: '서울특별시 성동구 연무장13길 8 메리히어', lat: 37.544900, lng: 127.056000, hasImage: true, labelPos: 'bottom', lastUpdated: null, customImg: null },
   { no: 34, type: '상점', status: '원활', wait: 0, time: '대기 없음', name: '클라이밍파크', address: '서울 성동구 연무장13길 7', lat: 37.544722, lng: 127.055833, hasImage: true, labelPos: 'left', lastUpdated: null, customImg: null },
   { no: 35, type: '상점', status: '보통', wait: 15, time: '10분 내외', name: '미피스토어 서울', address: '서울 성동구 연무장13길 5', lat: 37.544722, lng: 127.055556, hasImage: true, labelPos: 'top', lastUpdated: null, customImg: null },
-  { no: 36, type: '주차장', status: '혼잡', wait: 0, time: '만차', name: '성수역 3번출구 공영', address: '서울 성동구 성수이로 99', lat: 37.544444, lng: 127.056667, hasImage: false, labelPos: 'left', lastUpdated: null, customImg: null },
-  { no: 37, type: '주차장', status: '원활', wait: 0, time: '여유', name: '에이스하이엔드 주차장', address: '서울 성동구 성수이로 118', lat: 37.546944, lng: 127.058611, hasImage: false, labelPos: 'right', lastUpdated: null, customImg: null }
+  
+  // 💡 주차장 3곳 데이터 추가 (capacity: 총 주차면수 설정됨)
+  { no: 30001, type: '주차장', status: '원활', wait: 50, capacity: 154, time: '총 154면 / 남은 50대', name: '팩토리얼 성수', address: '서울 성동구 연무장7길 13', lat: 37.543880, lng: 127.054350, hasImage: false, labelPos: 'bottom', lastUpdated: null, customImg: null },
+  { no: 30002, type: '주차장', status: '마감', wait: 20, capacity: 52, time: '총 70면 / 남은 0대', name: '무신사 E1', address: '서울 성동구 성수동2가 271-22', lat: 37.544650, lng: 127.055550, hasImage: false, labelPos: 'top', lastUpdated: null, customImg: null },
+  { no: 30003, type: '주차장', status: '원활', wait: 15, capacity: 43, time: '총 178면 / 남은 25대', name: '무신사 S1', address: '서울 성동구 성수동2가 324-2', lat: 37.542600, lng: 127.055950, hasImage: false, labelPos: 'right', lastUpdated: null, customImg: null }
 ];
 
-// --- 겹치는 좌표 미세조정 함수 ---
 const adjustOverlappingCoordinates = (data) => {
   return data.map(place => {
-    // 1번 프리카 성수 팝업 (남쪽으로 살짝 이동)
     if (place.no === 1) return { ...place, lat: 37.544600, lng: 127.056111 };
-    // 13번 새로중앙박물관 (북쪽으로 살짝 이동)
     if (place.no === 13) return { ...place, lat: 37.544980, lng: 127.056250 };
     return place;
   });
 };
 
-// --- [이미지 자동 압축 엔진] ---
 const compressImage = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -116,7 +114,6 @@ const compressImage = (file) => {
   });
 };
 
-// --- 업데이트 경과 시간 계산기 ---
 const formatTimeAgo = (timestamp) => {
   if (!timestamp) return '';
   const diffMinutes = Math.floor((Date.now() - timestamp) / 60000);
@@ -127,24 +124,24 @@ const formatTimeAgo = (timestamp) => {
   return `${Math.floor(diffHours / 24)}일 전 업데이트`;
 };
 
-// --- 심플 점 마커 (주차장 색상 로직 포함) ---
+// --- 지도 점 마커 로직 (색상 통일) ---
 const createPointMarker = (place) => {
   let bgColor = 'bg-neutral-500';
   let pulseEffect = '';
 
-  if (place.status.includes('혼잡') || place.status === '만차') {
+  // 💡 혼잡도는 주황색, 마감/만차는 빨간색으로 구분!
+  if (place.status === '마감' || place.status === '만차') {
     bgColor = 'bg-red-500'; 
     pulseEffect = '<span class="absolute -inset-1.5 rounded-full bg-red-400 opacity-40 animate-ping"></span>';
-  } else if (place.status.includes('보통')) {
+  } else if (place.status === '혼잡') {
+    bgColor = 'bg-orange-500';
+  } else if (place.status === '보통') {
     bgColor = 'bg-amber-400';
-  } else if (place.status.includes('원활') || place.status === '여유') {
+  } else if (place.status === '원활' || place.status === '여유') {
     bgColor = 'bg-emerald-500';
-  } else if (place.status.includes('진행예정')) {
+  } else if (place.status === '진행예정') {
     bgColor = `bg-[${PURPLE_COLOR}]`;
   }
-  
-  // 일반적인 주차장이면서 상태값이 위 조건에 안걸렸을때 기본색상
-  if (place.type === '주차장' && !['만차', '여유', '혼잡', '원활'].includes(place.status)) bgColor = 'bg-blue-500'; 
 
   let labelPositionClass = '';
   switch(place.labelPos) {
@@ -177,12 +174,23 @@ const MapController = ({ center }) => {
   return null;
 };
 
-// --- 관리자(Admin) 전용 개별 수정 패널 컴포넌트 ---
+// --- 관리자(Admin) 전용 수정 패널 ---
 const AdminRow = ({ place, onSave }) => {
-  const [status, setStatus] = useState(place.status);
+  const isParking = place.type === '주차장';
+  
   const [wait, setWait] = useState(place.wait);
+  const [status, setStatus] = useState(place.status);
   const [imageFile, setImageFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  // 💡 주차장일 경우: 남은 대수에 따라 상태 자동 변경 로직
+  useEffect(() => {
+    if (isParking) {
+      if (wait >= 10) setStatus('원활');
+      else if (wait >= 1 && wait <= 9) setStatus('혼잡');
+      else if (wait <= 0) setStatus('마감');
+    }
+  }, [wait, isParking]);
 
   return (
     <div className="bg-white rounded-xl p-4 shadow-sm border border-neutral-200 flex flex-col gap-3">
@@ -194,26 +202,40 @@ const AdminRow = ({ place, onSave }) => {
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-1">
           <label className="text-[10px] font-bold text-neutral-500 uppercase">혼잡도 상태</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="p-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs font-medium outline-none focus:border-[#FF8C00]">
-            <option value="원활">원활</option>
-            <option value="보통">보통</option>
-            <option value="혼잡">혼잡</option>
-            <option value="마감">마감</option>
-            <option value="진행예정">진행예정</option>
-            {place.type === '주차장' && <option value="만차">만차</option>}
-            {place.type === '주차장' && <option value="여유">여유</option>}
-          </select>
+          
+          {/* 주차장은 자동 계산되므로 select 창 대신 배지로 표시 */}
+          {isParking ? (
+            <div className={`p-2 rounded-lg text-xs font-bold text-center border ${
+              status === '원활' ? 'bg-green-50 text-green-600 border-green-200' :
+              status === '혼잡' ? 'bg-orange-50 text-orange-600 border-orange-200' :
+              'bg-red-50 text-red-600 border-red-200'
+            }`}>
+              {status}
+            </div>
+          ) : (
+            <select value={status} onChange={(e) => setStatus(e.target.value)} className="p-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs font-medium outline-none focus:border-[#FF8C00]">
+              <option value="원활">원활</option>
+              <option value="보통">보통</option>
+              <option value="혼잡">혼잡</option>
+              <option value="마감">마감</option>
+              <option value="진행예정">진행예정</option>
+            </select>
+          )}
         </div>
+
         <div className="flex flex-col gap-1">
-          <label className="text-[10px] font-bold text-neutral-500 uppercase">{place.type === '주차장' ? '남은 자리(대)' : '대기 인원(명)'}</label>
-          <input type="number" value={wait} onChange={(e) => setWait(Number(e.target.value))} className="p-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs font-medium outline-none focus:border-[#FF8C00]" />
+          <label className="text-[10px] font-bold text-neutral-500 uppercase">{isParking ? '현재 가능 대수(손으로 입력)' : '대기 인원(명)'}</label>
+          <input type="number" min="0" value={wait} onChange={(e) => setWait(Number(e.target.value))} className="p-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs font-medium outline-none focus:border-[#FF8C00]" />
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-         <label className="text-[10px] font-bold text-neutral-500 uppercase">현장 사진 업데이트 (선택)</label>
-         <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} className="text-xs text-neutral-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-[#5E2A8C] hover:file:bg-purple-100" />
-      </div>
+      {/* 주차장은 사진 업로드칸을 아예 숨김 */}
+      {!isParking && (
+        <div className="flex flex-col gap-1">
+           <label className="text-[10px] font-bold text-neutral-500 uppercase">현장 사진 업데이트 (선택)</label>
+           <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} className="text-xs text-neutral-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-[#5E2A8C] hover:file:bg-purple-100" />
+        </div>
+      )}
 
       <button 
         onClick={async () => {
@@ -225,89 +247,43 @@ const AdminRow = ({ place, onSave }) => {
         disabled={isSaving}
         className={`mt-1 w-full text-white font-bold text-xs py-2.5 rounded-lg transition-colors ${isSaving ? 'bg-neutral-400' : 'bg-[#1A1A1A] hover:bg-[#FF8C00]'}`}
       >
-        {isSaving ? "압축 및 저장 중... (약 5초)" : "데이터 업데이트 저장"}
+        {isSaving ? "저장 중..." : "데이터 업데이트 저장"}
       </button>
     </div>
   );
 };
 
-// --- 메인 App 컴포넌트 선언 ---
+// --- 메인 App 컴포넌트 ---
 function App() {
   const [placesData, setPlacesData] = useState(adjustOverlappingCoordinates(INITIAL_DATA));
   const [activeTab, setActiveTab] = useState('팝업스토어');
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [mapCenter, setMapCenter] = useState([37.5445, 127.0560]); 
   const [expandedImage, setExpandedImage] = useState(null);
-  
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [secretCount, setSecretCount] = useState(0);
   const [tick, setTick] = useState(0); 
 
-  // --- 업데이트 시간 갱신 타이머 설정 ---
   useEffect(() => {
     const timer = setInterval(() => setTick(t => t + 1), 60000);
     return () => clearInterval(timer);
   }, []);
 
-  // --- 데이터 불러오기 1: public/data.json 에서 기본 데이터 로드 ---
+  // --- 데이터 로드 (이제 서울시 자동 API는 없고 파일에서 모두 불러옴) ---
   useEffect(() => {
     fetch('/data.json')
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {
-          setPlacesData(adjustOverlappingCoordinates(data));
+          // 기존 INITIAL_DATA와 GitHub에서 불러온 데이터를 덮어씌움
+          const mergedData = INITIAL_DATA.map(initPlace => {
+            const savedPlace = data.find(p => p.no === initPlace.no);
+            return savedPlace ? { ...initPlace, ...savedPlace } : initPlace;
+          });
+          setPlacesData(adjustOverlappingCoordinates(mergedData));
         }
       })
-      .catch(err => console.error("데이터 로드 실패 (초기 데이터 사용 중):", err));
-  }, []);
-
-  // --- 데이터 불러오기 2: 서울시 공영주차장 실시간 API 로드 (1분 주기) ---
-  useEffect(() => {
-    const fetchParkingData = async () => {
-      try {
-        // HTTPS 환경에서 HTTP 서울시 API를 호출하기 위해 프록시 우회망 사용
-        const targetUrl = 'http://openapi.seoul.go.kr:8088/7247455876736b793830476f504c70/json/GetParkInfo/1/1000/성동구';
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-        
-        const response = await fetch(proxyUrl);
-        const proxyData = await response.json();
-        const data = JSON.parse(proxyData.contents); // 프록시에서 받아온 실제 JSON 데이터
-
-        if (data && data.GetParkInfo && data.GetParkInfo.row) {
-          const parkingList = data.GetParkInfo.row;
-          
-          setPlacesData(prevData => prevData.map(place => {
-            // 주차장이 아니거나 공영주차장(성수역 3번출구)이 아니면 스킵
-            if (place.type !== '주차장' || !place.name.includes('성수역 3번출구')) return place;
-
-            // API 목록에서 '성수역3번출구' 글자가 포함된 주차장 찾기 (띄어쓰기 무시)
-            const liveParking = parkingList.find(p => p.PARKING_NAME?.replace(/\s+/g, '').includes('성수역3번출구'));
-            
-            if (liveParking) {
-              const capacity = liveParking.CAPACITY || 0; // 총 주차면수
-              const curParking = liveParking.CUR_PARKING || 0; // 현재 주차된 대수
-              const available = capacity - curParking; // 남은 자리 계산
-              
-              return {
-                ...place,
-                status: available <= 0 ? '만차' : '여유',
-                wait: available < 0 ? 0 : available, // 주차장은 wait 값을 '남은 자리수'로 사용
-                time: `총 ${capacity}면 / 남은 ${available < 0 ? 0 : available}자리`,
-                lastUpdated: Date.now()
-              };
-            }
-            return place;
-          }));
-        }
-      } catch (error) {
-        console.error("주차장 실시간 API 호출 실패:", error);
-      }
-    };
-
-    // 최초 1회 실행 후 1분(60000ms)마다 데이터 갱신
-    fetchParkingData();
-    const interval = setInterval(fetchParkingData, 60000);
-    return () => clearInterval(interval);
+      .catch(err => console.error("데이터 로드 실패:", err));
   }, []);
 
   const handleSecretLogin = () => {
@@ -324,7 +300,6 @@ function App() {
     }
   };
 
-  // GitHub로 데이터와 이미지를 푸시하는 핵심 로직
   const handleAdminSave = async (no, newStatus, newWait, imageFile) => {
     const TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
     const REPO = import.meta.env.VITE_REPO_NAME;
@@ -352,20 +327,20 @@ function App() {
           })
         });
 
-        if (!imgUploadRes.ok) {
-          const errDetail = await imgUploadRes.json();
-          throw new Error(`이미지 업로드 실패 (${errDetail.message || imgUploadRes.status})`);
-        }
-        
+        if (!imgUploadRes.ok) throw new Error('이미지 업로드 실패');
         newImgUrl = `/images/${fileName}`;
       }
 
       const updatedData = placesData.map(p => {
         if (p.no === no) {
+          // 💡 주차장일 경우, time 문구를 자동으로 갱신해줌
+          const updatedTime = p.type === '주차장' ? `총 ${p.capacity}면 / 남은 ${newWait}대` : p.time;
+          
           return { 
             ...p, 
             status: newStatus, 
             wait: newWait, 
+            time: updatedTime,
             lastUpdated: Date.now(),
             ...(newImgUrl && { customImg: newImgUrl })
           };
@@ -382,9 +357,7 @@ function App() {
           const fileData = await fileRes.json();
           sha = fileData.sha;
         }
-      } catch (err) {
-        console.warn("기존 data.json 파일을 찾을 수 없어 새로 생성합니다.");
-      }
+      } catch (err) { /* ignore */ }
 
       const jsonBody = {
         message: `Admin: Update data for place ${no}`,
@@ -400,15 +373,14 @@ function App() {
 
       if (updateRes.ok) {
         setPlacesData(adjustOverlappingCoordinates(updatedData)); 
-        alert(`저장 성공!\n\n데이터와 사진이 전송되었습니다.\n1~2분 뒤 Cloudflare 배포가 완료되면 반영됩니다.`);
+        alert(`저장 성공!\n\n1~2분 뒤에 반영됩니다.`);
       } else {
-        const errDetail = await updateRes.json();
-        throw new Error(`데이터 갱신 실패 (${errDetail.message || updateRes.status})`);
+        throw new Error(`데이터 갱신 실패`);
       }
 
     } catch (err) {
       console.error(err);
-      alert(`[오류] ${err.message}\n\n* 팁: 사진 첨부를 빼고 데이터만 저장해보세요.`);
+      alert(`[오류] ${err.message}`);
     }
   };
 
@@ -424,7 +396,6 @@ function App() {
     setMapCenter([place.lat, place.lng]);
   };
 
-  // --- 탭 구성 (외부 링크 포함, 아이콘 추가) ---
   const tabs = [
     { id: '팝업스토어', label: '팝업', icon: StorefrontIcon },
     { id: 'F&B/상점', label: 'F&B/상점', icon: CoffeeIcon },
@@ -532,12 +503,10 @@ function App() {
                           
                           <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 pt-8 flex flex-col items-center text-center">
                             <span className="text-white text-xs font-black block truncate w-full mb-0.5">{place.name}</span>
-                            
-                            {/* 툴팁: 만차/혼잡 시 빨간색 표시 및 주차장일 땐 대수 단위로 수정 */}
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${place.status.includes('혼잡') || place.status === '만차' ? 'bg-red-500/90 text-white' : 'bg-green-500/90 text-white'}`}>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${place.status === '마감' || place.status === '만차' ? 'bg-red-500/90 text-white' : place.status === '혼잡' ? 'bg-orange-500/90 text-white' : place.status === '보통' ? 'bg-amber-500/90 text-white' : 'bg-green-500/90 text-white'}`}>
                               {place.status} 
                               {place.type === '주차장' 
-                                ? (place.status === '만차' ? '' : ` ${place.wait}대`) 
+                                ? (place.status === '마감' ? '' : ` ${place.wait}대`) 
                                 : (place.status !== '마감' ? ` ${place.wait}명` : '')}
                             </span>
                           </div>
@@ -549,6 +518,7 @@ function App() {
               </MapContainer>
             </div>
 
+            {/* 마커 클릭 시 하단에 뜨는 정보 팝업창 */}
             {selectedPlace && (
               <div className="absolute bottom-[88px] w-full px-4 z-40 animate-in slide-in-from-bottom-5">
                 <div className="bg-white rounded-[24px] shadow-2xl border border-neutral-100 p-4 relative overflow-hidden">
@@ -557,6 +527,7 @@ function App() {
                   </button>
                   
                   <div className="flex gap-4">
+                    {/* 주차장일 경우 사진 영역을 렌더링하지 않음 */}
                     {selectedPlace.type !== '주차장' && (
                       <img 
                         src={selectedPlace.customImg || `/images/${selectedPlace.no}.jpg`} 
@@ -577,16 +548,20 @@ function App() {
                       <p className="text-[11px] font-medium text-neutral-500 mb-2 leading-relaxed">{selectedPlace.address}</p>
                       
                       <div className="flex items-center gap-2">
-                        {/* 하단 팝업: 만차/혼잡 시 빨간색 표시 및 주차장일 땐 대수 단위로 수정 */}
+                        {/* 💡 팝업창 색상 자동화 (마감=빨강, 혼잡=주황, 보통=노랑, 원활=초록) */}
                         <span className={`text-xs font-black px-2.5 py-1 rounded-md whitespace-nowrap ${
-                          selectedPlace.status.includes('혼잡') || selectedPlace.status === '만차' ? 'bg-red-100 text-red-600' : 
-                          selectedPlace.status.includes('보통') ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'
+                          selectedPlace.status === '마감' || selectedPlace.status === '만차' ? 'bg-red-100 text-red-600' : 
+                          selectedPlace.status === '혼잡' ? 'bg-orange-100 text-orange-600' : 
+                          selectedPlace.status === '보통' ? 'bg-amber-100 text-amber-700' : 
+                          selectedPlace.status === '원활' || selectedPlace.status === '여유' ? 'bg-green-100 text-green-700' : 
+                          'bg-neutral-100 text-neutral-600'
                         }`}>
                           {selectedPlace.status} 
                           {selectedPlace.type === '주차장' 
-                            ? (selectedPlace.status === '만차' ? '' : ` ${selectedPlace.wait}대`) 
+                            ? (selectedPlace.status === '마감' ? '' : ` ${selectedPlace.wait}대`) 
                             : (selectedPlace.status !== '마감' ? ` ${selectedPlace.wait}명` : '')}
                         </span>
+                        
                         <span className="text-xs font-bold text-neutral-400 whitespace-nowrap">{selectedPlace.time}</span>
                       </div>
                     </div>
@@ -595,7 +570,6 @@ function App() {
               </div>
             )}
             
-            {/* --- 모바일형 바텀 네비게이션 바 추가 --- */}
             <nav className="absolute bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-neutral-200 z-50 flex justify-around items-center pt-3 pb-5 sm:pb-3 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] rounded-b-none sm:rounded-b-[32px]">
               {tabs.map(tab => {
                 const Icon = tab.icon;
