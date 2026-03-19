@@ -67,7 +67,6 @@ const INITIAL_DATA = [
   { no: 34, type: '상점', status: '원활', wait: 0, time: '대기 없음', name: '클라이밍파크', address: '서울 성동구 연무장13길 7', lat: 37.544722, lng: 127.055833, hasImage: true, labelPos: 'left', lastUpdated: null, customImg: null },
   { no: 35, type: '상점', status: '보통', wait: 15, time: '10분 내외', name: '미피스토어 서울', address: '서울 성동구 연무장13길 5', lat: 37.544722, lng: 127.055556, hasImage: true, labelPos: 'top', lastUpdated: null, customImg: null },
   
-  // 💡 주차장 3곳 데이터 추가 (capacity: 총 주차면수 설정됨)
   { no: 30001, type: '주차장', status: '원활', wait: 50, capacity: 154, time: '총 154면 / 남은 50대', name: '팩토리얼 성수', address: '서울 성동구 연무장7길 13', lat: 37.543880, lng: 127.054350, hasImage: false, labelPos: 'bottom', lastUpdated: null, customImg: null },
   { no: 30002, type: '주차장', status: '마감', wait: 0, capacity: 70, time: '총 70면 / 남은 0대', name: '무신사 E1', address: '서울 성동구 성수동2가 271-22', lat: 37.544650, lng: 127.055550, hasImage: false, labelPos: 'top', lastUpdated: null, customImg: null },
   { no: 30003, type: '주차장', status: '원활', wait: 34, capacity: 178, time: '총 178면 / 남은 34대', name: '무신사 S1', address: '서울 성동구 성수동2가 324-2', lat: 37.542600, lng: 127.055950, hasImage: false, labelPos: 'right', lastUpdated: null, customImg: null }
@@ -123,19 +122,18 @@ const formatTimeAgo = (timestamp) => {
   return `${Math.floor(diffHours / 24)}일 전 업데이트`;
 };
 
-// --- 지도 점 마커 로직 (색상 통일) ---
+// --- 지도 점 마커 로직 ---
 const createPointMarker = (place) => {
   let bgColor = 'bg-neutral-500';
   let pulseEffect = '';
-  // 💡 [추가] 눈에 띄지만 과하지 않은 깜빡임(breathe)을 위한 클래스 변수
   let breatheClass = '';
 
   if (place.status === '마감' || place.status === '만차') {
     bgColor = 'bg-red-500'; 
-    breatheClass = 'animate-breathe'; // 💡 [적용] 은은하고 눈에 띄게 깜빡임
+    breatheClass = 'animate-breathe'; 
   } else if (place.status === '혼잡') {
     bgColor = 'bg-orange-500';
-    breatheClass = 'animate-breathe'; // 💡 [적용] 은은하고 눈에 띄게 깜빡임
+    breatheClass = 'animate-breathe'; 
   } else if (place.status === '보통') {
     bgColor = 'bg-amber-400';
   } else if (place.status === '원활' || place.status === '여유') {
@@ -184,7 +182,6 @@ const AdminRow = ({ place, onSave }) => {
   const [imageFile, setImageFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // 💡 주차장일 경우: 남은 대수에 따라 상태 자동 변경 로직
   useEffect(() => {
     if (isParking) {
       if (wait >= 10) setStatus('원활');
@@ -203,8 +200,6 @@ const AdminRow = ({ place, onSave }) => {
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-1">
           <label className="text-[10px] font-bold text-neutral-500 uppercase">혼잡도 상태</label>
-          
-          {/* 주차장은 자동 계산되므로 select 창 대신 배지로 표시 */}
           {isParking ? (
             <div className={`p-2 rounded-lg text-xs font-bold text-center border ${
               status === '원활' ? 'bg-green-50 text-green-600 border-green-200' :
@@ -230,7 +225,6 @@ const AdminRow = ({ place, onSave }) => {
         </div>
       </div>
 
-      {/* 주차장은 사진 업로드칸을 아예 숨김 */}
       {!isParking && (
         <div className="flex flex-col gap-1">
            <label className="text-[10px] font-bold text-neutral-500 uppercase">현장 사진 업데이트 (선택)</label>
@@ -327,9 +321,7 @@ function App() {
 
       const updatedData = placesData.map(p => {
         if (p.no === no) {
-          // 💡 주차장일 경우, time 문구를 자동으로 갱신해줌
           const updatedTime = p.type === '주차장' ? `총 ${p.capacity}면 / 남은 ${newWait}대` : p.time;
-          
           return { 
             ...p, 
             status: newStatus, 
@@ -410,7 +402,7 @@ function App() {
         .photo-tooltip::before { display: none !important; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         
-        /* 💡 [수정] 눈에 띄면서도 부드러운 깜빡임 애니메이션 (크기+투명도 조절) */
+        /* 💡 [수정완료] 눈에 띄지만 과하지 않은 고급스러운 깜빡임 애니메이션 (크기 1.25배 확대 + 투명도) */
         @keyframes noticeable-breathe {
           0%, 100% { transform: scale(1); opacity: 1; }
           50% { transform: scale(1.25); opacity: 0.75; }
@@ -489,9 +481,10 @@ function App() {
                     icon={createPointMarker(place)}
                     eventHandlers={{ click: () => handlePlaceClick(place) }}
                   >
-                    {place.hasImage && (
-                      <Tooltip direction="top" offset={[0, -12]} opacity={1} className="photo-tooltip">
-                        {/* 💡 [수정완료] 툴팁 전체를 감싸는 div에 클릭 이벤트를 추가하여 사진 확대 범위를 확장 */}
+                    {/* 💡 [수정완료] 위아래 싱크 불일치 문제를 해결하기 위해, 하단 카드가 켜진 '선택된 장소'에만 툴팁이 고정(permanent)되도록 설정 */}
+                    {selectedPlace?.no === place.no && place.hasImage && (
+                      <Tooltip permanent interactive direction="top" offset={[0, -12]} opacity={1} className="photo-tooltip">
+                        {/* 💡 [수정완료] 사진뿐만 아니라 상단 팝업 전체 영역을 터치해도 사진이 확대되도록 이벤트 추가 */}
                         <div 
                           className="relative w-[140px] h-[180px] rounded-[24px] overflow-hidden shadow-2xl border-[4px] border-white cursor-pointer active:scale-95 transition-transform"
                           onClick={(e) => {
@@ -531,11 +524,17 @@ function App() {
             {/* 마커 클릭 시 하단에 뜨는 정보 팝업창 */}
             {selectedPlace && (
               <div className="absolute bottom-[88px] w-full px-4 z-40 animate-in slide-in-from-bottom-5">
-                {/* 💡 [수정완료] 하단 팝업창(하얀색 카드) 전체를 터치해도 사진이 확대되도록 클릭 이벤트 추가 */}
+                {/* 💡 [수정완료] 하단 팝업창(하얀색 카드) 전체를 터치해도 사진이 확대되도록 설정 */}
                 <div 
                   className="bg-white rounded-[24px] shadow-2xl border border-neutral-100 p-4 relative overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
-                  onClick={() => setExpandedImage(selectedPlace)}
+                  onClick={() => {
+                    // 주차장은 확대할 사진이 없으므로 무시
+                    if (selectedPlace.type !== '주차장') {
+                      setExpandedImage(selectedPlace);
+                    }
+                  }}
                 >
+                  {/* 💡 닫기 버튼을 누를 때는 사진 확대 기능이 작동하지 않도록 충돌 방지 처리 */}
                   <button 
                     onClick={(e) => { e.stopPropagation(); setSelectedPlace(null); }} 
                     className="absolute top-3 right-3 p-1.5 bg-neutral-100 rounded-full text-neutral-500 hover:bg-neutral-200 z-10"
@@ -564,7 +563,6 @@ function App() {
                       <p className="text-[11px] font-medium text-neutral-500 mb-2 leading-relaxed">{selectedPlace.address}</p>
                       
                       <div className="flex items-center gap-2">
-                        {/* 💡 팝업창 색상 자동화 (마감=빨강, 혼잡=주황, 보통=노랑, 원활=초록) */}
                         <span className={`text-xs font-black px-2.5 py-1 rounded-md whitespace-nowrap ${
                           selectedPlace.status === '마감' || selectedPlace.status === '만차' ? 'bg-red-100 text-red-600' : 
                           selectedPlace.status === '혼잡' ? 'bg-orange-100 text-orange-600' : 
