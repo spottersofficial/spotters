@@ -24,8 +24,6 @@ const SpottersLogo = ({ className }) => (
 const XIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
 const AlertCircleIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
 
-// 💡 (수정완료: 쓰지 않는 ExternalLinkIcon 코드 삭제)
-
 const StorefrontIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg>;
 const CoffeeIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>;
 const ParkingIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>;
@@ -71,8 +69,8 @@ const INITIAL_DATA = [
   
   // 💡 주차장 3곳 데이터 추가 (capacity: 총 주차면수 설정됨)
   { no: 30001, type: '주차장', status: '원활', wait: 50, capacity: 154, time: '총 154면 / 남은 50대', name: '팩토리얼 성수', address: '서울 성동구 연무장7길 13', lat: 37.543880, lng: 127.054350, hasImage: false, labelPos: 'bottom', lastUpdated: null, customImg: null },
-  { no: 30002, type: '주차장', status: '마감', wait: 0, capacity: 70, time: '총 52면 / 남은 20대', name: '무신사 E1', address: '서울 성동구 성수동2가 271-22', lat: 37.544650, lng: 127.055550, hasImage: false, labelPos: 'top', lastUpdated: null, customImg: null },
-  { no: 30003, type: '주차장', status: '원활', wait: 34, capacity: 178, time: '총 43면 / 남은 15대', name: '무신사 S1', address: '서울 성동구 성수동2가 324-2', lat: 37.542600, lng: 127.055950, hasImage: false, labelPos: 'right', lastUpdated: null, customImg: null }
+  { no: 30002, type: '주차장', status: '마감', wait: 0, capacity: 70, time: '총 70면 / 남은 0대', name: '무신사 E1', address: '서울 성동구 성수동2가 271-22', lat: 37.544650, lng: 127.055550, hasImage: false, labelPos: 'top', lastUpdated: null, customImg: null },
+  { no: 30003, type: '주차장', status: '원활', wait: 34, capacity: 178, time: '총 178면 / 남은 34대', name: '무신사 S1', address: '서울 성동구 성수동2가 324-2', lat: 37.542600, lng: 127.055950, hasImage: false, labelPos: 'right', lastUpdated: null, customImg: null }
 ];
 
 const adjustOverlappingCoordinates = (data) => {
@@ -129,13 +127,16 @@ const formatTimeAgo = (timestamp) => {
 const createPointMarker = (place) => {
   let bgColor = 'bg-neutral-500';
   let pulseEffect = '';
+  // 💡 [추가] 과하지 않은 깜빡임(breathe)을 위한 클래스 변수
+  let breatheClass = '';
 
   // 💡 혼잡도는 주황색, 마감/만차는 빨간색으로 구분!
   if (place.status === '마감' || place.status === '만차') {
     bgColor = 'bg-red-500'; 
-    pulseEffect = '<span class="absolute -inset-1.5 rounded-full bg-red-400 opacity-40 animate-ping"></span>';
+    breatheClass = 'animate-breathe'; // 💡 [적용] 마감/만차일 때 은은하게 깜빡임
   } else if (place.status === '혼잡') {
     bgColor = 'bg-orange-500';
+    breatheClass = 'animate-breathe'; // 💡 [적용] 혼잡일 때 은은하게 깜빡임
   } else if (place.status === '보통') {
     bgColor = 'bg-amber-400';
   } else if (place.status === '원활' || place.status === '여유') {
@@ -157,7 +158,7 @@ const createPointMarker = (place) => {
     html: `
       <div class="relative flex items-center justify-center group cursor-pointer" style="width: 14px; height: 14px;">
         ${pulseEffect}
-        <div class="relative w-3.5 h-3.5 rounded-full border-[2px] border-white shadow-md ${bgColor} z-20 transition-transform group-hover:scale-125"></div>
+        <div class="relative w-3.5 h-3.5 rounded-full border-[2px] border-white shadow-md ${bgColor} ${breatheClass} z-20 transition-transform group-hover:scale-125"></div>
         <span class="absolute ${labelPositionClass} text-[11.5px] font-bold text-neutral-800 tracking-tight whitespace-nowrap z-30" 
               style="text-shadow: -1.5px -1.5px 0 #fff, 1.5px -1.5px 0 #fff, -1.5px 1.5px 0 #fff, 1.5px 1.5px 0 #fff, 0 2px 4px rgba(0,0,0,0.15); font-family: Pretendard, sans-serif;">
           ${place.name}
@@ -263,8 +264,6 @@ function App() {
   const [expandedImage, setExpandedImage] = useState(null);
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [secretCount, setSecretCount] = useState(0);
-
-  // 💡 (수정완료: 클라우드플레어 빌드 에러를 유발하던 쓰지않는 tick 변수 삭제)
 
   // --- 데이터 로드 ---
   useEffect(() => {
@@ -411,6 +410,15 @@ function App() {
         .photo-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
         .photo-tooltip::before { display: none !important; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
+        
+        /* 💡 [추가] 과하지 않은 은은한 숨쉬기(깜빡임) 애니메이션 */
+        @keyframes breathe {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(1.05); }
+        }
+        .animate-breathe {
+          animation: breathe 2s ease-in-out infinite;
+        }
       `}</style>
 
       <div className="bg-[#1A1A1A] min-h-screen flex items-center justify-center">
@@ -497,7 +505,14 @@ function App() {
                             {place.lastUpdated ? formatTimeAgo(place.lastUpdated) : 'LIVE'}
                           </div>
                           
-                          <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 pt-8 flex flex-col items-center text-center">
+                          {/* 💡 [수정] 아래 정보 영역을 터치하면 사진이 커지도록 클릭 이벤트 추가 */}
+                          <div 
+                            className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 pt-8 flex flex-col items-center text-center cursor-pointer active:scale-95 transition-transform"
+                            onClick={(e) => {
+                              e.stopPropagation(); // 지도로 클릭이 넘어가는 것을 방지
+                              setExpandedImage(place); // 사진 확대 실행
+                            }}
+                          >
                             <span className="text-white text-xs font-black block truncate w-full mb-0.5">{place.name}</span>
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${place.status === '마감' || place.status === '만차' ? 'bg-red-500/90 text-white' : place.status === '혼잡' ? 'bg-orange-500/90 text-white' : place.status === '보통' ? 'bg-amber-500/90 text-white' : 'bg-green-500/90 text-white'}`}>
                               {place.status} 
