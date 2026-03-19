@@ -22,6 +22,13 @@ const SpottersLogo = ({ className }) => (
 
 const XIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
 const AlertCircleIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
+const ExternalLinkIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className}><path fillRule="evenodd" d="M4.25 5.5a.75.75 0 00-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0112.75 17h-8.5A2.25 2.25 0 012 14.75v-8.5A2.25 2.25 0 014.25 4h5a.75.75 0 010 1.5h-5z" clipRule="evenodd" /><path fillRule="evenodd" d="M10.75 2.75a.75.75 0 000 1.5h3.69L8.22 10.47a.75.75 0 101.06 1.06l6.22-6.22v3.69a.75.75 0 001.5 0v-5a.75.75 0 00-.75-.75h-5z" clipRule="evenodd" /></svg>;
+
+// --- [바텀 네비게이션용 아이콘 추가] ---
+const StorefrontIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><path d="M12 3v6"/></svg>;
+const CoffeeIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>;
+const ParkingIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>;
+const BookOpenIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
 
 // --- 초기 데이터 (통신 실패 시 사용할 기본값) ---
 const INITIAL_DATA = [
@@ -64,6 +71,18 @@ const INITIAL_DATA = [
   { no: 37, type: '주차장', status: '원활', wait: 0, time: '여유', name: '에이스하이엔드 주차장', address: '서울 성동구 성수이로 118', lat: 37.546944, lng: 127.058611, hasImage: false, labelPos: 'right', lastUpdated: null, customImg: null }
 ];
 
+// --- 겹치는 좌표 미세조정 함수 ---
+// GitHub data.json에 좌표가 같게 올라가 있더라도 웹에서 불러올 때 자동으로 분산시킵니다.
+const adjustOverlappingCoordinates = (data) => {
+  return data.map(place => {
+    // 1번 프리카 성수 팝업 (남쪽으로 살짝 이동)
+    if (place.no === 1) return { ...place, lat: 37.544600, lng: 127.056111 };
+    // 13번 새로중앙박물관 (북쪽으로 살짝 이동)
+    if (place.no === 13) return { ...place, lat: 37.544980, lng: 127.056250 };
+    return place;
+  });
+};
+
 // --- [이미지 자동 압축 엔진] ---
 const compressImage = (file) => {
   return new Promise((resolve, reject) => {
@@ -76,7 +95,7 @@ const compressImage = (file) => {
         const canvas = document.createElement('canvas');
         let width = img.width;
         let height = img.height;
-        const MAX_SIZE = 800; // 최대 폭을 800px로 제한하여 용량 대폭 감소
+        const MAX_SIZE = 800; 
 
         if (width > height) {
           if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
@@ -88,8 +107,6 @@ const compressImage = (file) => {
 
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
-
-        // JPEG 포맷으로 품질 70% 압축 (Base64 헤더 떼고 반환)
         const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
         resolve(dataUrl.split(',')[1]);
       };
@@ -199,7 +216,7 @@ const AdminRow = ({ place, onSave }) => {
           setIsSaving(true);
           await onSave(place.no, status, wait, imageFile);
           setIsSaving(false);
-          setImageFile(null); // 전송 후 파일 입력창 초기화
+          setImageFile(null); 
         }} 
         disabled={isSaving}
         className={`mt-1 w-full text-white font-bold text-xs py-2.5 rounded-lg transition-colors ${isSaving ? 'bg-neutral-400' : 'bg-[#1A1A1A] hover:bg-[#FF8C00]'}`}
@@ -212,7 +229,7 @@ const AdminRow = ({ place, onSave }) => {
 
 // --- 메인 App 컴포넌트 선언 ---
 function App() {
-  const [placesData, setPlacesData] = useState(INITIAL_DATA);
+  const [placesData, setPlacesData] = useState(adjustOverlappingCoordinates(INITIAL_DATA));
   const [activeTab, setActiveTab] = useState('팝업스토어');
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [mapCenter, setMapCenter] = useState([37.5445, 127.0560]); 
@@ -222,9 +239,31 @@ function App() {
   const [secretCount, setSecretCount] = useState(0);
   const [tick, setTick] = useState(0); 
 
-  // 1분마다 업데이트 시간 갱신
+  // --- 크롬 탭 아이콘 (파비콘) 번개 로고로 변경 및 타이머 설정 ---
   useEffect(() => {
+    // 1분마다 업데이트 시간 갱신 타이머
     const timer = setInterval(() => setTick(t => t + 1), 60000);
+    
+    // 파비콘 동적 생성 및 적용
+    const svgIcon = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+        <defs>
+          <linearGradient id="brand-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="%235E2A8C" />
+            <stop offset="100%" stopColor="%23FF8C00" />
+          </linearGradient>
+        </defs>
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="url(%23brand-gradient)" />
+      </svg>
+    `;
+    let link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.head.appendChild(link);
+    }
+    link.href = `data:image/svg+xml,${encodeURIComponent(svgIcon.trim())}`;
+    
     return () => clearInterval(timer);
   }, []);
 
@@ -233,7 +272,10 @@ function App() {
     fetch('/data.json')
       .then(res => res.json())
       .then(data => {
-        if (data && data.length > 0) setPlacesData(data);
+        if (data && data.length > 0) {
+          // 불러온 데이터에도 겹치는 좌표 분산 로직 적용!
+          setPlacesData(adjustOverlappingCoordinates(data));
+        }
       })
       .catch(err => console.error("데이터 로드 실패 (초기 데이터 사용 중):", err));
   }, []);
@@ -259,16 +301,15 @@ function App() {
     let newImgUrl = null;
 
     if (!TOKEN || !REPO) {
-      alert("Netlify 환경 변수 설정(VITE_GITHUB_TOKEN, VITE_REPO_NAME)이 필요합니다.");
+      alert("Netlify/Cloudflare 환경 변수 설정이 필요합니다.");
       return;
     }
 
     try {
-      // 1. 이미지가 첨부되었다면 사이즈를 압축한 뒤 GitHub에 업로드
       if (imageFile) {
-        const compressedBase64 = await compressImage(imageFile); // 용량 대폭 감소!
+        const compressedBase64 = await compressImage(imageFile); 
         
-        const fileExt = "jpg"; // 캔버스에서 jpeg로 변환했으므로 무조건 jpg
+        const fileExt = "jpg"; 
         const fileName = `upload_${no}_${Date.now()}.${fileExt}`;
         const filePath = `public/images/${fileName}`;
 
@@ -289,7 +330,6 @@ function App() {
         newImgUrl = `/images/${fileName}`;
       }
 
-      // 2. data.json 내용 수정
       const updatedData = placesData.map(p => {
         if (p.no === no) {
           return { 
@@ -303,7 +343,6 @@ function App() {
         return p;
       });
 
-      // 3. GitHub에서 기존 data.json의 SHA 키를 가져옴 (덮어쓰기 위해 필수)
       let sha = null;
       try {
         const fileRes = await fetch(`https://api.github.com/repos/${REPO}/contents/public/data.json`, {
@@ -317,7 +356,6 @@ function App() {
         console.warn("기존 data.json 파일을 찾을 수 없어 새로 생성합니다.");
       }
 
-      // 4. 업데이트된 data.json을 GitHub로 전송
       const jsonBody = {
         message: `Admin: Update data for place ${no}`,
         content: btoa(unescape(encodeURIComponent(JSON.stringify(updatedData, null, 2))))
@@ -331,8 +369,8 @@ function App() {
       });
 
       if (updateRes.ok) {
-        setPlacesData(updatedData); // 관리자 화면 즉시 반영
-        alert(`저장 성공!\n\n데이터와 최적화된 사진이 전송되었습니다.\n1~2분 뒤 Netlify 배포가 완료되면 반영됩니다.`);
+        setPlacesData(adjustOverlappingCoordinates(updatedData)); 
+        alert(`저장 성공!\n\n데이터와 사진이 전송되었습니다.\n1~2분 뒤 Cloudflare 배포가 완료되면 반영됩니다.`);
       } else {
         const errDetail = await updateRes.json();
         throw new Error(`데이터 갱신 실패 (${errDetail.message || updateRes.status})`);
@@ -340,7 +378,7 @@ function App() {
 
     } catch (err) {
       console.error(err);
-      alert(`[오류] ${err.message}\n\n* 팁: 사진 첨부를 빼고 데이터만 저장해보세요. 그래도 안 된다면 GitHub 토큰 권한(repo 체크) 문제일 수 있습니다.`);
+      alert(`[오류] ${err.message}\n\n* 팁: 사진 첨부를 빼고 데이터만 저장해보세요.`);
     }
   };
 
@@ -356,10 +394,13 @@ function App() {
     setMapCenter([place.lat, place.lng]);
   };
 
+  // --- 탭 구성 (외부 링크 포함, 아이콘 추가) ---
   const tabs = [
-    { id: '팝업스토어', label: '팝업' },
-    { id: 'F&B/상점', label: 'F&B/상점' },
-    { id: '주차장', label: '주차장' }
+    { id: '팝업스토어', label: '팝업', icon: StorefrontIcon },
+    { id: 'F&B/상점', label: 'F&B/상점', icon: CoffeeIcon },
+    { id: '주차장', label: '주차장', icon: ParkingIcon },
+    // 모바일 하단 공간을 고려해 텍스트를 "팝업 정보"로 축약했습니다.
+    { id: '블로그', label: '팝업 정보', isLink: true, url: 'https://blog.naver.com/spotters', icon: BookOpenIcon }
   ];
 
   return (
@@ -409,7 +450,7 @@ function App() {
               </div>
 
               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                {tabs.map(tab => (
+                {tabs.filter(t => !t.isLink).map(tab => (
                   <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`px-4 py-2 rounded-full font-bold text-xs whitespace-nowrap ${activeTab === tab.id ? 'bg-[#5E2A8C] text-white' : 'bg-white text-neutral-600 border border-neutral-200'}`}>
                     {tab.label}
                   </button>
@@ -430,22 +471,6 @@ function App() {
               <div className={`pointer-events-auto ${BRAND_GRADIENT} text-white text-[11px] font-bold text-center py-2.5 px-3 rounded-[14px] shadow-lg flex items-center justify-center gap-1.5 border border-white/20`}>
                 <AlertCircleIcon className="w-4 h-4 opacity-90" />
                 이 웹사이트의 실시간 정보는 주말(토/일)에만 업데이트 됩니다.
-              </div>
-
-              <div className="flex gap-2 pointer-events-auto overflow-x-auto pb-1 scrollbar-hide">
-                {tabs.map(tab => (
-                  <button 
-                    key={tab.id}
-                    onClick={() => { setActiveTab(tab.id); setSelectedPlace(null); }}
-                    className={`px-5 py-2.5 rounded-full font-bold text-[13px] whitespace-nowrap transition-all shadow-sm ${
-                      activeTab === tab.id 
-                        ? 'bg-[#FF8C00] text-white border-transparent' 
-                        : 'bg-white text-neutral-600 border border-neutral-200 hover:border-[#FF8C00]/50 hover:text-[#FF8C00]'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
               </div>
             </nav>
 
@@ -491,7 +516,7 @@ function App() {
             </div>
 
             {selectedPlace && (
-              <div className="absolute bottom-6 w-full px-4 z-40 animate-in slide-in-from-bottom-5">
+              <div className="absolute bottom-[88px] w-full px-4 z-40 animate-in slide-in-from-bottom-5">
                 <div className="bg-white rounded-[24px] shadow-2xl border border-neutral-100 p-4 relative overflow-hidden">
                   <button onClick={() => setSelectedPlace(null)} className="absolute top-3 right-3 p-1.5 bg-neutral-100 rounded-full text-neutral-500 hover:bg-neutral-200 z-10">
                     <XIcon className="w-4 h-4" />
@@ -532,6 +557,47 @@ function App() {
               </div>
             )}
             
+            {/* --- 모바일형 바텀 네비게이션 바 추가 --- */}
+            <nav className="absolute bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-neutral-200 z-50 flex justify-around items-center pt-3 pb-5 sm:pb-3 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] rounded-b-none sm:rounded-b-[32px]">
+              {tabs.map(tab => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id && !tab.isLink;
+                
+                if (tab.isLink) {
+                  return (
+                    <a 
+                      key={tab.id} 
+                      href={tab.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex flex-col items-center gap-1.5 w-16 text-neutral-400 hover:text-[#5E2A8C] transition-colors"
+                    >
+                      <Icon className="w-[22px] h-[22px]" />
+                      <span className="text-[10px] font-bold">{tab.label}</span>
+                    </a>
+                  );
+                }
+                
+                return (
+                  <button 
+                    key={tab.id}
+                    onClick={() => { setActiveTab(tab.id); setSelectedPlace(null); }}
+                    className={`flex flex-col items-center gap-1.5 w-16 transition-colors ${
+                      isActive 
+                        ? 'text-[#FF8C00]' 
+                        : 'text-neutral-400 hover:text-neutral-600'
+                    }`}
+                  >
+                    <div className={`relative ${isActive ? 'scale-110 transition-transform' : ''}`}>
+                      <Icon className="w-[22px] h-[22px]" />
+                      {isActive && <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#5E2A8C] border-2 border-white"></span>}
+                    </div>
+                    <span className="text-[10px] font-bold">{tab.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+
             {expandedImage && (
               <div 
                 className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-in fade-in duration-200"
