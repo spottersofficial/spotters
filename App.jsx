@@ -24,7 +24,7 @@ const SpottersLogo = ({ className }) => (
 const XIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
 const AlertCircleIcon = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
 
-// --- 💡 최신 성수260320 데이터 (11개) ---
+// --- 최신 성수260320 데이터 (11개) ---
 const INITIAL_DATA = [
   { no: 1, type: '팝업스토어', status: '진행예정', wait: 0, time: '대기 없음', name: '새로중앙박물관 팝업스토어', address: '서울 성동구 연무장13길 11 1층', lat: 37.542817, lng: 127.058339, hasImage: true, labelPos: 'bottom', lastUpdated: null, customImg: null },
   { no: 2, type: '팝업스토어', status: '보통', wait: 20, time: '30분 내외', name: '코스모폴리탄X아이더 팝업', address: '서울 성동구 성수이로 88 (남정빌딩)', lat: 37.542794, lng: 127.056732, hasImage: true, labelPos: 'top', lastUpdated: null, customImg: null },
@@ -71,8 +71,17 @@ const compressImage = (file) => {
   });
 };
 
-const formatTimeAgo = () => {
-  return '오늘 1시간 전 업데이트';
+// 💡 [수정완료] 저장된 시간이 있으면 실시간 계산, 없으면 "오늘 1시간 전 업데이트"로 출력!
+const formatTimeAgo = (timestamp) => {
+  if (!timestamp) return '오늘 1시간 전 업데이트';
+  
+  const diffMinutes = Math.floor((Date.now() - timestamp) / 60000);
+  if (diffMinutes < 1) return '방금 업데이트';
+  if (diffMinutes < 60) return `${diffMinutes}분 전 업데이트`;
+  
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours}시간 전 업데이트`;
+  return `${Math.floor(diffHours / 24)}일 전 업데이트`;
 };
 
 // --- 지도 점 마커 로직 (색상 통일 & 깜빡임 유지) ---
@@ -188,7 +197,7 @@ function App() {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [secretCount, setSecretCount] = useState(0);
 
-  // --- 💡 [좀비 데이터 차단막] 데이터 로드 로직 수정 ---
+  // --- 데이터 로드 ---
   useEffect(() => {
     fetch('/data.json')
       .then(res => res.json())
@@ -197,7 +206,6 @@ function App() {
           const mergedData = INITIAL_DATA.map(initPlace => {
             const savedPlace = data.find(p => p.no === initPlace.no);
             
-            // 이름이 정확히 일치할 때만 깃허브에서 저장된 상태/사진을 가져옴 (이름 바뀌면 초기 데이터 사용)
             if (savedPlace && savedPlace.name === initPlace.name) {
               return { 
                 ...initPlace, 
@@ -267,7 +275,7 @@ function App() {
             ...p, 
             status: newStatus, 
             wait: newWait, 
-            lastUpdated: Date.now(),
+            lastUpdated: Date.now(), // 💡 저장하는 순간의 시간을 기록합니다.
             ...(newImgUrl && { customImg: newImgUrl })
           };
         }
@@ -414,9 +422,10 @@ function App() {
                             onError={(e) => { e.target.src = `https://picsum.photos/seed/${place.no}/300/400`; }}
                           />
                           
+                          {/* 💡 상단 지도 위 팝업창에서도 formatTimeAgo 함수에 lastUpdated 시간을 넘겨줍니다 */}
                           <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-md text-white text-[9px] px-2 py-1 rounded-full font-bold flex items-center gap-1.5 shadow-sm">
                             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-                            {formatTimeAgo()}
+                            {formatTimeAgo(place.lastUpdated)}
                           </div>
                           
                           <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 pt-8 flex flex-col items-center text-center">
@@ -434,6 +443,7 @@ function App() {
               </MapContainer>
             </div>
 
+            {/* 마커 클릭 시 하단에 뜨는 정보 팝업창 */}
             {selectedPlace && (
               <div className="absolute bottom-[24px] w-full px-4 z-40 animate-in slide-in-from-bottom-5">
                 <div 
@@ -458,7 +468,10 @@ function App() {
                     <div className="flex-1 flex flex-col justify-center min-w-0">
                       <div className="flex items-center gap-2 mb-1.5">
                         <span className={`text-[10px] font-bold text-[#5E2A8C] bg-[#5E2A8C]/10 px-2 py-0.5 rounded w-max`}>{selectedPlace.type}</span>
-                        <span className="text-[9px] font-bold text-[#FF8C00] bg-orange-50 px-1.5 py-0.5 rounded border border-orange-200">{formatTimeAgo()}</span>
+                        {/* 💡 하단 흰색 카드에서도 formatTimeAgo 함수에 lastUpdated 시간을 넘겨줍니다 */}
+                        <span className="text-[9px] font-bold text-[#FF8C00] bg-orange-50 px-1.5 py-0.5 rounded border border-orange-200">
+                          {formatTimeAgo(selectedPlace.lastUpdated)}
+                        </span>
                       </div>
                       <h3 className="text-lg font-black text-neutral-900 leading-tight mb-1 pr-6 line-clamp-1 font-montserrat">{selectedPlace.name}</h3>
                       <p className="text-[11px] font-medium text-neutral-500 mb-2 leading-relaxed">{selectedPlace.address}</p>
