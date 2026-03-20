@@ -92,8 +92,8 @@
   {
     "no": 7,
     "type": "팝업스토어",
-    "status": "보통",
-    "wait": 10,
+    "status": "혼잡",
+    "wait": 50,
     "time": "10분 내외",
     "name": "레인메이커스 뷰티원더랜드 팝업",
     "address": "서울 성동구 연무장길 73 XYZ SEOUL",
@@ -101,8 +101,8 @@
     "lng": 127.057234,
     "hasImage": true,
     "labelPos": "bottom",
-    "lastUpdated": null,
-    "customImg": null
+    "lastUpdated": 1773994797984,
+    "customImg": "/images/upload_7_1773994796855.jpg"
   },
   {
     "no": 8,
