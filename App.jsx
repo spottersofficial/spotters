@@ -365,7 +365,7 @@ function App() {
       <div className="bg-[#1A1A1A] min-h-screen flex items-center justify-center">
         <div className="w-full max-w-[430px] h-[100dvh] sm:h-[85vh] bg-[#FFFFFF] relative sm:rounded-[40px] overflow-hidden shadow-2xl sm:border-[8px] sm:border-neutral-800 flex flex-col">
           
-          <header className="absolute top-0 w-full z-50 p-4 pt-6 sm:pt-4 pointer-events-none">
+          <header className="absolute top-0 w-full z-50 p-4 pt-6 sm:pt-4 pointer-events-none flex flex-col gap-2.5">
             <div className="bg-white/85 backdrop-blur-xl rounded-2xl shadow-sm border border-neutral-100 p-3.5 flex justify-between items-center pointer-events-auto">
               <div className="flex items-center gap-2">
                 <SpottersLogo className="w-8 h-8 drop-shadow-sm" />
@@ -385,10 +385,28 @@ function App() {
                 </div>
               )}
             </div>
+
+            {!isAdminMode && (
+              <>
+                {/* 💡 [수정완료] 알림창 텍스트 오류 수정 및 문구 반영 */}
+                <div 
+                  onClick={() => alert("📌 빠른 즐겨찾기 추가 방법\n\n📱 아이폰(사파리): 하단 [공유] 버튼 > [홈 화면에 추가]\n📱 갤럭시(크롬): 상단 [메뉴] 버튼 > [⭐별표] 또는 [홈 화면에 추가]\n💻 PC: 키보드 Ctrl + D (Mac은 Cmd + D)")}
+                  className="pointer-events-auto bg-amber-50 border border-amber-200 rounded-[14px] p-2.5 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-[0.98] transition-transform"
+                >
+                  <span className="text-[14px]">⭐</span>
+                  <span className="text-[11px] font-bold text-amber-700 tracking-tight">즐겨찾기에 추가하고 실시간 업데이트를 확인하세요 !</span>
+                </div>
+
+                <div className={`pointer-events-auto ${BRAND_GRADIENT} text-white text-[11px] font-bold text-center py-2.5 px-3 rounded-[14px] shadow-lg flex items-center justify-center gap-1.5 border border-white/20`}>
+                  <AlertCircleIcon className="w-4 h-4 opacity-90" />
+                  이 웹사이트의 실시간 정보는 주말(토/일)에만 업데이트 됩니다.
+                </div>
+              </>
+            )}
           </header>
 
           {isAdminMode ? (
-            <div className="flex-1 w-full h-full bg-neutral-100 pt-28 pb-6 px-4 overflow-y-auto flex flex-col gap-4">
+            <div className="flex-1 w-full h-full bg-neutral-100 pt-[160px] pb-6 px-4 overflow-y-auto flex flex-col gap-4">
               <div className="flex justify-between items-center mb-2">
                 <h2 className="text-lg font-black text-neutral-900">데이터 실시간 관리</h2>
                 <button onClick={() => setIsAdminMode(false)} className="text-xs font-bold text-red-500 bg-red-50 px-3 py-1.5 rounded-full">닫기</button>
@@ -404,13 +422,6 @@ function App() {
           ) : (
 
           <>
-            <nav className="absolute top-24 w-full z-40 px-4 pointer-events-none flex flex-col gap-2.5">
-              <div className={`pointer-events-auto ${BRAND_GRADIENT} text-white text-[11px] font-bold text-center py-2.5 px-3 rounded-[14px] shadow-lg flex items-center justify-center gap-1.5 border border-white/20`}>
-                <AlertCircleIcon className="w-4 h-4 opacity-90" />
-                이 웹사이트의 실시간 정보는 주말(토/일)에만 업데이트 됩니다.
-              </div>
-            </nav>
-
             <div className="flex-1 w-full h-full relative z-0">
               <MapContainer center={mapCenter} zoom={16} zoomControl={false} className="w-full h-full">
                 <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
@@ -490,7 +501,6 @@ function App() {
                       <h3 className="text-lg font-black text-neutral-900 leading-tight mb-1 pr-6 line-clamp-1 font-montserrat">{selectedPlace.name}</h3>
                       <p className="text-[11px] font-medium text-neutral-500 mb-2 leading-relaxed">{selectedPlace.address}</p>
                       
-                      {/* 💡 [추가] 네이버 길찾기 버튼을 포함한 상태바 렌더링 */}
                       <div className="flex items-center gap-2">
                         <span className={`text-xs font-black px-2.5 py-1 rounded-md whitespace-nowrap ${
                           selectedPlace.status === '마감' || selectedPlace.status === '만차' ? 'bg-red-100 text-red-600' : 
@@ -506,13 +516,12 @@ function App() {
                         
                         <span className="text-xs font-bold text-neutral-400 whitespace-nowrap">{selectedPlace.time}</span>
 
-                        {/* 💡 [추가] 네이버지도 길찾기 전용 초록색 다이렉트 버튼 */}
                         <a
                           href={`https://map.naver.com/p/directions/-/${selectedPlace.lng},${selectedPlace.lat},${encodeURIComponent(selectedPlace.name)}/-/transit`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="ml-auto bg-[#03C75A] hover:bg-[#02b351] transition-colors text-white text-[10px] font-bold px-2.5 py-1.5 rounded-md flex items-center gap-1 shadow-sm"
-                          onClick={(e) => e.stopPropagation()} // 클릭 시 팝업 카드 자체의 사진 확대 이벤트 무시
+                          onClick={(e) => e.stopPropagation()} 
                         >
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
                           길찾기
