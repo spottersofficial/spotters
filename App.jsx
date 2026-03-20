@@ -71,7 +71,6 @@ const compressImage = (file) => {
   });
 };
 
-// 실시간 업데이트 문구 로직
 const formatTimeAgo = (timestamp) => {
   if (!timestamp) return '오늘 1시간 전 업데이트';
   
@@ -140,7 +139,6 @@ const AdminRow = ({ place, onSave }) => {
   const [wait, setWait] = useState(place.wait);
   const [status, setStatus] = useState(place.status);
   
-  // 💡 [수정] 기존 문구("30분 내외")에서 숫자("30")만 쏙 빼서 초기값으로 세팅 (없으면 0)
   const initialTimeNum = parseInt(String(place.time).replace(/[^0-9]/g, '')) || 0;
   const [timeNum, setTimeNum] = useState(initialTimeNum); 
   
@@ -172,7 +170,6 @@ const AdminRow = ({ place, onSave }) => {
         </div>
       </div>
 
-      {/* 💡 [수정] 글자 대신 숫자만 입력받는 박스로 변경 */}
       <div className="flex flex-col gap-1">
         <label className="text-[10px] font-bold text-neutral-500 uppercase">예상 대기시간(분) - 0 입력시 '대기 없음'</label>
         <input 
@@ -193,7 +190,6 @@ const AdminRow = ({ place, onSave }) => {
       <button 
         onClick={async () => {
           setIsSaving(true);
-          // 💡 [수정] 저장 버튼을 누를 때 숫자를 "30분 내외" 또는 "대기 없음" 문구로 스마트하게 자동 변환
           const formattedTime = timeNum === 0 ? '대기 없음' : `${timeNum}분 내외`;
           await onSave(place.no, status, wait, formattedTime, imageFile);
           setIsSaving(false);
@@ -494,6 +490,7 @@ function App() {
                       <h3 className="text-lg font-black text-neutral-900 leading-tight mb-1 pr-6 line-clamp-1 font-montserrat">{selectedPlace.name}</h3>
                       <p className="text-[11px] font-medium text-neutral-500 mb-2 leading-relaxed">{selectedPlace.address}</p>
                       
+                      {/* 💡 [추가] 네이버 길찾기 버튼을 포함한 상태바 렌더링 */}
                       <div className="flex items-center gap-2">
                         <span className={`text-xs font-black px-2.5 py-1 rounded-md whitespace-nowrap ${
                           selectedPlace.status === '마감' || selectedPlace.status === '만차' ? 'bg-red-100 text-red-600' : 
@@ -508,6 +505,18 @@ function App() {
                         </span>
                         
                         <span className="text-xs font-bold text-neutral-400 whitespace-nowrap">{selectedPlace.time}</span>
+
+                        {/* 💡 [추가] 네이버지도 길찾기 전용 초록색 다이렉트 버튼 */}
+                        <a
+                          href={`https://map.naver.com/p/directions/-/${selectedPlace.lng},${selectedPlace.lat},${encodeURIComponent(selectedPlace.name)}/-/transit`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="ml-auto bg-[#03C75A] hover:bg-[#02b351] transition-colors text-white text-[10px] font-bold px-2.5 py-1.5 rounded-md flex items-center gap-1 shadow-sm"
+                          onClick={(e) => e.stopPropagation()} // 클릭 시 팝업 카드 자체의 사진 확대 이벤트 무시
+                        >
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                          길찾기
+                        </a>
                       </div>
                     </div>
                   </div>
