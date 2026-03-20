@@ -63,7 +63,7 @@
     "no": 5,
     "type": "팝업스토어",
     "status": "원활",
-    "wait": 0,
+    "wait": 5,
     "time": "10분 내외",
     "name": "쿠팡 알럭스 팝업",
     "address": "서울 성동구 연무장11길 11 1층",
@@ -71,7 +71,7 @@
     "lng": 127.057113,
     "hasImage": true,
     "labelPos": "top",
-    "lastUpdated": 1773992792554,
+    "lastUpdated": 1773995437785,
     "customImg": null
   },
   {
