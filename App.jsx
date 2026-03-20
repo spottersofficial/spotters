@@ -71,7 +71,7 @@ const compressImage = (file) => {
   });
 };
 
-// 💡 [수정완료] 저장된 시간이 있으면 실시간 계산, 없으면 "오늘 1시간 전 업데이트"로 출력!
+// 실시간 업데이트 문구 로직
 const formatTimeAgo = (timestamp) => {
   if (!timestamp) return '오늘 1시간 전 업데이트';
   
@@ -84,7 +84,7 @@ const formatTimeAgo = (timestamp) => {
   return `${Math.floor(diffHours / 24)}일 전 업데이트`;
 };
 
-// --- 지도 점 마커 로직 (색상 통일 & 깜빡임 유지) ---
+// --- 지도 점 마커 로직 ---
 const createPointMarker = (place) => {
   let bgColor = 'bg-neutral-500';
   let pulseEffect = '';
@@ -139,6 +139,11 @@ const MapController = ({ center }) => {
 const AdminRow = ({ place, onSave }) => {
   const [wait, setWait] = useState(place.wait);
   const [status, setStatus] = useState(place.status);
+  
+  // 💡 [수정] 기존 문구("30분 내외")에서 숫자("30")만 쏙 빼서 초기값으로 세팅 (없으면 0)
+  const initialTimeNum = parseInt(String(place.time).replace(/[^0-9]/g, '')) || 0;
+  const [timeNum, setTimeNum] = useState(initialTimeNum); 
+  
   const [imageFile, setImageFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -167,6 +172,19 @@ const AdminRow = ({ place, onSave }) => {
         </div>
       </div>
 
+      {/* 💡 [수정] 글자 대신 숫자만 입력받는 박스로 변경 */}
+      <div className="flex flex-col gap-1">
+        <label className="text-[10px] font-bold text-neutral-500 uppercase">예상 대기시간(분) - 0 입력시 '대기 없음'</label>
+        <input 
+          type="number" 
+          min="0" 
+          value={timeNum} 
+          onChange={(e) => setTimeNum(Number(e.target.value))} 
+          placeholder="예: 30" 
+          className="p-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs font-medium outline-none focus:border-[#FF8C00]" 
+        />
+      </div>
+
       <div className="flex flex-col gap-1">
          <label className="text-[10px] font-bold text-neutral-500 uppercase">현장 사진 업데이트 (선택)</label>
          <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} className="text-xs text-neutral-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-purple-50 file:text-[#5E2A8C] hover:file:bg-purple-100" />
@@ -175,7 +193,9 @@ const AdminRow = ({ place, onSave }) => {
       <button 
         onClick={async () => {
           setIsSaving(true);
-          await onSave(place.no, status, wait, imageFile);
+          // 💡 [수정] 저장 버튼을 누를 때 숫자를 "30분 내외" 또는 "대기 없음" 문구로 스마트하게 자동 변환
+          const formattedTime = timeNum === 0 ? '대기 없음' : `${timeNum}분 내외`;
+          await onSave(place.no, status, wait, formattedTime, imageFile);
           setIsSaving(false);
           setImageFile(null); 
         }} 
@@ -238,7 +258,7 @@ function App() {
     }
   };
 
-  const handleAdminSave = async (no, newStatus, newWait, imageFile) => {
+  const handleAdminSave = async (no, newStatus, newWait, newTime, imageFile) => {
     const TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
     const REPO = import.meta.env.VITE_REPO_NAME;
     let newImgUrl = null;
@@ -275,7 +295,8 @@ function App() {
             ...p, 
             status: newStatus, 
             wait: newWait, 
-            lastUpdated: Date.now(), // 💡 저장하는 순간의 시간을 기록합니다.
+            time: newTime, 
+            lastUpdated: Date.now(),
             ...(newImgUrl && { customImg: newImgUrl })
           };
         }
@@ -422,7 +443,6 @@ function App() {
                             onError={(e) => { e.target.src = `https://picsum.photos/seed/${place.no}/300/400`; }}
                           />
                           
-                          {/* 💡 상단 지도 위 팝업창에서도 formatTimeAgo 함수에 lastUpdated 시간을 넘겨줍니다 */}
                           <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-md text-white text-[9px] px-2 py-1 rounded-full font-bold flex items-center gap-1.5 shadow-sm">
                             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
                             {formatTimeAgo(place.lastUpdated)}
@@ -443,7 +463,6 @@ function App() {
               </MapContainer>
             </div>
 
-            {/* 마커 클릭 시 하단에 뜨는 정보 팝업창 */}
             {selectedPlace && (
               <div className="absolute bottom-[24px] w-full px-4 z-40 animate-in slide-in-from-bottom-5">
                 <div 
@@ -468,7 +487,6 @@ function App() {
                     <div className="flex-1 flex flex-col justify-center min-w-0">
                       <div className="flex items-center gap-2 mb-1.5">
                         <span className={`text-[10px] font-bold text-[#5E2A8C] bg-[#5E2A8C]/10 px-2 py-0.5 rounded w-max`}>{selectedPlace.type}</span>
-                        {/* 💡 하단 흰색 카드에서도 formatTimeAgo 함수에 lastUpdated 시간을 넘겨줍니다 */}
                         <span className="text-[9px] font-bold text-[#FF8C00] bg-orange-50 px-1.5 py-0.5 rounded border border-orange-200">
                           {formatTimeAgo(selectedPlace.lastUpdated)}
                         </span>
