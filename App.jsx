@@ -213,14 +213,13 @@ function App() {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [secretCount, setSecretCount] = useState(0);
 
-  // --- 💡 [버그 수정 1] 데이터 로드 시 강력한 이름 매칭 및 캐시 회피 적용 ---
+  // --- 데이터 로드 ---
   useEffect(() => {
-    fetch('/data.json?t=' + new Date().getTime()) // 캐시 방지 적용
+    fetch('/data.json?t=' + new Date().getTime())
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {
           const mergedData = INITIAL_DATA.map(initPlace => {
-            // 이름 양옆의 공백을 제거하여 영문 이름도 완벽 매칭되도록 수정
             const savedPlace = data.find(p => p.name?.trim() === initPlace.name?.trim());
             
             if (savedPlace) {
@@ -326,7 +325,6 @@ function App() {
       if (updateRes.ok) {
         setPlacesData(updatedData); 
         
-        // 💡 [버그 수정 2] 하단 팝업 카드(selectedPlace)에도 즉시 바뀐 정보를 동기화 주입
         if (selectedPlace && selectedPlace.no === no) {
           setSelectedPlace(updatedData.find(p => p.no === no));
         }
@@ -405,7 +403,7 @@ function App() {
 
                 <div className={`pointer-events-auto ${BRAND_GRADIENT} text-white text-[11px] font-bold text-center py-2.5 px-3 rounded-[14px] shadow-lg flex items-center justify-center gap-1.5 border border-white/20`}>
                   <AlertCircleIcon className="w-4 h-4 opacity-90" />
-                  이 웹사이트의 실시간 정보는 주말(토/일)에만 업데이트 됩니다.
+                  웹사이트 실시간 정보는 주말(토/일 12:00~17:00)에만 업데이트됩니다.
                 </div>
               </>
             )}
