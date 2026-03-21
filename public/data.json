@@ -48,7 +48,7 @@
     "no": 4,
     "type": "팝업스토어",
     "status": "혼잡",
-    "wait": 83,
+    "wait": 90,
     "time": "40분 내외",
     "name": "비오레 팝업",
     "address": "서울 성동구 연무장길 65 LECT 성수",
@@ -56,8 +56,8 @@
     "lng": 127.056826,
     "hasImage": true,
     "labelPos": "left",
-    "lastUpdated": 1774067078385,
-    "customImg": "/images/upload_4_1774067076432.jpg"
+    "lastUpdated": 1774071833573,
+    "customImg": "/images/upload_4_1774071831949.jpg"
   },
   {
     "no": 5,
