@@ -152,16 +152,16 @@
   {
     "no": 11,
     "type": "팝업스토어",
-    "status": "보통",
+    "status": "원활",
     "wait": 5,
-    "time": "10분 내외",
+    "time": "대기 없음",
     "name": "Feenah THE DATE GALLERY",
     "address": "서울 성동구 연무장길 99 The A",
     "lat": 37.541206,
     "lng": 127.060254,
     "hasImage": true,
     "labelPos": "left",
-    "lastUpdated": 1774005987531,
-    "customImg": null
+    "lastUpdated": 1774068293379,
+    "customImg": "/images/upload_11_1774068291628.jpg"
   }
 ]
