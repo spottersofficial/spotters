@@ -213,16 +213,17 @@ function App() {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [secretCount, setSecretCount] = useState(0);
 
-  // --- 데이터 로드 ---
+  // --- 💡 [버그 수정 1] 데이터 로드 시 강력한 이름 매칭 및 캐시 회피 적용 ---
   useEffect(() => {
-    fetch('/data.json')
+    fetch('/data.json?t=' + new Date().getTime()) // 캐시 방지 적용
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {
           const mergedData = INITIAL_DATA.map(initPlace => {
-            const savedPlace = data.find(p => p.no === initPlace.no);
+            // 이름 양옆의 공백을 제거하여 영문 이름도 완벽 매칭되도록 수정
+            const savedPlace = data.find(p => p.name?.trim() === initPlace.name?.trim());
             
-            if (savedPlace && savedPlace.name === initPlace.name) {
+            if (savedPlace) {
               return { 
                 ...initPlace, 
                 status: savedPlace.status, 
@@ -324,6 +325,12 @@ function App() {
 
       if (updateRes.ok) {
         setPlacesData(updatedData); 
+        
+        // 💡 [버그 수정 2] 하단 팝업 카드(selectedPlace)에도 즉시 바뀐 정보를 동기화 주입
+        if (selectedPlace && selectedPlace.no === no) {
+          setSelectedPlace(updatedData.find(p => p.no === no));
+        }
+
         alert(`저장 성공!\n\n1~2분 뒤에 반영됩니다.`);
       } else {
         throw new Error(`데이터 갱신 실패`);
@@ -388,7 +395,6 @@ function App() {
 
             {!isAdminMode && (
               <>
-                {/* 💡 [수정완료] 알림창 텍스트 오류 수정 및 문구 반영 */}
                 <div 
                   onClick={() => alert("📌 빠른 즐겨찾기 추가 방법\n\n📱 아이폰(사파리): 하단 [공유] 버튼 > [홈 화면에 추가]\n📱 갤럭시(크롬): 상단 [메뉴] 버튼 > [⭐별표] 또는 [홈 화면에 추가]\n💻 PC: 키보드 Ctrl + D (Mac은 Cmd + D)")}
                   className="pointer-events-auto bg-amber-50 border border-amber-200 rounded-[14px] p-2.5 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-[0.98] transition-transform"
