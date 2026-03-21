@@ -152,7 +152,7 @@
   {
     "no": 11,
     "type": "팝업스토어",
-    "status": "보통",
+    "status": "원활",
     "wait": 5,
     "time": "10분 내외",
     "name": "Feenah THE DATE GALLERY",
@@ -161,7 +161,7 @@
     "lng": 127.060254,
     "hasImage": true,
     "labelPos": "left",
-    "lastUpdated": 1774005987531,
-    "customImg": null
+    "lastUpdated": 1774063171130,
+    "customImg": "/images/upload_11_1774063169630.jpg"
   }
 ]
