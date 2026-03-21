@@ -34,14 +34,14 @@
     "type": "팝업스토어",
     "status": "원활",
     "wait": 5,
-    "time": "10분 내외",
+    "time": "5분 내외",
     "name": "베어스랜드",
     "address": "서울특별시 성동구 성수이로16길 5 맵달SEOUL",
     "lat": 37.541291,
     "lng": 127.057236,
     "hasImage": true,
     "labelPos": "right",
-    "lastUpdated": 1774067868611,
+    "lastUpdated": 1774072233962,
     "customImg": "/images/upload_3_1774062143410.jpg"
   },
   {
