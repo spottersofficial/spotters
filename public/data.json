@@ -108,7 +108,7 @@
     "no": 8,
     "type": "팝업스토어",
     "status": "보통",
-    "wait": 20,
+    "wait": 15,
     "time": "대기 없음",
     "name": "와키윌리 성수 플래그십 스토어",
     "address": "서울 성동구 성수이로 86",
@@ -116,7 +116,7 @@
     "lng": 127.056641,
     "hasImage": true,
     "labelPos": "left",
-    "lastUpdated": 1774066955362,
+    "lastUpdated": 1774071707574,
     "customImg": "/images/upload_8_1774066935293.jpg"
   },
   {
