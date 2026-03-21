@@ -17,17 +17,17 @@
   {
     "no": 2,
     "type": "팝업스토어",
-    "status": "혼잡",
-    "wait": 50,
-    "time": "30분 내외",
+    "status": "보통",
+    "wait": 20,
+    "time": "10분 내외",
     "name": "코스모폴리탄X아이더 팝업",
     "address": "서울 성동구 성수이로 88 (남정빌딩)",
     "lat": 37.542794,
     "lng": 127.056732,
     "hasImage": true,
     "labelPos": "top",
-    "lastUpdated": 1773995194860,
-    "customImg": "/images/upload_2_1773995193038.jpg"
+    "lastUpdated": 1774061618558,
+    "customImg": "/images/upload_2_1774061616923.jpg"
   },
   {
     "no": 3,
