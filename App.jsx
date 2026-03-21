@@ -403,7 +403,7 @@ function App() {
 
                 <div className={`pointer-events-auto ${BRAND_GRADIENT} text-white text-[11px] font-bold text-center py-2.5 px-3 rounded-[14px] shadow-lg flex items-center justify-center gap-1.5 border border-white/20`}>
                   <AlertCircleIcon className="w-4 h-4 opacity-90" />
-                  웹사이트 실시간 정보는 주말(토/일 12:00~17:00)에만 업데이트됩니다.
+                  웹사이트 실시간 정보는 주말(토/일 12:00~17:00)만 업데이트됩니다.
                 </div>
               </>
             )}
