@@ -138,7 +138,7 @@
     "no": 10,
     "type": "팝업스토어",
     "status": "보통",
-    "wait": 25,
+    "wait": 30,
     "time": "20분 내외",
     "name": "클리어디어 프레시 마트 팝업",
     "address": "서울 성동구 연무장길 81 무신사 뷰티 스페이스 1",
@@ -146,8 +146,8 @@
     "lng": 127.058289,
     "hasImage": true,
     "labelPos": "right",
-    "lastUpdated": 1774072040353,
-    "customImg": "/images/upload_10_1774072038378.jpg"
+    "lastUpdated": 1774078039084,
+    "customImg": "/images/upload_10_1774078037176.jpg"
   },
   {
     "no": 11,
