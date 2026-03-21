@@ -78,16 +78,16 @@
     "no": 6,
     "type": "팝업스토어",
     "status": "원활",
-    "wait": 5,
-    "time": "30분 내외",
+    "wait": 0,
+    "time": "대기 없음",
     "name": "메디힐 팝업",
     "address": "서울 성동구 연무장7길 13 올리브영N 성수 1층",
     "lat": 37.544168,
     "lng": 127.054538,
     "hasImage": true,
     "labelPos": "right",
-    "lastUpdated": 1773995803462,
-    "customImg": "/images/upload_6_1773995801070.jpg"
+    "lastUpdated": 1774061367662,
+    "customImg": "/images/upload_6_1774061366313.jpg"
   },
   {
     "no": 7,
