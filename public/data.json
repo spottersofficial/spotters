@@ -123,16 +123,16 @@
     "no": 9,
     "type": "팝업스토어",
     "status": "원활",
-    "wait": 0,
-    "time": "대기 없음",
+    "wait": 10,
+    "time": "5분 내외",
     "name": "성수 콜랩코리아 팝업 스토어",
     "address": "서울 성동구 연무장7길 16",
     "lat": 37.543963,
     "lng": 127.055146,
     "hasImage": true,
     "labelPos": "top",
-    "lastUpdated": 1774061390668,
-    "customImg": "/images/upload_9_1774061389511.jpg"
+    "lastUpdated": 1774066612431,
+    "customImg": "/images/upload_9_1774066610352.jpg"
   },
   {
     "no": 10,
