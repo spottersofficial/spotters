@@ -86,7 +86,7 @@
     "lng": 127.054538,
     "hasImage": true,
     "labelPos": "right",
-    "lastUpdated": 1774061367662,
+    "lastUpdated": 1774066570598,
     "customImg": "/images/upload_6_1774061366313.jpg"
   },
   {
@@ -152,7 +152,7 @@
   {
     "no": 11,
     "type": "팝업스토어",
-    "status": "원활",
+    "status": "보통",
     "wait": 5,
     "time": "10분 내외",
     "name": "Feenah THE DATE GALLERY",
@@ -161,7 +161,7 @@
     "lng": 127.060254,
     "hasImage": true,
     "labelPos": "left",
-    "lastUpdated": 1774063171130,
-    "customImg": "/images/upload_11_1774063169630.jpg"
+    "lastUpdated": 1774005987531,
+    "customImg": null
   }
 ]
