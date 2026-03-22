@@ -120,8 +120,7 @@ const AdminRow = ({ place, reports, onSave, onToggleReport }) => {
         <div className="flex justify-between items-center border-b border-neutral-100 pb-2">
           <h4 className="font-bold text-sm text-neutral-900">{place.name}</h4>
         </div>
-        {/* 🚀 3칸으로 수정: 상태, 대기명, 예상시간 */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-1">
             <label className="text-[10px] font-bold text-neutral-500 uppercase">상태</label>
             <select value={status} onChange={(e) => setStatus(e.target.value)} className="p-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs outline-none">
@@ -131,10 +130,6 @@ const AdminRow = ({ place, reports, onSave, onToggleReport }) => {
           <div className="flex flex-col gap-1">
             <label className="text-[10px] font-bold text-neutral-500 uppercase">대기(명)</label>
             <input type="number" min="0" value={wait} onChange={(e) => setWait(Number(e.target.value))} className="p-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs outline-none" />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-bold text-neutral-500 uppercase">예상시간(분)</label>
-            <input type="number" min="0" step="5" value={timeNum} onChange={(e) => setTimeNum(Number(e.target.value))} className="p-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs outline-none" />
           </div>
         </div>
         <div className="flex flex-col gap-1">
@@ -164,8 +159,8 @@ const AdminRow = ({ place, reports, onSave, onToggleReport }) => {
                   <img src={r.photo_url} className="w-12 h-12 object-cover rounded-md shrink-0" alt="제보사진"/>
                   <div className="flex flex-col justify-between w-full min-w-0">
                     <div className="flex justify-between items-start">
-                      {/* 관리자 모드에서만 이름과 전화번호 표시 */}
-                      <span className="text-[10px] font-bold text-[#5E2A8C] truncate">{r.user_name || r.kakao_id} ({r.user_phone || '연락처 없음'})</span>
+                      {/* 관리자 모드에서 DB에 저장된 kakao_id(이름/번호 형태) 표시 */}
+                      <span className="text-[10px] font-bold text-[#5E2A8C] truncate">{r.kakao_id}</span>
                       <button onClick={() => onToggleReport(r.id, !r.is_selected)} className={`text-[9px] px-2 py-0.5 rounded font-bold ${r.is_selected ? 'bg-red-500 text-white' : 'bg-neutral-200 text-neutral-700'}`}>
                         {r.is_selected ? '선택해제' : '홈에 노출하기'}
                       </button>
@@ -195,7 +190,7 @@ function App() {
   const [reportText, setReportText] = useState('');
   const [reportFile, setReportFile] = useState(null);
   
-  // 🚀 이름과 번호, 동의 여부 상태
+  // 이름과 번호, 개인정보 동의 여부 상태
   const [userName, setUserName] = useState('');
   const [userPhone, setUserPhone] = useState('');
   const [privacyConsent, setPrivacyConsent] = useState(false);
@@ -309,14 +304,13 @@ function App() {
       // 2. 이미지 주소 가져오기
       const { data: { publicUrl } } = supabase.storage.from('popup-photos').getPublicUrl(fileName);
 
-      // 3. DB에 저장 (user_name, user_phone으로 매핑)
+      // 3. DB에 저장 (DB 스키마 에러를 피하기 위해 이름과 번호를 기존 kakao_id 컬럼에 합쳐서 저장)
       const { error: insertError } = await supabase.from('reports').insert({
         place_no: selectedPlace.no,
         photo_url: publicUrl,
         keywords: selectedKeywords,
         review_text: reportText,
-        user_name: userName,
-        user_phone: userPhone,
+        kakao_id: `${userName} / ${userPhone}`, 
         created_at: Date.now()
       });
       if (insertError) throw insertError;
