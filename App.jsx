@@ -120,7 +120,8 @@ const AdminRow = ({ place, reports, onSave, onToggleReport }) => {
         <div className="flex justify-between items-center border-b border-neutral-100 pb-2">
           <h4 className="font-bold text-sm text-neutral-900">{place.name}</h4>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        {/* 🚀 복구 완료: 상태, 대기(명), 시간(분) 3개 항목 배치 */}
+        <div className="grid grid-cols-3 gap-3">
           <div className="flex flex-col gap-1">
             <label className="text-[10px] font-bold text-neutral-500 uppercase">상태</label>
             <select value={status} onChange={(e) => setStatus(e.target.value)} className="p-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs outline-none">
@@ -130,6 +131,10 @@ const AdminRow = ({ place, reports, onSave, onToggleReport }) => {
           <div className="flex flex-col gap-1">
             <label className="text-[10px] font-bold text-neutral-500 uppercase">대기(명)</label>
             <input type="number" min="0" value={wait} onChange={(e) => setWait(Number(e.target.value))} className="p-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs outline-none" />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] font-bold text-neutral-500 uppercase">시간(분)</label>
+            <input type="number" min="0" value={timeNum} onChange={(e) => setTimeNum(Number(e.target.value))} className="p-2 bg-neutral-50 border border-neutral-200 rounded-lg text-xs outline-none" />
           </div>
         </div>
         <div className="flex flex-col gap-1">
