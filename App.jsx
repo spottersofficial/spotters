@@ -43,7 +43,7 @@ const T = {
     step3: "3. 어떤 점이 좋았나요?",
     step3Desc: "(다중 선택)",
     step4: "4. 꿀팁이나 한 줄 평 (선택)",
-    step4Place: "예: 뒷문으로 가면 대기 없어요! / 3시쯤 굿즈 다 털렸네요 ㅠㅠ",
+    step4Place: "예: 웨이팅 키오스크 있어요! / 3시쯤 굿즈 다 털렸네요 ㅠㅠ",
     submitBtn: "제보 완료하고 이벤트 응모하기",
     submitWait: "업로드 중...",
     bestPhoto: "베스트 제보 포토 📸",
@@ -71,7 +71,7 @@ const T = {
     tabReport: "Live Reports",
     noReport: "No reports yet!",
     noReportDesc: "Be the first to report and get a coffee ☕️",
-    btnReport: "Review Upload", // 🚀 영문버전 버튼 텍스트 수정
+    btnReport: "Share photos & get a coupon",
     modalTitle: "Submit a Report",
     step1: "1. Reporter Info",
     step1Desc: "Please enter accurately for event rewards! (Will NOT be shown publicly)",
@@ -85,7 +85,7 @@ const T = {
     step3: "3. What did you like?",
     step3Desc: "(Multiple choice)",
     step4: "4. Tips or short review (Optional)",
-    step4Place: "e.g. No wait at the back door! / Goods sold out at 3PM ㅠㅠ",
+    step4Place: "e.g. A waiting registration kiosk is available! / Goods sold out at 3PM. T_T",
     submitBtn: "Submit Report & Enter Event",
     submitWait: "Uploading...",
     bestPhoto: "Best Photo 📸",
@@ -600,7 +600,10 @@ function App() {
               </div>
             )}
             
-            {/* 🚀 주말 업데이트 공지 배너 코드 삭제됨 */}
+            <div className="pointer-events-auto bg-orange-50/95 backdrop-blur-sm text-[#FF8C00] text-[10.5px] font-bold py-2 px-3 rounded-[12px] border border-[#FF8C00]/30 flex items-center justify-center gap-1.5 shadow-sm animate-in slide-in-from-top-3">
+              <AlertCircleIcon className="w-3.5 h-3.5" />
+              {t.notice}
+            </div>
           </header>
 
           {isAdminMode ? (
@@ -764,10 +767,11 @@ function App() {
                         </div>
                       )}
                       
-                      {/* 🚀 제보 버튼이 영문판에서도 노출되도록 조건 수정 */}
-                      <button onClick={() => setShowReportForm(true)} className={`${BRAND_GRADIENT} text-white font-bold text-[13px] py-3 rounded-[14px] w-full flex justify-center items-center gap-1.5 shadow-md active:scale-[0.98] transition-transform`}>
-                        <CameraIcon className="w-4 h-4" /> {t.btnReport}
-                      </button>
+                      {lang === 'ko' && (
+                        <button onClick={() => setShowReportForm(true)} className={`${BRAND_GRADIENT} text-white font-bold text-[13px] py-3 rounded-[14px] w-full flex justify-center items-center gap-1.5 shadow-md active:scale-[0.98] transition-transform`}>
+                          <CameraIcon className="w-4 h-4" /> {t.btnReport}
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
