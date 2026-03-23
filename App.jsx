@@ -24,7 +24,7 @@ const T = {
     eventTitle: "이번 주 이벤트",
     eventDesc: "경품/현장 사진 제보하고 메가커피 받기!",
     eventBadge: "선정시 증정",
-    notice: "웹사이트 실시간 정보는 주말(토/일 12:00~17:00)만 업데이트됩니다.",
+    notice: "사이트 실시간 정보는 주말만 업데이트됩니다.", // 🚀 문구 수정
     tabInfo: "기본 정보",
     tabReport: "실시간 제보",
     noReport: "아직 제보가 없어요!",
@@ -66,12 +66,12 @@ const T = {
     eventTitle: "This Week's Event",
     eventDesc: "Share photos and get a Mega Coffee coupon!",
     eventBadge: "Selected",
-    notice: "Real-time info is only updated on weekends (Sat/Sun 12:00~17:00).",
+    notice: "Real-time info is only updated on weekends.", // 🚀 문구 수정
     tabInfo: "Info",
     tabReport: "Live Reports",
     noReport: "No reports yet!",
     noReportDesc: "Be the first to report and get a coffee ☕️",
-    btnReport: "Share photos & get a coupon",
+    btnReport: "Review Upload", // 🚀 버튼 텍스트 수정
     modalTitle: "Submit a Report",
     step1: "1. Reporter Info",
     step1Desc: "Please enter accurately for event rewards! (Will NOT be shown publicly)",
@@ -767,11 +767,10 @@ function App() {
                         </div>
                       )}
                       
-                      {lang === 'ko' && (
-                        <button onClick={() => setShowReportForm(true)} className={`${BRAND_GRADIENT} text-white font-bold text-[13px] py-3 rounded-[14px] w-full flex justify-center items-center gap-1.5 shadow-md active:scale-[0.98] transition-transform`}>
-                          <CameraIcon className="w-4 h-4" /> {t.btnReport}
-                        </button>
-                      )}
+                      {/* 🚀 제보 버튼이 영문판에서도 노출되도록 조건 수정 */}
+                      <button onClick={() => setShowReportForm(true)} className={`${BRAND_GRADIENT} text-white font-bold text-[13px] py-3 rounded-[14px] w-full flex justify-center items-center gap-1.5 shadow-md active:scale-[0.98] transition-transform`}>
+                        <CameraIcon className="w-4 h-4" /> {t.btnReport}
+                      </button>
                     </div>
                   )}
                 </div>
