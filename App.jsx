@@ -108,8 +108,7 @@ const T = {
 
 const translateStatus = (status, lang) => {
   if(lang === 'ko') return status;
-  // 🚀 새 상태에 대한 영문 번역 추가
-  const map = { "원활": "Good", "보통": "Normal", "혼잡": "Crowded", "마감": "Closed", "진행예정": "Upcoming", "3/22 행사종료": "Ended (3/22)" };
+  const map = { "원활": "Good", "보통": "Normal", "혼잡": "Crowded", "마감": "Closed", "진행예정": "Upcoming", "3/22 종료": "Ended (3/22)" };
   return map[status] || status;
 }
 
@@ -180,13 +179,11 @@ const compressImage = (file) => {
   });
 };
 
-// 🚀 지하철 출구 좌표 및 다국어 텍스트 데이터
 const STATION_EXITS = [
   { id: 'exit3', lat: 37.544025, lng: 127.057117, name_ko: '성수역 3번 출구', name_en: 'Seongsu Stn. Exit 3' },
   { id: 'exit4', lat: 37.544847, lng: 127.054754, name_ko: '성수역 4번 출구', name_en: 'Seongsu Stn. Exit 4' }
 ];
 
-// 🚀 출구 텍스트용 투명 마커 렌더링
 const createExitMarker = (exit, lang) => {
   const displayName = lang === 'en' ? exit.name_en : exit.name_ko;
   return L.divIcon({
@@ -201,18 +198,16 @@ const createExitMarker = (exit, lang) => {
   });
 };
 
-// --- 지도 점 마커 (언어 필터 추가) ---
 const createPointMarker = (place, lang) => {
   let bgColor = 'bg-neutral-500';
   let breatheClass = '';
   
-  // 🚀 새 상태 조건 추가 (3/22 행사종료일 때 검은색 처리)
   if (place.status === '마감' || place.status === '만차') { bgColor = 'bg-red-500'; breatheClass = 'animate-breathe'; } 
   else if (place.status === '혼잡') { bgColor = 'bg-orange-500'; breatheClass = 'animate-breathe'; } 
   else if (place.status === '보통') { bgColor = 'bg-amber-400'; } 
   else if (place.status === '원활' || place.status === '여유') { bgColor = 'bg-emerald-500'; } 
   else if (place.status && place.status.includes('진행예정')) { bgColor = `bg-[${PURPLE_COLOR}]`; }
-  else if (place.status === '3/22 행사종료') { bgColor = 'bg-black'; }
+  else if (place.status === '3/22 종료') { bgColor = 'bg-black'; }
 
   let labelPositionClass = place.labelPos === 'top' ? 'bottom-full mb-1.5 left-1/2 -translate-x-1/2' :
                            place.labelPos === 'bottom' ? 'top-full mt-1.5 left-1/2 -translate-x-1/2' :
@@ -265,8 +260,7 @@ const AdminRow = ({ place, reports, onSave, onToggleReport, onUpdateLang }) => {
               <option value="혼잡">혼잡</option>
               <option value="마감">마감</option>
               <option value="진행예정">진행예정</option>
-              {/* 🚀 새 상태 옵션 추가 */}
-              <option value="3/22 행사종료">3/22 행사종료</option>
+              <option value="3/22 종료">3/22 종료</option>
             </select>
           </div>
           <div className="flex flex-col gap-1">
@@ -363,6 +357,20 @@ function App() {
   const [secretCount, setSecretCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
+  // 🚀 보안 적용: 세션 및 인증 상태 실시간 구독
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) setIsAdminMode(true);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) setIsAdminMode(true);
+      else setIsAdminMode(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const fetchPlaces = async () => {
     try {
       const { data, error } = await supabase.from('places').select('*').order('no', { ascending: true });
@@ -403,11 +411,35 @@ function App() {
     if (isAdminMode) fetchAdminReports();
   }, [isAdminMode]);
 
-  const handleSecretLogin = () => {
+  // 🚀 보안 적용: Supabase Auth를 통한 실제 로그인 기능 연동
+  const handleSecretLogin = async () => {
     if (secretCount >= 4) {
-      if (window.prompt("비밀번호:") === "mmjc0812") setIsAdminMode(true);
+      const email = window.prompt("관리자 아이디(이메일)를 입력하세요:");
+      if (!email) { setSecretCount(0); return; }
+      
+      const pwd = window.prompt("관리자 비밀번호를 입력하세요:");
+      if (!pwd) { setSecretCount(0); return; }
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: pwd,
+      });
+
+      if (error) {
+        alert("로그인 실패: 아이디 또는 비밀번호가 올바르지 않습니다.");
+      } else {
+        setIsAdminMode(true);
+      }
       setSecretCount(0);
-    } else { setSecretCount(prev => prev + 1); }
+    } else { 
+      setSecretCount(prev => prev + 1); 
+    }
+  };
+
+  // 🚀 보안 적용: Supabase Auth 실제 로그아웃 기능
+  const handleAdminLogout = async () => {
+    await supabase.auth.signOut();
+    setIsAdminMode(false);
   };
 
   const handleAdminSave = async (no, newStatus, newWait, newTime, imageFile) => {
@@ -578,7 +610,8 @@ function App() {
              <div className="flex-1 w-full h-full bg-neutral-100 pt-[160px] pb-6 px-4 overflow-y-auto flex flex-col gap-4">
                <div className="flex justify-between items-center mb-2">
                  <h2 className="text-lg font-black text-neutral-900">{t.adminTitle}</h2>
-                 <button onClick={() => setIsAdminMode(false)} className="text-xs font-bold text-red-500 bg-red-50 px-3 py-1.5 rounded-full">{t.adminClose}</button>
+                 {/* 🚀 보안 적용: 닫기 버튼을 로그아웃 버튼으로 교체 */}
+                 <button onClick={handleAdminLogout} className="text-xs font-bold text-red-500 bg-red-50 px-3 py-1.5 rounded-full">{t.adminClose}</button>
                </div>
                <div className="flex flex-col gap-4 pb-10">
                  {placesData.map(place => ( 
@@ -590,7 +623,6 @@ function App() {
           <>
             <div className="flex-1 w-full h-full relative z-0">
               <MapContainer center={mapCenter} zoom={16} zoomControl={false} className="w-full h-full">
-                {/* 🚀 MapTiler API 적용 및 CSS 필터로 무채색 현대적 디자인 구현 */}
                 <TileLayer 
                   key={lang}
                   url={`https://api.maptiler.com/maps/streets-v2/256/{z}/{x}/{y}.png?key=0MQk1Z9FONFMeu7MkCDh&lang=${lang}`} 
@@ -599,7 +631,6 @@ function App() {
                 />
                 <MapController center={mapCenter} />
 
-                {/* 🚀 성수역 출구 투명 라벨 마커 (영문판에서만 표시) */}
                 {lang === 'en' && STATION_EXITS.map(exit => (
                   <Marker 
                     key={exit.id} 
@@ -689,16 +720,14 @@ function App() {
                           {lang === 'en' ? (selectedPlace.address_en || selectedPlace.address) : selectedPlace.address}
                         </p>
                         <div className="flex items-center gap-2">
-                          {/* 🚀 뱃지 색상 처리에 '3/22 행사종료' 반영 */}
                           <span className={`text-xs font-black px-2 py-1 rounded-md whitespace-nowrap ${
                             selectedPlace.status === '마감' ? 'bg-red-100 text-red-600' : 
-                            selectedPlace.status === '3/22 행사종료' ? 'bg-neutral-200 text-neutral-800' : 
+                            selectedPlace.status === '3/22 종료' ? 'bg-neutral-200 text-neutral-800' : 
                             'bg-green-100 text-green-700'
                           }`}>
                             {translateStatus(selectedPlace.status, lang)} {selectedPlace.wait > 0 && `${selectedPlace.wait}${t.waitSuffix}`}
                           </span>
                           <span className="text-xs font-bold text-neutral-400">{translateTime(selectedPlace.time, lang)}</span>
-                          {/* 🚀 길찾기 버튼 영문판에서 숨김 처리 */}
                           {lang === 'ko' && (
                             <a href={`https://map.naver.com/p/directions/-/${selectedPlace.lng},${selectedPlace.lat},${encodeURIComponent(selectedPlace.name)}/-/transit`} target="_blank" rel="noopener noreferrer" className="ml-auto bg-[#03C75A] text-white text-[10px] font-bold px-2 py-1.5 rounded-md flex items-center gap-1">
                               {t.routeBtn}
