@@ -76,7 +76,7 @@ const T = {
     step1: "1. Reporter Info",
     step1Desc: "Please enter accurately for event rewards! (Will NOT be shown publicly)",
     namePlace: "Name",
-    phonePlace: "Phone Number",
+    phonePlace: "E-mail Address",
     privacy: "(Required) I agree to the collection and use of personal info for the event.",
     privacySub: "* Data will be destroyed within 1 month.",
     step2: "2. Upload a Photo",
