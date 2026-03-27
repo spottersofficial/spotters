@@ -43,7 +43,6 @@
         .maplibregl-ctrl-bottom-left, .maplibregl-ctrl-bottom-right { display: none !important; }
         .select-none { user-select: none; -webkit-user-select: none; }
 
-        /* 디자인팀 요청: 텍스트 Halo(글로우) 효과 */
         .text-halo {
             text-shadow: 
                 -1.5px -1.5px 0 #ffffff,  
@@ -203,7 +202,6 @@
         let logoClickTimer = null;
         let adminAccessToken = '';
 
-        // 전철역 데이터 세팅
         const SUBWAY_DATA = {
             '성수': { name: '성수역', nameEn: 'Seongsu', lat: 37.5445888, lng: 127.0559664, color: '#00A84D' }, 
             '노원': { name: '노원역', nameEn: 'Nowon', lat: 37.656201, lng: 127.062820, color: '#00A4E3' } 
@@ -258,7 +256,7 @@
             if (map) {
                 const coords = region === '성수' ? [127.0570, 37.5425] : [127.063338, 37.656367];
                 map.flyTo({ center: coords, zoom: 15.5 });
-                renderSubwayMarker(); // 지역 이동 시 마커 갱신
+                renderSubwayMarker();
             }
 
             document.getElementById('admin-status').innerText = `[${region}] DB 로딩 중...`;
@@ -272,7 +270,6 @@
             fetchPlaces();
         }
 
-        // HTML/CSS 방식의 전철역 마커 생성 함수
         function renderSubwayMarker() {
             if (subwayMarker) subwayMarker.remove();
             
@@ -283,8 +280,10 @@
             el.className = 'flex flex-col items-center select-none pointer-events-none z-0 opacity-90';
             
             el.innerHTML = `
-                <div class="relative w-[22px] h-[22px] flex items-center justify-center drop-shadow-sm">
-                    <img src="spottr-subway.svg" alt="subway" class="w-full h-full object-contain">
+                <div class="relative w-[28px] h-[28px] flex items-center justify-center drop-shadow-sm bg-navy rounded-full border border-white">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM15.5 16L14 14.5H10L8.5 16H6.5L8.5 13.5V10C8.5 8.62 9.62 7.5 11 7.5H13C14.38 7.5 15.5 8.62 15.5 10V13.5L17.5 16H15.5ZM12 13.5C11.17 13.5 10.5 12.83 10.5 12C10.5 11.17 11.17 10.5 12 10.5C12.83 10.5 13.5 11.17 13.5 12C13.5 12.83 12.83 13.5 12 13.5Z" fill="white"/>
+                    </svg>
                     <div class="absolute -bottom-0.5 -right-0.5 w-[9px] h-[9px] rounded-full border-[1.5px] border-white shadow-sm" style="background-color: ${data.color};"></div>
                 </div>
                 <div class="mt-1 flex flex-col items-center leading-tight">
@@ -309,7 +308,7 @@
             });
 
             map.on('style.load', () => {
-                renderSubwayMarker(); // 초기 로드 시 마커 렌더링
+                renderSubwayMarker();
             });
         }
 
