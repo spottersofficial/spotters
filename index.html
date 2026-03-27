@@ -36,11 +36,25 @@
             border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-weight: 700; font-size: 13px; font-family: 'Montserrat', sans-serif;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.2s;
+            z-index: 10;
         }
         .rank-marker.top-rank { background-color: var(--color-point-blue); }
         .rank-marker:hover { transform: scale(1.1); z-index: 50; }
         .maplibregl-ctrl-bottom-left, .maplibregl-ctrl-bottom-right { display: none !important; }
         .select-none { user-select: none; -webkit-user-select: none; }
+
+        /* 디자인팀 요청: 텍스트 Halo(글로우) 효과 */
+        .text-halo {
+            text-shadow: 
+                -1.5px -1.5px 0 #ffffff,  
+                 1.5px -1.5px 0 #ffffff,
+                -1.5px  1.5px 0 #ffffff,
+                 1.5px  1.5px 0 #ffffff,
+                 0px -1.5px 0 #ffffff,
+                 0px  1.5px 0 #ffffff,
+                -1.5px  0px 0 #ffffff,
+                 1.5px  0px 0 #ffffff;
+        }
     </style>
 </head>
 <body class="relative text-main font-sans antialiased">
@@ -189,6 +203,13 @@
         let logoClickTimer = null;
         let adminAccessToken = '';
 
+        // 전철역 데이터 세팅
+        const SUBWAY_DATA = {
+            '성수': { name: '성수역', nameEn: 'Seongsu', lat: 37.5445888, lng: 127.0559664, color: '#00A84D' }, 
+            '노원': { name: '노원역', nameEn: 'Nowon', lat: 37.656201, lng: 127.062820, color: '#00A4E3' } 
+        };
+        let subwayMarker = null;
+
         function handleLogoClick() {
             logoClickCount++;
             if (logoClickCount === 1) logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 2000);
@@ -237,6 +258,7 @@
             if (map) {
                 const coords = region === '성수' ? [127.0570, 37.5425] : [127.063338, 37.656367];
                 map.flyTo({ center: coords, zoom: 15.5 });
+                renderSubwayMarker(); // 지역 이동 시 마커 갱신
             }
 
             document.getElementById('admin-status').innerText = `[${region}] DB 로딩 중...`;
@@ -250,7 +272,32 @@
             fetchPlaces();
         }
 
-        // 💡 [복구 완료] 지도를 렌더링하는 핵심 함수
+        // HTML/CSS 방식의 전철역 마커 생성 함수
+        function renderSubwayMarker() {
+            if (subwayMarker) subwayMarker.remove();
+            
+            const data = SUBWAY_DATA[currentRegion];
+            if (!data || !map) return;
+
+            const el = document.createElement('div');
+            el.className = 'flex flex-col items-center select-none pointer-events-none z-0 opacity-90';
+            
+            el.innerHTML = `
+                <div class="relative w-[22px] h-[22px] flex items-center justify-center drop-shadow-sm">
+                    <img src="spottr-subway.svg" alt="subway" class="w-full h-full object-contain">
+                    <div class="absolute -bottom-0.5 -right-0.5 w-[9px] h-[9px] rounded-full border-[1.5px] border-white shadow-sm" style="background-color: ${data.color};"></div>
+                </div>
+                <div class="mt-1 flex flex-col items-center leading-tight">
+                    <span class="text-[12px] font-bold text-[#333333] text-halo tracking-tight">${data.name}</span>
+                    <span class="text-[9.5px] font-medium text-[#333333] text-halo font-sans brand-title">${data.nameEn}</span>
+                </div>
+            `;
+
+            subwayMarker = new maptilersdk.Marker({ element: el, anchor: 'center' })
+                .setLngLat([data.lng, data.lat])
+                .addTo(map);
+        }
+
         function initMap() {
             const coords = currentRegion === '성수' ? [127.0570, 37.5425] : [127.063338, 37.656367];
             map = new maptilersdk.Map({
@@ -259,6 +306,10 @@
                 center: coords,
                 zoom: 15.5,
                 controls: false
+            });
+
+            map.on('style.load', () => {
+                renderSubwayMarker(); // 초기 로드 시 마커 렌더링
             });
         }
 
