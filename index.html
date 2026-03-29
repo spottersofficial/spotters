@@ -90,14 +90,18 @@
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-3">
-                    <div class="flex bg-white/10 rounded-full p-0.5 text-[10px] font-bold text-white/50">
-                        <button id="btn-kr" class="bg-point text-white rounded-full px-2 py-1 shadow-sm transition-colors" onclick="setLanguage('KR')">KR</button>
-                        <button id="btn-en" class="px-2 py-1 hover:text-white transition-colors" onclick="setLanguage('EN')">EN</button>
+                <div class="flex flex-col items-end justify-center pr-1 select-none pointer-events-none">
+                    <div class="text-white text-[13px] leading-[1.15] text-right tracking-tight" style="font-family: 'Montserrat', sans-serif; font-weight: bold;">
+                        No Ads. Real Trend !
                     </div>
-                    <button class="text-white hover:opacity-80 transition-opacity focus:outline-none">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                    </button>
+                    <div class="flex items-center gap-1 mt-1">
+                        <div class="w-3.5 h-3.5 bg-point rounded-full flex items-center justify-center">
+                            <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <span class="text-white text-[9px] tracking-tight" style="font-family: 'Pretendard', sans-serif; font-weight: bold;">
+                            DATA-VERIFIED
+                        </span>
+                    </div>
                 </div>
             </header>
 
@@ -116,7 +120,7 @@
             <div class="px-5 text-center mt-0.5 w-full max-w-md pointer-events-auto">
                 <p id="desc-1" class="text-[9.5px] text-gray-600 font-semibold tracking-tight leading-snug bg-white/80 backdrop-blur-md py-1.5 px-3 rounded-lg shadow-sm border border-white/50">
                     구글맵 평점과 네이버 실시간 검색량을 교차 검증하는 자동 로직으로,<br>
-                    광고와 어뷰징이 배제된 <span class="text-point font-black">100% 리얼 핫플</span>만을 주말마다 선정합니다.
+                    광고와 어뷰징이 배제된 <span class="text-point font-black">100% 리얼 핫플</span>만을 실시간 업데이트합니다.
                 </p>
                 <p class="text-[9px] text-gray-500 font-medium mt-1.5 pb-0.5">
                     <span id="desc-2-label">제휴 및 문의:</span> <a href="mailto:admin@spottr.kr" class="font-bold text-navy hover:underline">admin@spottr.kr</a>
@@ -320,12 +324,15 @@
             
             const btnKr = document.getElementById('btn-kr');
             const btnEn = document.getElementById('btn-en');
-            if(lang === 'KR') {
-                btnKr.className = "bg-point text-white rounded-full px-2 py-1 shadow-sm transition-colors";
-                btnEn.className = "px-2 py-1 hover:text-white transition-colors";
-            } else {
-                btnEn.className = "bg-point text-white rounded-full px-2 py-1 shadow-sm transition-colors";
-                btnKr.className = "px-2 py-1 hover:text-white transition-colors";
+            
+            if(btnKr && btnEn) {
+                if(lang === 'KR') {
+                    btnKr.className = "bg-point text-white rounded-full px-2 py-1 shadow-sm transition-colors";
+                    btnEn.className = "px-2 py-1 hover:text-white transition-colors";
+                } else {
+                    btnEn.className = "bg-point text-white rounded-full px-2 py-1 shadow-sm transition-colors";
+                    btnKr.className = "px-2 py-1 hover:text-white transition-colors";
+                }
             }
 
             document.getElementById('current-region-label').innerHTML = i18n[currentLang]['region_' + currentRegion];
@@ -675,19 +682,15 @@
             initDragScroll(container);
         }
 
-        // 💡 [공유 기능 로직 추가]
         function sharePlace(event, placeName, region, rank) {
-            // 카드 클릭(지도 이동) 이벤트 전파 방지
             if (event) event.stopPropagation(); 
 
-            // 현재 접속 중인 URL 도메인을 가져와 지역 정보(region) 파라미터를 붙여 링크 생성
             const baseUrl = window.location.origin + window.location.pathname;
             const shareUrl = `${baseUrl}?region=${encodeURIComponent(region)}`;
             
             const shareTitle = 'Spottr 실시간 핫플';
             const shareText = `🔥 [${region}] 실시간 핫플 ${rank}위: '${placeName}'\n지금 뜨고 있는 ${region} 핫플 순위를 확인해보세요!`;
 
-            // 모바일 Web Share API (카카오톡, 문자 등 네이티브 공유)
             if (navigator.share) {
                 navigator.share({
                     title: shareTitle,
@@ -695,7 +698,6 @@
                     url: shareUrl,
                 }).catch((error) => console.log('공유 취소 또는 오류:', error));
             } else {
-                // PC 등 API 미지원 환경 대비 폴백 (클립보드 복사)
                 navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
                 alert('링크가 클립보드에 복사되었습니다. 친구에게 공유해보세요!');
             }
@@ -826,7 +828,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // 💡 [초기 진입 랜딩 로직] 공유된 URL 파라미터(?region=OO) 확인 및 맵핑
             const urlParams = new URLSearchParams(window.location.search);
             const sharedRegion = urlParams.get('region');
             const validRegions = ['홍대', '성수', '노원', '마곡', '잠실', '이태원', '을지로', '압구정'];
@@ -835,7 +836,6 @@
                 currentRegion = sharedRegion;
             }
 
-            // 초기 UI에 현재 지역 이름 강제 반영
             document.getElementById('current-region-label').innerText = i18n['KR']['region_' + currentRegion] || currentRegion;
             document.getElementById('admin-region-badge').innerText = currentRegion;
 
