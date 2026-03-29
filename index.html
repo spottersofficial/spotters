@@ -20,6 +20,15 @@
         }
     </script>
 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KF8QQD5NZN"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-KF8QQD5NZN');
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.maptiler.com/maptiler-sdk-js/v2.0.3/maptiler-sdk.umd.js"></script>
     <link href="https://cdn.maptiler.com/maptiler-sdk-js/v2.0.3/maptiler-sdk.css" rel="stylesheet" />
@@ -685,8 +694,19 @@
         function sharePlace(event, placeName, region, rank) {
             if (event) event.stopPropagation(); 
 
+            // 💡 [추가됨] GA4 공유 이벤트 트래킹
+            if (typeof gtag === 'function') {
+                gtag('event', 'share', {
+                    'method': 'Web Share API',
+                    'content_type': 'hotspot',
+                    'item_id': placeName,
+                    'region': region
+                });
+            }
+
             const baseUrl = window.location.origin + window.location.pathname;
-            const shareUrl = `${baseUrl}?region=${encodeURIComponent(region)}`;
+            // 💡 [추가됨] UTM 파라미터를 추가하여 공유 링크를 통한 유입 추적
+            const shareUrl = `${baseUrl}?region=${encodeURIComponent(region)}&utm_source=user_share&utm_medium=social&utm_campaign=viral_loop`;
             
             const shareTitle = 'Spottr 실시간 핫플';
             const shareText = `🔥 [${region}] 실시간 핫플 ${rank}위: '${placeName}'\n지금 뜨고 있는 ${region} 핫플 순위를 확인해보세요!`;
