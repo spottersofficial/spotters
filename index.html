@@ -29,6 +29,14 @@
       gtag('config', 'G-KF8QQD5NZN');
     </script>
 
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "w3g2sxr0nn");
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.maptiler.com/maptiler-sdk-js/v2.0.3/maptiler-sdk.umd.js"></script>
     <link href="https://cdn.maptiler.com/maptiler-sdk-js/v2.0.3/maptiler-sdk.css" rel="stylesheet" />
@@ -73,7 +81,7 @@
         <div>
             <header class="pointer-events-auto h-[64px] bg-navy flex items-center justify-between px-4 shadow-md w-full relative z-[9999]">
                 <div class="flex items-center gap-3">
-                    <img src="logo-spottr-header.svg" alt="SEONGSU.NOW by Spotters" class="h-7 sm:h-8 object-contain cursor-pointer" onclick="handleLogoClick()">
+                    <img src="logo-spottr-header.svg" alt="SEONGSU.NOW by Spotters" class="h-7 sm:h-8 object-contain cursor-pointer" onclick="window.location.href='/'">
                     
                     <div class="flex flex-col justify-center border-l border-white/20 pl-3">
                         <div class="relative">
@@ -99,7 +107,7 @@
                     </div>
                 </div>
                 
-                <div class="flex flex-col items-end justify-center pr-1 select-none pointer-events-none">
+                <div class="flex flex-col items-end justify-center pr-1 select-none pointer-events-auto cursor-pointer" onclick="handleAdminClick()">
                     <div class="text-white text-[13px] leading-[1.15] text-right tracking-tight" style="font-family: 'Montserrat', sans-serif; font-weight: bold;">
                         No Ads. Real Trends !
                     </div>
@@ -265,8 +273,8 @@
         let isDraggingCard = false;
         let currentRegion = '홍대'; 
 
-        let logoClickCount = 0;
-        let logoClickTimer = null;
+        let adminClickCount = 0;
+        let adminClickTimer = null;
         let adminAccessToken = '';
 
         const SUBWAY_DATA = {
@@ -367,12 +375,12 @@
             }
         }
 
-        function handleLogoClick() {
-            logoClickCount++;
-            if (logoClickCount === 1) logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 2000);
-            if (logoClickCount === 5) {
-                clearTimeout(logoClickTimer);
-                logoClickCount = 0;
+        function handleAdminClick() {
+            adminClickCount++;
+            if (adminClickCount === 1) adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 2000);
+            if (adminClickCount === 5) {
+                clearTimeout(adminClickTimer);
+                adminClickCount = 0;
                 openAdminAuth();
             }
         }
@@ -694,7 +702,7 @@
         function sharePlace(event, placeName, region, rank) {
             if (event) event.stopPropagation(); 
 
-            // 💡 [추가됨] GA4 공유 이벤트 트래킹
+            // 💡 GA4 공유 이벤트 트래킹
             if (typeof gtag === 'function') {
                 gtag('event', 'share', {
                     'method': 'Web Share API',
@@ -705,7 +713,7 @@
             }
 
             const baseUrl = window.location.origin + window.location.pathname;
-            // 💡 [추가됨] UTM 파라미터를 추가하여 공유 링크를 통한 유입 추적
+            // 💡 UTM 파라미터를 추가하여 공유 링크를 통한 유입 추적
             const shareUrl = `${baseUrl}?region=${encodeURIComponent(region)}&utm_source=user_share&utm_medium=social&utm_campaign=viral_loop`;
             
             const shareTitle = 'Spottr 실시간 핫플';
