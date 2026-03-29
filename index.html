@@ -77,11 +77,12 @@
                                 <button id="dd-hongdae" onclick="changeRegion('홍대', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">홍대입구</button>
                                 <button id="dd-seongsu" onclick="changeRegion('성수', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">성수동</button>
                                 <button id="dd-itaewon" onclick="changeRegion('이태원', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">이태원</button>
-                                <button id="dd-euljiro" onclick="changeRegion('을지로', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50">을지로</button>
+                                <button id="dd-euljiro" onclick="changeRegion('을지로', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">을지로</button>
+                                <button id="dd-apgujeong" onclick="changeRegion('압구정', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">압구정</button>
                                 <button id="dd-jamsil" onclick="changeRegion('잠실', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">잠실</button>
                                 <button id="dd-magok" onclick="changeRegion('마곡', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">마곡</button>
                                 <button id="dd-nowon" onclick="changeRegion('노원', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">노원역</button>
-                            </div>
+                                                            </div>
                         </div>
                         <div class="flex items-center gap-1 mt-0.5 text-[10px] text-white/70 font-bold brand-title tracking-wide">
                             <span class="text-point animate-pulse text-[8px]">●</span> LIVE
@@ -205,6 +206,7 @@
                 'region_잠실': '잠실',
                 'region_이태원': '이태원',
                 'region_을지로': '을지로',
+                'region_압구정': '압구정',
                 'desc_1': '구글맵 평점과 네이버 실시간 검색량을 교차 검증하는 자동 로직으로,<br>광고와 어뷰징이 배제된 <span class="text-point font-black">100% 리얼 핫플</span>만을 주말마다 선정합니다.',
                 'desc_2': '제휴 및 문의:',
                 'loading': '데이터를 불러오는 중입니다...',
@@ -225,6 +227,7 @@
                 'region_잠실': 'Jamsil',
                 'region_이태원': 'Itaewon',
                 'region_을지로': 'Euljiro',
+                'region_압구정': 'Apgujeong',
                 'desc_1': 'Using cross-validation of Google Maps ratings and real-time search volume,<br>we curate <span class="text-point font-black">100% authentic hotspots</span> free from ads every weekend.',
                 'desc_2': 'Contact:',
                 'loading': 'Loading data...',
@@ -260,7 +263,8 @@
             '마곡': { name: '마곡역', nameEn: 'Magok', lat: 37.558891, lng: 126.836867, color: '#996CAC' },
             '잠실': { name: '잠실역', nameEn: 'Jamsil', lat: 37.514430, lng: 127.104568, color: '#00A84D' },
             '이태원': { name: '이태원역', nameEn: 'Itaewon', lat: 37.534508, lng: 126.993914, color: '#C6841D' },
-            '을지로': { name: '을지로3가역', nameEn: 'Euljiro 3-ga', lat: 37.566251, lng: 126.992219, color: '#00A84D' }
+            '을지로': { name: '을지로3가역', nameEn: 'Euljiro 3-ga', lat: 37.566251, lng: 126.992219, color: '#00A84D' },
+            '압구정': { name: '압구정로데오역', nameEn: 'Apgujeong Rodeo', lat: 37.527431, lng: 127.040561, color: '#F5A200' }
         };
         let subwayMarker = null;
 
@@ -335,6 +339,7 @@
             document.getElementById('dd-jamsil').innerText = i18n[currentLang]['region_잠실'];
             document.getElementById('dd-itaewon').innerText = i18n[currentLang]['region_이태원'];
             document.getElementById('dd-euljiro').innerText = i18n[currentLang]['region_을지로'];
+            document.getElementById('dd-apgujeong').innerText = i18n[currentLang]['region_압구정'];
 
             if (map) {
                 renderSubwayMarker();
@@ -398,6 +403,7 @@
                                region === '잠실' ? [127.104568, 37.514430] : 
                                region === '이태원' ? [126.993914, 37.534508] :
                                region === '을지로' ? [126.992219, 37.566251] :
+                               region === '압구정' ? [127.040561, 37.527431] :
                                [127.063338, 37.656367];
                 map.flyTo({ center: coords, zoom: 15.5 });
                 renderSubwayMarker();
@@ -448,6 +454,7 @@
                            currentRegion === '잠실' ? [127.104568, 37.514430] : 
                            currentRegion === '이태원' ? [126.993914, 37.534508] :
                            currentRegion === '을지로' ? [126.992219, 37.566251] :
+                           currentRegion === '압구정' ? [127.040561, 37.527431] :
                            [127.063338, 37.656367];
             map = new maptilersdk.Map({
                 container: 'map',
