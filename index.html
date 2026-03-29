@@ -64,7 +64,7 @@
         <div>
             <header class="pointer-events-auto h-[64px] bg-navy flex items-center justify-between px-4 shadow-md w-full relative z-[9999]">
                 <div class="flex items-center gap-3">
-                    <img src="logo-spottr-header.svg" alt="spottr" class="h-7 sm:h-8 object-contain cursor-pointer" onclick="handleLogoClick()">
+                    <img src="logo-spottr-header.svg" alt="SEONGSU.NOW by Spotters" class="h-7 sm:h-8 object-contain cursor-pointer" onclick="handleLogoClick()">
                     
                     <div class="flex flex-col justify-center border-l border-white/20 pl-3">
                         <div class="relative">
@@ -76,7 +76,9 @@
                             <div id="region-dropdown" class="absolute top-[110%] left-0 mt-1 w-28 bg-white rounded-lg shadow-2xl hidden border border-gray-200 overflow-hidden z-[9999] pointer-events-auto">
                                 <button id="dd-hongdae" onclick="changeRegion('홍대', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">홍대입구</button>
                                 <button id="dd-seongsu" onclick="changeRegion('성수', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">성수동</button>
-                                <button id="dd-nowon" onclick="changeRegion('노원', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50">노원역</button>
+                                <button id="dd-nowon" onclick="changeRegion('노원', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">노원역</button>
+                                <button id="dd-magok" onclick="changeRegion('마곡', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">마곡</button>
+                                <button id="dd-jamsil" onclick="changeRegion('잠실', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50">잠실</button>
                             </div>
                         </div>
                         <div class="flex items-center gap-1 mt-0.5 text-[10px] text-white/70 font-bold brand-title tracking-wide">
@@ -111,11 +113,12 @@
             <div class="px-5 text-center mt-0.5 w-full max-w-md pointer-events-auto">
                 <p id="desc-1" class="text-[9.5px] text-gray-600 font-semibold tracking-tight leading-snug bg-white/80 backdrop-blur-md py-1.5 px-3 rounded-lg shadow-sm border border-white/50">
                     구글맵 평점과 네이버 실시간 검색량을 교차 검증하는 자동 로직으로,<br>
-                    광고와 어뷰징이 배제된 <span class="text-point font-black">100% 리얼 핫플</span>만을 매일 선정합니다.
+                    광고와 어뷰징이 배제된 <span class="text-point font-black">100% 리얼 핫플</span>만을 주말마다 선정합니다.
                 </p>
-                <p class="text-[9px] text-gray-500 font-medium mt-1.5 pb-1">
+                <p class="text-[9px] text-gray-500 font-medium mt-1.5 pb-0.5">
                     <span id="desc-2-label">제휴 및 문의:</span> <a href="mailto:admin@spottr.kr" class="font-bold text-navy hover:underline">admin@spottr.kr</a>
                 </p>
+                <p class="text-[9px] text-gray-500 font-medium pb-1">Last Updated: March 15</p>
             </div>
         </div>
     </div>
@@ -195,8 +198,10 @@
             'KR': {
                 'region_홍대': '홍대입구',
                 'region_성수': '성수동',
-                'region_노원': '노원역',
-                'desc_1': '구글맵 평점과 네이버 실시간 검색량을 교차 검증하는 자동 로직으로,<br>광고와 어뷰징이 배제된 <span class="text-point font-black">100% 리얼 핫플</span>만을 매일 선정합니다.',
+                'region_노원': '노원',
+                'region_마곡': '마곡',
+                'region_잠실': '잠실',
+                'desc_1': '구글맵 평점과 네이버 실시간 검색량을 교차 검증하는 자동 로직으로,<br>광고와 어뷰징이 배제된 <span class="text-point font-black">100% 리얼 핫플</span>만을 주말마다 선정합니다.',
                 'desc_2': '제휴 및 문의:',
                 'loading': '데이터를 불러오는 중입니다...',
                 'no_data': '데이터가 없습니다. 우측 상단 번개 로고를 5번 눌러 수집해주세요.',
@@ -212,7 +217,9 @@
                 'region_홍대': 'Hongdae',
                 'region_성수': 'Seongsu',
                 'region_노원': 'Nowon',
-                'desc_1': 'Using cross-validation of Google Maps ratings and real-time search volume,<br>we curate <span class="text-point font-black">100% authentic hotspots</span> free from ads daily.',
+                'region_마곡': 'Magok',
+                'region_잠실': 'Jamsil',
+                'desc_1': 'Using cross-validation of Google Maps ratings and real-time search volume,<br>we curate <span class="text-point font-black">100% authentic hotspots</span> free from ads every weekend.',
                 'desc_2': 'Contact:',
                 'loading': 'Loading data...',
                 'no_data': 'No data available. Please refresh or update.',
@@ -243,7 +250,9 @@
         const SUBWAY_DATA = {
             '성수': { name: '성수역', nameEn: 'Seongsu', lat: 37.5445888, lng: 127.0559664, color: '#00A84D' }, 
             '홍대': { name: '홍대입구역', nameEn: 'Hongik Univ.', lat: 37.556037, lng: 126.922974, color: '#00A84D' },
-            '노원': { name: '노원역', nameEn: 'Nowon', lat: 37.656201, lng: 127.062820, color: '#00A4E3' } 
+            '노원': { name: '노원역', nameEn: 'Nowon', lat: 37.656201, lng: 127.062820, color: '#00A4E3' },
+            '마곡': { name: '마곡역', nameEn: 'Magok', lat: 37.558891, lng: 126.836867, color: '#996CAC' },
+            '잠실': { name: '잠실역', nameEn: 'Jamsil', lat: 37.514430, lng: 127.104568, color: '#00A84D' }
         };
         let subwayMarker = null;
 
@@ -253,7 +262,6 @@
             const jong = ["","k","kk","gs","n","nj","nh","d","l","lg","lm","lb","ls","lt","lp","lh","m","b","bs","s","ss","ng","j","ch","k","t","p","h"];
             
             const dict = { 
-                // Specific brands / Long names
                 '크리스찬 디올': 'Christian Dior', '크리스찬디올': 'Christian Dior',
                 '포인트 오브 뷰': 'Point of View', '포인트오브뷰': 'Point of View',
                 '미키스시': 'Miki Sushi', '카페씨떼': 'Cafe Cite',
@@ -262,13 +270,11 @@
                 '세스크멘슬': 'CESK MNSL', '카카오프렌즈': 'Kakao Friends', '아더에러': 'ADERERROR',
                 '에그타르트': 'Egg Tart', 'abc마트': 'ABC Mart', 'ABC마트': 'ABC Mart',
                 '애니메이트': 'animate', '올리브영': 'Olive Young', '커피랩': 'Coffee Lab',
-                // Medium words
                 '무신사': 'Musinsa', '스탠다드': 'Standard', '스파오': 'SPAO',
                 '팝마트': 'POP MART', '콜린': 'Colline', '콤마': 'Comma', '꼼마': 'Comma', '피오니': 'Peony',
                 '오브젝트': 'Object', '플래그십': 'Flagship', '언플러그드': 'Unplugged',
                 '베통': 'Beton', '테니': 'Tenne', '로우키': 'Lowkey', '베이글': 'Bagel',
                 '키스': 'KITH', '트리츠': 'Treats', '시떼': 'Cite', '타운': 'Town',
-                // Common words
                 '스토어': 'Store', '베이커리': 'Bakery', '제과': 'Bakery', '디저트': 'Dessert', 
                 '팝업': 'Pop-up', '본점': 'Main Store', '성수점': 'Seongsu', '홍대점': 'Hongdae', '노원점': 'Nowon',
                 '카페': 'Cafe', '식당': 'Restaurant', '맛집': 'Eatery'
@@ -317,8 +323,9 @@
             document.getElementById('dd-hongdae').innerText = i18n[currentLang]['region_홍대'];
             document.getElementById('dd-seongsu').innerText = i18n[currentLang]['region_성수'];
             document.getElementById('dd-nowon').innerText = i18n[currentLang]['region_노원'];
+            document.getElementById('dd-magok').innerText = i18n[currentLang]['region_마곡'];
+            document.getElementById('dd-jamsil').innerText = i18n[currentLang]['region_잠실'];
 
-            // 💡 언어 변경 시 지도 위 지하철역 마커도 즉시 렌더링
             if (map) {
                 renderSubwayMarker();
             }
@@ -375,7 +382,11 @@
             document.getElementById('admin-region-badge').innerText = region;
             
             if (map) {
-                const coords = region === '성수' ? [127.0570, 37.5425] : region === '홍대' ? [126.922974, 37.556037] : [127.063338, 37.656367];
+                const coords = region === '성수' ? [127.0570, 37.5425] : 
+                               region === '홍대' ? [126.922974, 37.556037] : 
+                               region === '마곡' ? [126.836867, 37.558891] : 
+                               region === '잠실' ? [127.104568, 37.514430] : 
+                               [127.063338, 37.656367];
                 map.flyTo({ center: coords, zoom: 15.5 });
                 renderSubwayMarker();
             }
@@ -419,7 +430,11 @@
         }
 
         function initMap() {
-            const coords = currentRegion === '성수' ? [127.0570, 37.5425] : currentRegion === '홍대' ? [126.922974, 37.556037] : [127.063338, 37.656367];
+            const coords = currentRegion === '성수' ? [127.0570, 37.5425] : 
+                           currentRegion === '홍대' ? [126.922974, 37.556037] : 
+                           currentRegion === '마곡' ? [126.836867, 37.558891] : 
+                           currentRegion === '잠실' ? [127.104568, 37.514430] : 
+                           [127.063338, 37.656367];
             map = new maptilersdk.Map({
                 container: 'map',
                 style: "dataviz-light",
@@ -723,10 +738,19 @@
 
         function downloadCSVFile() {
             if (allPlacesData.length === 0) return;
-            let csv = "분류,순위,상호명,적용키워드,검색량,대표이미지URL\n";
-            allPlacesData.forEach(p => {
-                csv += `${p.type},${p.no},"${p.name}","${p.extracted_kw || ''}",${p.trend_score},"${p.custom_img || ''}"\n`;
+            
+            // 💡 CSV 다운로드 시, 데이터를 카테고리별로 그룹화하고 그 안에서 순위별로 오름차순 정렬
+            const sortedData = [...allPlacesData].sort((a, b) => {
+                if (a.type < b.type) return -1;
+                if (a.type > b.type) return 1;
+                return a.no - b.no;
             });
+
+            let csv = "분류,카테고리별 순위,상호명,적용키워드,검색량,대표이미지URL\n";
+            sortedData.forEach(p => {
+                csv += `${p.type},${p.type} ${p.no}위,"${p.name}","${p.extracted_kw || ''}",${p.trend_score},"${p.custom_img || ''}"\n`;
+            });
+            
             const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.setAttribute("href", URL.createObjectURL(blob));
