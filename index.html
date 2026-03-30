@@ -129,6 +129,13 @@
         </div>
 
         <div class="w-full pb-4 pointer-events-auto flex flex-col items-center select-none relative z-40">
+            <button id="swipe-left" class="hidden absolute left-2 top-[40%] -translate-y-1/2 z-50 bg-black/30 hover:bg-black/50 text-white font-black rounded-full p-2.5 transition-opacity opacity-0 backdrop-blur-sm shadow-md" onclick="swipeCards('left')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            <button id="swipe-right" class="hidden absolute right-2 top-[40%] -translate-y-1/2 z-50 bg-black/30 hover:bg-black/50 text-white font-black rounded-full p-2.5 transition-opacity opacity-0 backdrop-blur-sm shadow-md" onclick="swipeCards('right')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+
             <div id="cards-container" class="flex gap-3 px-4 w-full overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2">
                 <div id="loading-text" class="w-full text-center text-[12px] font-bold text-sub bg-white py-4 rounded-xl shadow-sm border border-gray-100">
                     지역 데이터를 불러오는 중입니다...
@@ -556,8 +563,9 @@
                 const safeId = 'tab-' + cat.replace(/[\/\s]/g, '');
                 const displayName = i18n[currentLang]['cat_' + cat] || cat;
                 
+                // 💡 [수정됨] 카테고리 탭 초기화 부분 색상 직관화 적용
                 container.innerHTML += `
-                    <button onclick="switchTab('${cat}')" id="${safeId}" class="btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold shadow-sm flex items-center gap-1 whitespace-nowrap">
+                    <button onclick="switchTab('${cat}')" id="${safeId}" class="btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold shadow-sm flex items-center gap-1 whitespace-nowrap bg-white text-gray-500 border border-gray-200 transition-colors">
                         ${icon} ${displayName}
                     </button>
                 `;
@@ -612,11 +620,12 @@
             activeCategories.forEach(cat => {
                 const safeId = 'tab-' + cat.replace(/[\/\s]/g, '');
                 const tabEl = document.getElementById(safeId);
+                // 💡 [수정됨] 활성화/비활성화 탭의 색상과 디자인 직관화 변경
                 if (tabEl) {
                     if (cat === selectedCategory) {
-                        tabEl.className = 'btn-tab btn-active px-4 py-2 rounded-full text-[12px] font-bold shadow-md flex items-center gap-1 whitespace-nowrap';
+                        tabEl.className = 'btn-tab btn-active px-4 py-2 rounded-full text-[12px] font-bold shadow-md flex items-center gap-1 whitespace-nowrap bg-navy text-white transition-colors';
                     } else {
-                        tabEl.className = 'btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold shadow-sm flex items-center gap-1 whitespace-nowrap';
+                        tabEl.className = 'btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold shadow-sm flex items-center gap-1 whitespace-nowrap bg-white text-gray-500 border border-gray-200 transition-colors hover:bg-gray-50';
                     }
                 }
             });
@@ -697,12 +706,13 @@
                 container.insertAdjacentHTML('beforeend', cardHtml);
             });
             initDragScroll(container);
+            // 💡 [추가됨] 카드 로드 시 화살표 상태 초기화
+            if (typeof updateSwipeArrows === 'function') setTimeout(updateSwipeArrows, 50);
         }
 
         function sharePlace(event, placeName, region, rank) {
             if (event) event.stopPropagation(); 
 
-            // 💡 GA4 공유 이벤트 트래킹
             if (typeof gtag === 'function') {
                 gtag('event', 'share', {
                     'method': 'Web Share API',
@@ -713,7 +723,6 @@
             }
 
             const baseUrl = window.location.origin + window.location.pathname;
-            // 💡 UTM 파라미터를 추가하여 공유 링크를 통한 유입 추적
             const shareUrl = `${baseUrl}?region=${encodeURIComponent(region)}&utm_source=user_share&utm_medium=social&utm_campaign=viral_loop`;
             
             const shareTitle = 'Spottr 실시간 핫플';
@@ -756,6 +765,59 @@
                 const x = e.pageX - slider.offsetLeft;
                 slider.scrollLeft = scrollLeft - (x - startX) * 1.5; 
             });
+
+            // 💡 [추가됨] 스크롤 시 화살표 상태 업데이트 이벤트 리스너 추가
+            slider.addEventListener('scroll', () => {
+                if (typeof updateSwipeArrows === 'function') updateSwipeArrows();
+            });
+        }
+
+        // 💡 [추가됨] 화살표 클릭 시 좌우 스와이프 처리 함수
+        function swipeCards(direction) {
+            const container = document.getElementById('cards-container');
+            if (!container) return;
+            const cardWidth = container.querySelector('.snap-center')?.offsetWidth || 288; 
+            const scrollAmount = cardWidth + 12; // 카드 1장 너비 + 간격 만큼 이동
+            
+            if (direction === 'left') {
+                container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        // 💡 [추가됨] 스크롤 위치에 따른 화살표 표시/숨김 처리 로직
+        function updateSwipeArrows() {
+            const container = document.getElementById('cards-container');
+            const leftArrow = document.getElementById('swipe-left');
+            const rightArrow = document.getElementById('swipe-right');
+            if (!container || !leftArrow || !rightArrow) return;
+
+            const places = allPlacesData.filter(p => p.type === currentSelectedCategory).slice(0, 10);
+            if (places.length === 0) {
+                leftArrow.classList.add('hidden', 'opacity-0');
+                rightArrow.classList.add('hidden', 'opacity-0');
+                return;
+            }
+
+            const isAtStart = container.scrollLeft <= 5;
+            const isAtEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 10;
+
+            if (isAtStart) {
+                leftArrow.classList.add('opacity-0');
+                setTimeout(() => { if(container.scrollLeft <= 5) leftArrow.classList.add('hidden') }, 300);
+            } else {
+                leftArrow.classList.remove('hidden');
+                setTimeout(() => leftArrow.classList.remove('opacity-0'), 10);
+            }
+
+            if (isAtEnd) {
+                rightArrow.classList.add('opacity-0');
+                setTimeout(() => { if(container.scrollLeft + container.clientWidth >= container.scrollWidth - 10) rightArrow.classList.add('hidden') }, 300);
+            } else {
+                rightArrow.classList.remove('hidden');
+                setTimeout(() => rightArrow.classList.remove('opacity-0'), 10);
+            }
         }
 
         async function runBackendUpdate() {
