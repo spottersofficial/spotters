@@ -48,7 +48,6 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .brand-title { letter-spacing: -0.02em; }
         
-        /* 💡 마커 디자인 타원형(Pill)으로 변경 및 '위' 텍스트 수용 */
         .rank-marker {
             min-width: 38px; height: 32px; padding: 0 8px;
             background-color: var(--color-primary-navy); color: white;
@@ -76,7 +75,6 @@
                  1.5px  0px 0 #ffffff;
         }
 
-        /* 💡 팝업 컨테이너 자체의 레이어를 최상단으로 올림 */
         .maplibregl-popup {
             z-index: 9999 !important;
         }
@@ -90,7 +88,6 @@
         }
         .maplibregl-popup-close-button { display: none; }
 
-        /* 💡 비활성 탭 클릭 유도용 숨쉬기 애니메이션 */
         @keyframes glow-pulse {
             0%, 100% { background-color: #ffffff; border-color: #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
             50% { background-color: #e0f0ff; border-color: #4da3ff; box-shadow: 0 0 12px 0 rgba(0, 123, 255, 0.5); }
@@ -176,7 +173,7 @@
                 <p class="text-[9px] text-gray-500 font-medium mt-1.5 pb-0.5">
                     <span id="desc-2-label">제휴 및 문의:</span> <a href="mailto:admin@spottr.kr" class="font-bold text-navy hover:underline">admin@spottr.kr</a>
                 </p>
-                <p class="text-[9px] text-gray-500 font-medium pb-1">Last Updated: March 31</p>
+                <p class="text-[9px] text-gray-500 font-medium pb-1">Last Updated: April 3</p>
             </div>
         </div>
     </div>
@@ -533,9 +530,10 @@
 
             if (map && overviewMarkers.length > 0) {
                 const isMobile = window.innerWidth < 640;
+                // 💡 [수정됨] Overview 맵 패딩 하단 영역 대폭 증가시켜 북쪽으로 시프트
                 const padding = isMobile 
-                    ? { top: 120, bottom: 80, left: 40, right: 40 }
-                    : { top: 150, bottom: 100, left: 150, right: 150 };
+                    ? { top: 80, bottom: 240, left: 40, right: 40 }
+                    : { top: 100, bottom: 200, left: 150, right: 150 };
                 
                 map.fitBounds(bounds, { padding: padding, duration: 800, maxZoom: 13.5 });
             }
@@ -753,7 +751,6 @@
                     if (cat === selectedCategory) {
                         tabEl.className = 'btn-tab btn-active px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap bg-navy text-white shadow-md border-transparent transition-colors';
                     } else {
-                        // 💡 비활성 탭에 커스텀 숨쉬기 애니메이션(btn-inactive) 부여
                         tabEl.className = 'btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap text-gray-500 border border-gray-200 transition-colors hover:bg-gray-50';
                     }
                 }
@@ -771,14 +768,11 @@
             if (places.length === 0) return;
 
             const bounds = new maptilersdk.LngLatBounds();
-            let lastClickedIndex = -1; // 모바일 더블 탭 확인용 상태
 
             places.forEach((place, index) => {
                 const el = document.createElement('div');
                 const isTop3 = index < 3;
                 el.className = `rank-marker ${isTop3 ? 'top-rank' : ''}`;
-                
-                // 💡 마커 숫자에 '위' 글자 추가
                 el.innerHTML = `${index + 1}위`;
                 
                 const rankBadge = isTop3 ? 'bg-point text-white' : 'bg-navy text-white';
@@ -788,8 +782,9 @@
                 const rankText = i18n[currentLang].rank_format(index + 1);
                 const displayName = currentLang === 'EN' ? romanizeKorean(place.name) : place.name;
 
+                // 💡 [수정됨] 웹용 플로팅 카드 (클릭 가능 영역으로 확장, 줌인 연동)
                 const popupHtml = `
-                    <div class="w-[180px] bg-white flex flex-col pointer-events-auto">
+                    <div class="w-[180px] bg-white flex flex-col pointer-events-auto cursor-pointer" onclick="document.getElementById('card-${index}').scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); map.flyTo({ center: [${place.lng}, ${place.lat}], zoom: 17.5 });">
                         <div class="h-24 bg-gray-200 relative">
                             <img src="${imageSrc}" class="absolute inset-0 w-full h-full object-cover">
                             <div class="absolute top-1.5 left-1.5 ${rankBadge} brand-title px-2 py-0.5 rounded text-[11px] font-bold shadow-md">
@@ -809,7 +804,6 @@
                     </div>
                 `;
 
-                // 팝업 생성 (자동 닫힘 제어를 위해 setPopup 대신 독립 생성 후 이벤트로 제어)
                 const popup = new maptilersdk.Popup({ closeButton: false, closeOnClick: true, offset: 15, maxWidth: '200px' })
                     .setLngLat([place.lng, place.lat])
                     .setHTML(popupHtml);
@@ -818,7 +812,6 @@
                     .setLngLat([place.lng, place.lat])
                     .addTo(map);
 
-                // 💡 웹 모드 마우스 호버(팝업 부드럽게 닫히도록 타이머 제어)
                 let popupTimeout;
                 const handleMouseEnter = () => {
                     clearTimeout(popupTimeout);
@@ -826,7 +819,7 @@
                 };
                 const handleMouseLeave = () => {
                     if (window.innerWidth >= 640) {
-                        popupTimeout = setTimeout(() => popup.remove(), 250); // 팝업으로 이동할 시간 0.25초 확보
+                        popupTimeout = setTimeout(() => popup.remove(), 250); 
                     }
                 };
 
@@ -841,30 +834,22 @@
                     }
                 });
 
-                // 💡 모바일 탭 제어 (첫 탭: 팝업, 두번째 탭: 포커싱)
+                // 💡 [수정됨] 마커 클릭 로직 분기 (모바일 팝업 비활성화 및 카드 스와이프 연동)
                 el.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    const card = document.getElementById(`card-${index}`);
+                    
                     if (window.innerWidth >= 640) {
-                        // 웹: 바로 포커싱
-                        const card = document.getElementById(`card-${index}`);
+                        // 웹 모드: 즉시 하단 카드 연동 및 지도 포커싱
                         if (card) {
                             card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                             map.flyTo({ center: [place.lng, place.lat], zoom: 17.5 });
                         }
                     } else {
-                        // 모바일
-                        if (lastClickedIndex !== index || !popup.isOpen()) {
-                            // 다른 팝업들 닫고 이 팝업 열기
-                            document.querySelectorAll('.maplibregl-popup').forEach(p => p.remove());
-                            popup.addTo(map);
-                            lastClickedIndex = index;
-                        } else {
-                            // 이미 팝업이 띄워진 상태에서 같은 마커를 한 번 더 터치했을 때 포커싱
-                            const card = document.getElementById(`card-${index}`);
-                            if (card) {
-                                card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                                map.flyTo({ center: [place.lng, place.lat], zoom: 17.5 });
-                            }
+                        // 모바일 모드: 팝업 띄우지 않음. 지도는 그대로 두고 하단 카드만 해당 위치로 스와이프
+                        document.querySelectorAll('.maplibregl-popup').forEach(p => p.remove()); 
+                        if (card) {
+                            card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                         }
                     }
                 });
@@ -952,7 +937,6 @@
             }
         }
 
-        // 💡 하단 리스트 카드를 클릭했을 때 실행되는 포커싱 함수
         function panToMap(lat, lng) {
             if (isDraggingCard) return; 
             if (!map) return;
