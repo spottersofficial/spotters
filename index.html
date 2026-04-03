@@ -48,15 +48,19 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .brand-title { letter-spacing: -0.02em; }
         
+        /* 💡 마커 디자인 타원형(Pill)으로 변경 및 '위' 텍스트 수용 */
         .rank-marker {
-            width: 30px; height: 30px; background-color: var(--color-primary-navy); color: white;
-            border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 13px; font-family: 'Montserrat', sans-serif;
+            min-width: 38px; height: 32px; padding: 0 8px;
+            background-color: var(--color-primary-navy); color: white;
+            border: 2px solid white; border-radius: 9999px; 
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 13px; font-family: 'Pretendard', sans-serif;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.2s;
             z-index: 10;
         }
         .rank-marker.top-rank { background-color: var(--color-point-blue); }
         .rank-marker:hover { transform: scale(1.1); z-index: 50; }
+        
         .maplibregl-ctrl-bottom-left, .maplibregl-ctrl-bottom-right { display: none !important; }
         .select-none { user-select: none; -webkit-user-select: none; }
 
@@ -71,6 +75,32 @@
                 -1.5px  0px 0 #ffffff,
                  1.5px  0px 0 #ffffff;
         }
+
+        /* 💡 팝업 컨테이너 자체의 레이어를 최상단으로 올림 */
+        .maplibregl-popup {
+            z-index: 9999 !important;
+        }
+        
+        .maplibregl-popup-content {
+            padding: 0 !important;
+            border-radius: 0.75rem !important;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+            border: 1px solid #f3f4f6 !important;
+        }
+        .maplibregl-popup-close-button { display: none; }
+
+        /* 💡 비활성 탭 클릭 유도용 숨쉬기 애니메이션 */
+        @keyframes glow-pulse {
+            0%, 100% { background-color: #ffffff; border-color: #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+            50% { background-color: #e0f0ff; border-color: #4da3ff; box-shadow: 0 0 12px 0 rgba(0, 123, 255, 0.5); }
+        }
+        .btn-inactive {
+            animation: glow-pulse 2.5s infinite ease-in-out;
+        }
+        .btn-active {
+            animation: none;
+        }
     </style>
 </head>
 <body class="relative text-main font-sans antialiased">
@@ -80,15 +110,15 @@
     <div class="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between">
         <div>
             <header class="pointer-events-auto h-[64px] bg-navy flex items-center justify-between px-4 shadow-md w-full relative z-[9999]">
-                <div class="flex items-center gap-3">
-                    <img src="logo-spottr-header.svg" alt="SEONGSU.NOW by Spotters" class="h-7 sm:h-8 object-contain cursor-pointer" onclick="window.location.href='/'">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <img src="logo-spottr-header.svg" alt="SEONGSU.NOW by Spotters" class="h-6 sm:h-8 object-contain cursor-pointer shrink-0" onclick="window.location.href='/'">
                     
-                    <div class="flex flex-col justify-center border-l border-white/20 pl-3">
+                    <div class="flex flex-col justify-center border-l border-white/20 pl-2 sm:pl-3 shrink-0">
                         <div class="relative">
-                            <button onclick="toggleRegionMenu(event)" class="flex items-center gap-1.5 text-white text-[13px] font-bold bg-white/15 hover:bg-white/25 px-2.5 py-1.5 rounded-full border border-white/20 shadow-sm transition-all focus:outline-none">
-                                <svg class="w-3.5 h-3.5 text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                <span id="current-region-label">홍대입구</span>
-                                <svg class="w-3 h-3 text-white/80 ml-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                            <button onclick="toggleRegionMenu(event)" class="flex items-center gap-1 sm:gap-1.5 text-white text-[12px] sm:text-[13px] font-bold bg-white/15 hover:bg-white/25 px-2 sm:px-2.5 py-1.5 rounded-full border border-white/20 shadow-sm transition-all focus:outline-none whitespace-nowrap shrink-0">
+                                <svg class="w-3.5 h-3.5 text-white/90 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <span id="current-region-label" class="whitespace-nowrap">지역 선택</span>
+                                <svg class="w-3 h-3 text-white/80 shrink-0 ml-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                             </button>
                             <div id="region-dropdown" class="absolute top-[110%] left-0 mt-1 w-28 bg-white rounded-lg shadow-2xl hidden border border-gray-200 overflow-hidden z-[9999] pointer-events-auto">
                                 <button id="dd-hongdae" onclick="changeRegion('홍대', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">홍대입구</button>
@@ -101,21 +131,21 @@
                                 <button id="dd-nowon" onclick="changeRegion('노원', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">노원역</button>
                             </div>
                         </div>
-                        <div class="flex items-center gap-1 mt-0.5 text-[10px] text-white/70 font-bold brand-title tracking-wide">
+                        <div class="flex items-center gap-1 mt-0.5 text-[10px] text-white/70 font-bold brand-title tracking-wide shrink-0">
                             <span class="text-point animate-pulse text-[8px]">●</span> LIVE
                         </div>
                     </div>
                 </div>
                 
                 <div class="flex flex-col items-end justify-center pr-1 select-none pointer-events-auto cursor-pointer" onclick="handleAdminClick()">
-                    <div class="text-white text-[13px] leading-[1.15] text-right tracking-tight" style="font-family: 'Montserrat', sans-serif; font-weight: bold;">
-                        No Ads. Real Trends !
+                    <div class="text-white text-[11px] sm:text-[13px] leading-[1.15] text-right tracking-tight" style="font-family: 'Montserrat', sans-serif; font-weight: bold;">
+                        No Ads. Real Trends
                     </div>
                     <div class="flex items-center gap-1 mt-1">
-                        <div class="w-3.5 h-3.5 bg-point rounded-full flex items-center justify-center">
-                            <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                        <div class="w-3 sm:w-3.5 h-3 sm:h-3.5 bg-point rounded-full flex items-center justify-center">
+                            <svg class="w-2 sm:w-2.5 h-2 sm:h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
                         </div>
-                        <span class="text-white text-[9px] tracking-tight" style="font-family: 'Pretendard', sans-serif; font-weight: bold;">
+                        <span class="text-white text-[8px] sm:text-[9px] tracking-tight" style="font-family: 'Pretendard', sans-serif; font-weight: bold;">
                             DATA-VERIFIED
                         </span>
                     </div>
@@ -137,10 +167,7 @@
             </button>
 
             <div id="cards-container" class="flex gap-3 px-4 w-full overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2">
-                <div id="loading-text" class="w-full text-center text-[12px] font-bold text-sub bg-white py-4 rounded-xl shadow-sm border border-gray-100">
-                    지역 데이터를 불러오는 중입니다...
                 </div>
-            </div>
             <div class="px-5 text-center mt-0.5 w-full max-w-md pointer-events-auto">
                 <p id="desc-1" class="text-[12px] text-gray-600 font-semibold tracking-tight leading-snug bg-white/80 backdrop-blur-md py-1.5 px-3 rounded-lg shadow-sm border border-white/50">
                     구글맵 평점과 네이버 실시간 검색량을 교차 검증하는 자동 로직으로,<br>
@@ -149,7 +176,7 @@
                 <p class="text-[9px] text-gray-500 font-medium mt-1.5 pb-0.5">
                     <span id="desc-2-label">제휴 및 문의:</span> <a href="mailto:admin@spottr.kr" class="font-bold text-navy hover:underline">admin@spottr.kr</a>
                 </p>
-                <p class="text-[9px] text-gray-500 font-medium pb-1">Last Updated: April 2</p>
+                <p class="text-[9px] text-gray-500 font-medium pb-1">Last Updated: March 31</p>
             </div>
         </div>
     </div>
@@ -159,7 +186,7 @@
         <div class="bg-navy px-6 py-4 flex justify-between items-center shadow-md shrink-0">
             <div>
                 <h2 class="text-xl font-black text-white brand-title">spottr ADMIN DASHBOARD</h2>
-                <p class="text-xs text-white/70 mt-1"><span id="admin-region-badge" class="bg-point text-white px-2 py-0.5 rounded mr-1">홍대</span> 실시간 데이터 수동 보정</p>
+                <p class="text-xs text-white/70 mt-1"><span id="admin-region-badge" class="bg-point text-white px-2 py-0.5 rounded mr-1">전체</span> 실시간 데이터 수동 보정</p>
             </div>
             <button onclick="document.getElementById('admin-dashboard').classList.add('hidden')" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded text-sm font-bold transition-colors">
                 닫기 ✕
@@ -278,7 +305,10 @@
         let map;
         let currentMarkers = [];
         let isDraggingCard = false;
-        let currentRegion = '홍대'; 
+        
+        let currentRegion = null; 
+        let isOverview = false;
+        let overviewMarkers = [];
 
         let adminClickCount = 0;
         let adminClickTimer = null;
@@ -346,20 +376,9 @@
         function setLanguage(lang) {
             currentLang = lang;
             
-            const btnKr = document.getElementById('btn-kr');
-            const btnEn = document.getElementById('btn-en');
-            
-            if(btnKr && btnEn) {
-                if(lang === 'KR') {
-                    btnKr.className = "bg-point text-white rounded-full px-2 py-1 shadow-sm transition-colors";
-                    btnEn.className = "px-2 py-1 hover:text-white transition-colors";
-                } else {
-                    btnEn.className = "bg-point text-white rounded-full px-2 py-1 shadow-sm transition-colors";
-                    btnKr.className = "px-2 py-1 hover:text-white transition-colors";
-                }
+            if (currentRegion) {
+                document.getElementById('current-region-label').innerHTML = i18n[currentLang]['region_' + currentRegion];
             }
-
-            document.getElementById('current-region-label').innerHTML = i18n[currentLang]['region_' + currentRegion];
             document.getElementById('desc-1').innerHTML = i18n[currentLang].desc_1;
             document.getElementById('desc-2-label').innerHTML = i18n[currentLang].desc_2;
             
@@ -372,11 +391,11 @@
             document.getElementById('dd-euljiro').innerText = i18n[currentLang]['region_을지로'];
             document.getElementById('dd-apgujeong').innerText = i18n[currentLang]['region_압구정'];
 
-            if (map) {
+            if (map && !isOverview) {
                 renderSubwayMarker();
             }
 
-            if (activeCategories.length > 0 && allPlacesData.length > 0) {
+            if (activeCategories.length > 0 && allPlacesData.length > 0 && !isOverview) {
                 renderCategoryTabs();
                 switchTab(currentSelectedCategory || activeCategories[0]);
             }
@@ -423,11 +442,17 @@
         function changeRegion(region, event) {
             if(event) event.stopPropagation();
             currentRegion = region;
+            isOverview = false;
+            
             document.getElementById('region-dropdown').classList.add('hidden');
             document.getElementById('current-region-label').innerText = i18n[currentLang]['region_' + region];
             document.getElementById('admin-region-badge').innerText = region;
             
             if (map) {
+                if (map.getLayer('seoul-boundary-fill')) {
+                    map.setLayoutProperty('seoul-boundary-fill', 'visibility', 'none');
+                }
+
                 const coords = region === '성수' ? [127.0570, 37.5425] : 
                                region === '홍대' ? [126.922974, 37.556037] : 
                                region === '마곡' ? [126.836867, 37.558891] : 
@@ -436,7 +461,11 @@
                                region === '을지로' ? [126.992219, 37.566251] :
                                region === '압구정' ? [127.040561, 37.527431] :
                                [127.063338, 37.656367];
-                map.flyTo({ center: coords, zoom: 15.5 });
+                map.flyTo({ center: coords, zoom: 15.5, duration: 1200 });
+                
+                overviewMarkers.forEach(m => m.remove());
+                overviewMarkers = [];
+                
                 renderSubwayMarker();
             }
 
@@ -450,6 +479,66 @@
             document.getElementById('admin-table-body').innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500 font-medium">${i18n[currentLang].loading}</td></tr>`;
 
             fetchPlaces();
+        }
+
+        function renderOverviewMarkers() {
+            overviewMarkers.forEach(m => m.remove());
+            overviewMarkers = [];
+            const bounds = new maptilersdk.LngLatBounds();
+
+            Object.entries(SUBWAY_DATA).forEach(([regionKey, data]) => {
+                const el = document.createElement('div');
+                el.className = 'flex flex-col items-center select-none cursor-pointer z-50 transition-transform hover:scale-110';
+                
+                const shortName = currentLang === 'EN' ? data.nameEn : data.name;
+
+                const iconHtml = `
+                    <div class="relative w-[32px] h-[32px] flex items-center justify-center drop-shadow-md bg-navy rounded-full border-[1.5px] border-white shadow-lg">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM15.5 16L14 14.5H10L8.5 16H6.5L8.5 13.5V10C8.5 8.62 9.62 7.5 11 7.5H13C14.38 7.5 15.5 8.62 15.5 10V13.5L17.5 16H15.5ZM12 13.5C11.17 13.5 10.5 12.83 10.5 12C10.5 11.17 11.17 10.5 12 10.5C12.83 10.5 13.5 11.17 13.5 12C13.5 12.83 12.83 13.5 12 13.5Z" fill="white"/>
+                        </svg>
+                        <div class="absolute -bottom-0.5 -right-0.5 w-[10px] h-[10px] rounded-full border-[1.5px] border-white shadow-sm" style="background-color: ${data.color};"></div>
+                    </div>
+                `;
+
+                const textHtmlTop = `
+                    <div class="mb-1 flex flex-col items-center leading-tight">
+                        <span class="text-[12px] font-bold text-[#333333] text-halo tracking-tight">${shortName}</span>
+                    </div>
+                `;
+
+                const textHtmlBottom = `
+                    <div class="mt-1 flex flex-col items-center leading-tight">
+                        <span class="text-[12px] font-bold text-[#333333] text-halo tracking-tight">${shortName}</span>
+                    </div>
+                `;
+
+                if (regionKey === '성수') {
+                    el.innerHTML = textHtmlTop + iconHtml;
+                } else {
+                    el.innerHTML = iconHtml + textHtmlBottom;
+                }
+                
+                el.onclick = (e) => {
+                    e.stopPropagation();
+                    changeRegion(regionKey);
+                };
+
+                const marker = new maptilersdk.Marker({ element: el, anchor: 'center' })
+                    .setLngLat([data.lng, data.lat])
+                    .addTo(map);
+                overviewMarkers.push(marker);
+                bounds.extend([data.lng, data.lat]);
+            });
+
+            if (map && overviewMarkers.length > 0) {
+                const isMobile = window.innerWidth < 640;
+                const padding = isMobile 
+                    ? { top: 120, bottom: 80, left: 40, right: 40 }
+                    : { top: 150, bottom: 100, left: 150, right: 150 };
+                
+                map.fitBounds(bounds, { padding: padding, duration: 800, maxZoom: 13.5 });
+            }
         }
 
         function renderSubwayMarker() {
@@ -479,28 +568,69 @@
         }
 
         function initMap() {
-            const coords = currentRegion === '성수' ? [127.0570, 37.5425] : 
-                           currentRegion === '홍대' ? [126.922974, 37.556037] : 
-                           currentRegion === '마곡' ? [126.836867, 37.558891] : 
-                           currentRegion === '잠실' ? [127.104568, 37.514430] : 
-                           currentRegion === '이태원' ? [126.993914, 37.534508] :
-                           currentRegion === '을지로' ? [126.992219, 37.566251] :
-                           currentRegion === '압구정' ? [127.040561, 37.527431] :
-                           [127.063338, 37.656367];
+            let coords, zoomLevel;
+            if (isOverview) {
+                coords = [126.985, 37.55]; 
+                zoomLevel = 10.5;
+            } else {
+                coords = currentRegion === '성수' ? [127.0570, 37.5425] : 
+                         currentRegion === '홍대' ? [126.922974, 37.556037] : 
+                         currentRegion === '마곡' ? [126.836867, 37.558891] : 
+                         currentRegion === '잠실' ? [127.104568, 37.514430] : 
+                         currentRegion === '이태원' ? [126.993914, 37.534508] :
+                         currentRegion === '을지로' ? [126.992219, 37.566251] :
+                         currentRegion === '압구정' ? [127.040561, 37.527431] :
+                         [127.063338, 37.656367];
+                zoomLevel = 15.5;
+            }
+
             map = new maptilersdk.Map({
                 container: 'map',
                 style: "dataviz-light",
                 center: coords,
-                zoom: 15.5,
+                zoom: zoomLevel,
                 controls: false
             });
 
             map.on('style.load', () => {
-                renderSubwayMarker();
+                const layers = map.getStyle().layers;
+                layers.forEach(layer => {
+                    if (layer.id.toLowerCase().includes('water') && layer.type === 'fill') {
+                        map.setPaintProperty(layer.id, 'fill-color', '#B2D8E5');
+                    }
+                });
+
+                if (!map.getSource('seoul-boundary')) {
+                    map.addSource('seoul-boundary', {
+                        'type': 'geojson',
+                        'data': 'https://raw.githubusercontent.com/southkorea/seoul-maps/master/juso/2015/json/seoul_municipalities_geo_simple.json'
+                    });
+                    
+                    map.addLayer({
+                        'id': 'seoul-boundary-fill',
+                        'type': 'fill',
+                        'source': 'seoul-boundary',
+                        'paint': {
+                            'fill-color': '#7FB3D5', 
+                            'fill-opacity': 0.15
+                        }
+                    });
+                }
+
+                if (isOverview) {
+                    renderOverviewMarkers();
+                } else {
+                    renderSubwayMarker();
+                    if (map.getLayer('seoul-boundary-fill')) {
+                        map.setLayoutProperty('seoul-boundary-fill', 'visibility', 'none');
+                    }
+                }
             });
         }
 
         async function fetchPlaces() {
+            if (isOverview) return; 
+            
             try {
                 if(!map) initMap();
                 
@@ -563,9 +693,8 @@
                 const safeId = 'tab-' + cat.replace(/[\/\s]/g, '');
                 const displayName = i18n[currentLang]['cat_' + cat] || cat;
                 
-                // 💡 [수정됨] 카테고리 탭 초기화 부분 색상 직관화 적용
                 container.innerHTML += `
-                    <button onclick="switchTab('${cat}')" id="${safeId}" class="btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold shadow-sm flex items-center gap-1 whitespace-nowrap bg-white text-gray-500 border border-gray-200 transition-colors">
+                    <button onclick="switchTab('${cat}')" id="${safeId}" class="btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap text-gray-500 border transition-colors cursor-pointer">
                         ${icon} ${displayName}
                     </button>
                 `;
@@ -620,12 +749,12 @@
             activeCategories.forEach(cat => {
                 const safeId = 'tab-' + cat.replace(/[\/\s]/g, '');
                 const tabEl = document.getElementById(safeId);
-                // 💡 [수정됨] 활성화/비활성화 탭의 색상과 디자인 직관화 변경
                 if (tabEl) {
                     if (cat === selectedCategory) {
-                        tabEl.className = 'btn-tab btn-active px-4 py-2 rounded-full text-[12px] font-bold shadow-md flex items-center gap-1 whitespace-nowrap bg-navy text-white transition-colors';
+                        tabEl.className = 'btn-tab btn-active px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap bg-navy text-white shadow-md border-transparent transition-colors';
                     } else {
-                        tabEl.className = 'btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold shadow-sm flex items-center gap-1 whitespace-nowrap bg-white text-gray-500 border border-gray-200 transition-colors hover:bg-gray-50';
+                        // 💡 비활성 탭에 커스텀 숨쉬기 애니메이션(btn-inactive) 부여
+                        tabEl.className = 'btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap text-gray-500 border border-gray-200 transition-colors hover:bg-gray-50';
                     }
                 }
             });
@@ -642,20 +771,104 @@
             if (places.length === 0) return;
 
             const bounds = new maptilersdk.LngLatBounds();
+            let lastClickedIndex = -1; // 모바일 더블 탭 확인용 상태
+
             places.forEach((place, index) => {
                 const el = document.createElement('div');
                 const isTop3 = index < 3;
                 el.className = `rank-marker ${isTop3 ? 'top-rank' : ''}`;
-                el.innerHTML = `${index + 1}`;
                 
-                el.onclick = () => {
-                    const card = document.getElementById(`card-${index}`);
-                    if (card) {
-                        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                        map.flyTo({ center: [place.lng, place.lat], zoom: 17.5 });
+                // 💡 마커 숫자에 '위' 글자 추가
+                el.innerHTML = `${index + 1}위`;
+                
+                const rankBadge = isTop3 ? 'bg-point text-white' : 'bg-navy text-white';
+                const searchKw = place.extracted_kw ? place.extracted_kw : `${currentRegion} ${place.name}`;
+                const blogLink = place.youtube_vid ? place.youtube_vid : `https://search.naver.com/search.naver?where=blog&query=${encodeURIComponent(searchKw)}`;
+                const imageSrc = place.custom_img ? place.custom_img : `https://picsum.photos/seed/${place.id}/400/300`;
+                const rankText = i18n[currentLang].rank_format(index + 1);
+                const displayName = currentLang === 'EN' ? romanizeKorean(place.name) : place.name;
+
+                const popupHtml = `
+                    <div class="w-[180px] bg-white flex flex-col pointer-events-auto">
+                        <div class="h-24 bg-gray-200 relative">
+                            <img src="${imageSrc}" class="absolute inset-0 w-full h-full object-cover">
+                            <div class="absolute top-1.5 left-1.5 ${rankBadge} brand-title px-2 py-0.5 rounded text-[11px] font-bold shadow-md">
+                                ${rankText}
+                            </div>
+                            <button onclick="sharePlace(event, '${place.name.replace(/'/g, "\\'")}', '${currentRegion}', ${index + 1})" class="absolute top-1.5 right-1.5 w-6 h-6 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md z-10 hover:bg-white transition-colors" title="공유하기">
+                                <svg class="w-3.5 h-3.5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                            </button>
+                        </div>
+                        <div class="px-2.5 py-2 flex flex-col gap-1">
+                            <h3 class="font-extrabold text-[13px] text-gray-900 truncate">${displayName}</h3>
+                            <div class="flex justify-between items-end mt-0.5">
+                                <span class="text-[10px] text-gray-900 font-black tracking-tight"><span class="text-point font-bold">검색량</span> ${Number(place.trend_score).toLocaleString()}</span>
+                                <a href="${blogLink}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="text-[10px] font-bold bg-[#03C75A] text-white px-2 py-1 rounded hover:bg-[#02b350] shadow-sm transition-colors">블로그 ↗</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // 팝업 생성 (자동 닫힘 제어를 위해 setPopup 대신 독립 생성 후 이벤트로 제어)
+                const popup = new maptilersdk.Popup({ closeButton: false, closeOnClick: true, offset: 15, maxWidth: '200px' })
+                    .setLngLat([place.lng, place.lat])
+                    .setHTML(popupHtml);
+
+                const marker = new maptilersdk.Marker({ element: el })
+                    .setLngLat([place.lng, place.lat])
+                    .addTo(map);
+
+                // 💡 웹 모드 마우스 호버(팝업 부드럽게 닫히도록 타이머 제어)
+                let popupTimeout;
+                const handleMouseEnter = () => {
+                    clearTimeout(popupTimeout);
+                    if (window.innerWidth >= 640 && !popup.isOpen()) popup.addTo(map);
+                };
+                const handleMouseLeave = () => {
+                    if (window.innerWidth >= 640) {
+                        popupTimeout = setTimeout(() => popup.remove(), 250); // 팝업으로 이동할 시간 0.25초 확보
                     }
                 };
-                const marker = new maptilersdk.Marker({ element: el }).setLngLat([place.lng, place.lat]).addTo(map);
+
+                el.addEventListener('mouseenter', handleMouseEnter);
+                el.addEventListener('mouseleave', handleMouseLeave);
+
+                popup.on('open', () => {
+                    const popupEl = popup.getElement();
+                    if (popupEl) {
+                        popupEl.addEventListener('mouseenter', handleMouseEnter);
+                        popupEl.addEventListener('mouseleave', handleMouseLeave);
+                    }
+                });
+
+                // 💡 모바일 탭 제어 (첫 탭: 팝업, 두번째 탭: 포커싱)
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (window.innerWidth >= 640) {
+                        // 웹: 바로 포커싱
+                        const card = document.getElementById(`card-${index}`);
+                        if (card) {
+                            card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                            map.flyTo({ center: [place.lng, place.lat], zoom: 17.5 });
+                        }
+                    } else {
+                        // 모바일
+                        if (lastClickedIndex !== index || !popup.isOpen()) {
+                            // 다른 팝업들 닫고 이 팝업 열기
+                            document.querySelectorAll('.maplibregl-popup').forEach(p => p.remove());
+                            popup.addTo(map);
+                            lastClickedIndex = index;
+                        } else {
+                            // 이미 팝업이 띄워진 상태에서 같은 마커를 한 번 더 터치했을 때 포커싱
+                            const card = document.getElementById(`card-${index}`);
+                            if (card) {
+                                card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                                map.flyTo({ center: [place.lng, place.lat], zoom: 17.5 });
+                            }
+                        }
+                    }
+                });
+
                 currentMarkers.push(marker);
                 bounds.extend([place.lng, place.lat]);
             });
@@ -706,7 +919,6 @@
                 container.insertAdjacentHTML('beforeend', cardHtml);
             });
             initDragScroll(container);
-            // 💡 [추가됨] 카드 로드 시 화살표 상태 초기화
             if (typeof updateSwipeArrows === 'function') setTimeout(updateSwipeArrows, 50);
         }
 
@@ -740,6 +952,7 @@
             }
         }
 
+        // 💡 하단 리스트 카드를 클릭했을 때 실행되는 포커싱 함수
         function panToMap(lat, lng) {
             if (isDraggingCard) return; 
             if (!map) return;
@@ -766,18 +979,16 @@
                 slider.scrollLeft = scrollLeft - (x - startX) * 1.5; 
             });
 
-            // 💡 [추가됨] 스크롤 시 화살표 상태 업데이트 이벤트 리스너 추가
             slider.addEventListener('scroll', () => {
                 if (typeof updateSwipeArrows === 'function') updateSwipeArrows();
             });
         }
 
-        // 💡 [추가됨] 화살표 클릭 시 좌우 스와이프 처리 함수
         function swipeCards(direction) {
             const container = document.getElementById('cards-container');
             if (!container) return;
             const cardWidth = container.querySelector('.snap-center')?.offsetWidth || 288; 
-            const scrollAmount = cardWidth + 12; // 카드 1장 너비 + 간격 만큼 이동
+            const scrollAmount = cardWidth + 12; 
             
             if (direction === 'left') {
                 container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
@@ -786,7 +997,6 @@
             }
         }
 
-        // 💡 [추가됨] 스크롤 위치에 따른 화살표 표시/숨김 처리 로직
         function updateSwipeArrows() {
             const container = document.getElementById('cards-container');
             const leftArrow = document.getElementById('swipe-left');
@@ -899,38 +1109,30 @@
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
-        async function saveManualEdits(placeName, btnElement) {
-            const tr = btnElement.closest('tr');
-            btnElement.innerText = '저장...'; btnElement.disabled = true;
-
-            const { error } = await supabaseClient.from('places').update({ 
-                extracted_kw: tr.querySelector('.kw-input').value, 
-                trend_score: parseInt(tr.querySelector('.search-input').value, 10) || 0,
-                custom_img: tr.querySelector('.img-input').value 
-            }).eq('name', placeName).eq('region', currentRegion);
-
-            if (error) { alert('실패: ' + error.message); btnElement.disabled = false; btnElement.innerText = 'DB 반영'; } 
-            else {
-                btnElement.innerText = '완료 ✔'; btnElement.classList.replace('bg-gray-700', 'bg-green-600');
-                setTimeout(() => { btnElement.innerText = 'DB 반영'; btnElement.classList.replace('bg-green-600', 'bg-gray-700'); btnElement.disabled = false; }, 2000);
-                fetchPlaces();
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const sharedRegion = urlParams.get('region');
             const validRegions = ['홍대', '성수', '노원', '마곡', '잠실', '이태원', '을지로', '압구정'];
             
+            setLanguage('KR'); 
+
             if (sharedRegion && validRegions.includes(sharedRegion)) {
                 currentRegion = sharedRegion;
+                isOverview = false;
+                document.getElementById('current-region-label').innerText = i18n['KR']['region_' + currentRegion] || currentRegion;
+                document.getElementById('admin-region-badge').innerText = currentRegion;
+                fetchPlaces();
+            } else {
+                isOverview = true;
+                currentRegion = null;
+                document.getElementById('current-region-label').innerText = '지역 선택';
+                document.getElementById('admin-region-badge').innerText = '전체';
+                
+                document.getElementById('cards-container').innerHTML = '';
+                document.getElementById('tab-container').innerHTML = ''; 
+                
+                initMap();
             }
-
-            document.getElementById('current-region-label').innerText = i18n['KR']['region_' + currentRegion] || currentRegion;
-            document.getElementById('admin-region-badge').innerText = currentRegion;
-
-            setLanguage('KR'); 
-            fetchPlaces();
         });
     </script>
 </body>
