@@ -1467,19 +1467,17 @@
             const sharedRegion = urlParams.get('region');
             const validRegions = ['홍대', '성수', '노원', '마곡', '잠실', '이태원', '을지로', '압구정', '강남', '천호'];
 
-            setLanguage('KR');
-
             if (sharedRegion && validRegions.includes(sharedRegion)) {
                 currentRegion = sharedRegion;
                 isOverview = false;
+                setLanguage('KR');
                 document.getElementById('current-region-label').innerText = i18n['KR']['region_' + currentRegion] || currentRegion;
                 document.getElementById('admin-region-badge').innerText = currentRegion;
                 fetchPlaces();
             } else {
                 currentRegion = '홍대';
                 isOverview = false;
-                document.getElementById('current-region-label').innerText = i18n['KR']['region_홍대'];
-                document.getElementById('admin-region-badge').innerText = '홍대';
+                setLanguage('KR');
                 initMap();
                 fetchPlaces();
             }
