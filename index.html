@@ -114,7 +114,7 @@
         지도의 역을 클릭하여 핫플 순위를 확인하세요 👇
     </div>
 
-    <div class="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between">
+    <div class="absolute inset-0 z-[200] pointer-events-none flex flex-col justify-between">
         <div>
             <header class="pointer-events-auto h-[64px] bg-navy flex items-center justify-between px-4 shadow-md w-full relative z-[9999]">
                 <div class="flex items-center gap-2 sm:gap-3">
@@ -134,10 +134,10 @@
                                 <button id="dd-euljiro" onclick="changeRegion('을지로', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">을지로</button>
                                 <button id="dd-apgujeong" onclick="changeRegion('압구정', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">압구정</button>
                                 <button id="dd-jamsil" onclick="changeRegion('잠실', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">잠실</button>
+                                <button id="dd-magok" onclick="changeRegion('마곡', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">마곡</button>
+                                <button id="dd-nowon" onclick="changeRegion('노원', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">노원역</button>
                                 <button id="dd-gangnam" onclick="changeRegion('강남', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">강남역</button>
                                 <button id="dd-cheonho" onclick="changeRegion('천호', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">천호역</button>
-                                <button id="dd-nowon" onclick="changeRegion('노원', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">노원역</button>
-                                <button id="dd-magok" onclick="changeRegion('마곡', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">마곡</button>
                             </div>
                         </div>
                         <div class="flex items-center gap-1 mt-0.5 text-[10px] text-white/70 font-bold brand-title tracking-wide shrink-0">
@@ -146,17 +146,23 @@
                     </div>
                 </div>
                 
-                <div class="flex flex-col items-end justify-center pr-1 select-none pointer-events-auto cursor-pointer" onclick="handleAdminClick()">
-                    <div class="text-white text-[11px] sm:text-[13px] leading-[1.15] text-right tracking-tight" style="font-family: 'Montserrat', sans-serif; font-weight: bold;">
-                        No Ads. Real Trends
-                    </div>
-                    <div class="flex items-center gap-1 mt-1">
-                        <div class="w-3 sm:w-3.5 h-3 sm:h-3.5 bg-point rounded-full flex items-center justify-center">
-                            <svg class="w-2 sm:w-2.5 h-2 sm:h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                <div class="flex items-center gap-3 sm:gap-4 select-none pointer-events-auto">
+                    <button id="lang-toggle-btn" onclick="toggleLanguage(event)" class="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 text-white text-[11px] sm:text-[12px] font-bold shadow-sm transition-all focus:outline-none shrink-0">
+                        EN
+                    </button>
+                    
+                    <div class="flex flex-col items-end justify-center pr-1 cursor-pointer" onclick="handleAdminClick()">
+                        <div class="text-white text-[11px] sm:text-[13px] leading-[1.15] text-right tracking-tight" style="font-family: 'Montserrat', sans-serif; font-weight: bold;">
+                            No Ads. Real Trends
                         </div>
-                        <span class="text-white text-[8px] sm:text-[9px] tracking-tight" style="font-family: 'Pretendard', sans-serif; font-weight: bold;">
-                            DATA-VERIFIED
-                        </span>
+                        <div class="flex items-center gap-1 mt-1">
+                            <div class="w-3 sm:w-3.5 h-3 sm:h-3.5 bg-point rounded-full flex items-center justify-center">
+                                <svg class="w-2 sm:w-2.5 h-2 sm:h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="text-white text-[8px] sm:text-[9px] tracking-tight" style="font-family: 'Pretendard', sans-serif; font-weight: bold;">
+                                DATA-VERIFIED
+                            </span>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -185,7 +191,7 @@
                 <p class="text-[9px] text-gray-500 font-medium mt-1.5 pb-0.5">
                     <span id="desc-2-label">제휴 및 문의:</span> <a href="mailto:admin@spottr.kr" class="font-bold text-navy hover:underline">admin@spottr.kr</a>
                 </p>
-                <p class="text-[9px] text-gray-500 font-medium pb-1">Last Updated: April 9</p>
+                <p class="text-[9px] text-gray-500 font-medium pb-1">Last Updated: April 7</p>
             </div>
         </div>
     </div>
@@ -263,6 +269,8 @@
         let currentLang = 'KR';
         const i18n = {
             'KR': {
+                'region_select': '지역 선택',
+                'overview_guide': '지도의 역을 클릭하여 핫플 순위를 확인하세요 👇',
                 'region_홍대': '홍대입구',
                 'region_성수': '성수동',
                 'region_노원': '노원',
@@ -274,7 +282,7 @@
                 'region_강남': '강남역',
                 'region_천호': '천호역',
                 'desc_1': '구글맵 평점과 네이버 실시간 검색량을 교차 검증하는 자동 로직으로,<br>광고와 어뷰징이 배제된 <span class="text-point font-black">100% 리얼 핫플</span>만을 실시간 업데이트합니다.',
-                'desc_2': '문의:',
+                'desc_2': '제휴 및 문의:',
                 'loading': '데이터를 불러오는 중입니다...',
                 'no_data': '데이터가 없습니다. 우측 상단 번개 로고를 5번 눌러 수집해주세요.',
                 'no_cat': '활성화된 카테고리가 없습니다.',
@@ -286,6 +294,8 @@
                 'rank_format': (rank) => `${rank}위`
             },
             'EN': {
+                'region_select': 'Region Select',
+                'overview_guide': 'Click a station on the map to check hotspot rankings 👇',
                 'region_홍대': 'Hongdae',
                 'region_성수': 'Seongsu',
                 'region_노원': 'Nowon',
@@ -309,6 +319,352 @@
                 'rank_format': (rank) => `No.${rank}`
             }
         };
+
+        // =====================================================================
+        // CSV 데이터 연동 딕셔너리
+        // (첨부하신 CSV 파일의 C열:상호명, G열:영문명 데이터를 여기에 매핑해주시면 됩니다)
+        // =====================================================================
+        const EN_NAME_DICT = {
+            '크리스찬 디올': 'Christian Dior', '크리스찬디올': 'Christian Dior',
+            '포인트 오브 뷰': 'Point of View', '포인트오브뷰': 'Point of View',
+            '미키스시': 'Miki Sushi', '카페씨떼': 'Cafe Cite',
+            '허밍벨라': 'Humming Bella', '마망젤라또': 'Maman Gelato',
+            '카페시떼': 'Cafe Cite', '블루보틀': 'Blue Bottle', '뷰티플레이': 'Beauty Play',
+            '세스크멘슬': 'CESK MNSL', '카카오프렌즈': 'Kakao Friends', '아더에러': 'ADERERROR',
+            '에그타르트': 'Egg Tart', 'abc마트': 'ABC Mart', 'ABC마트': 'ABC Mart',
+            '애니메이트': 'animate', '올리브영': 'Olive Young', '커피랩': 'Coffee Lab',
+            '무신사': 'Musinsa', '스탠다드': 'Standard', '스파오': 'SPAO',
+            '팝마트': 'POP MART', '콜린': 'Colline', '콤마': 'Comma', '꼼마': 'Comma', '피오니': 'Peony',
+            '오브젝트': 'Object', '플래그십': 'Flagship', '언플러그드': 'Unplugged',
+            '베통': 'Beton', '테니': 'Tenne', '로우키': 'Lowkey', '베이글': 'Bagel',
+            '키스': 'KITH', '트리츠': 'Treats', '시떼': 'Cite', '타운': 'Town',
+            '스토어': 'Store', '베이커리': 'Bakery', '제과': 'Bakery', '디저트': 'Dessert', 
+            '팝업': 'Pop-up', '본점': 'Main Store', '성수점': 'Seongsu', '홍대점': 'Hongdae', '노원점': 'Nowon',
+            '카페': 'Cafe', '식당': 'Restaurant', '맛집': 'Eatery',
+
+            '스페이스K 서울': 'Space K Seoul',
+'방구방구문방구': 'Banggu Banggu Stationery',
+'산청숯불가든 마곡': 'Sancheong Charcoal Garden Magok',
+'거궁 마곡점': 'Geogung Magok',
+'일품 마곡점': 'Ilpum Magok',
+'마곡돈탐구소': 'Magok Don Tamguso',
+'마곡금고깃집': 'Magok Gold Meat House',
+'마곡상해루': 'Magok Shanghairu',
+'마곡숙성도': 'Magok Suksungdo',
+'로마옥 마곡': 'Romaok Magok',
+'라우라': 'Laura',
+'목로': 'Mokro',
+'어나더사이드': 'Another Side',
+'베이글리스트': 'Bagel List',
+'타르데마 베이커리 우장산점': 'Tardema Bakery Ujangsan',
+'Bakery LUNE (베이커리룬)': 'Bakery LUNE',
+'고드니': 'Godny',
+'파리크라상 이대서울병원점': 'Paris Croissant Ewha Womans Univ. Seoul Hospital',
+'르와조': 'Loiseau',
+'라크루뜨서울 본점': 'La Croute Seoul Main Store',
+'브릭샌드 원그로브점 Bricksand Onegrove': 'Bricksand Onegrove',
+'마곡 카페 디프커피': 'Magok Cafe Deep Coffee',
+'뉴발란스 키즈 2001아울렛 천호점': 'New Balance Kids 2001 Outlet Cheonho',
+'현대백화점 천호점': 'Hyundai Department Store Cheonho',
+'서울 풍납동 토성': 'Seoul Pungnap-dong Fortress',
+'파크랜드': 'Parkland',
+'송포어스': 'Song For Us',
+'천호경송': 'Cheonho Gyeongsong',
+'천호닭곰탕': 'Cheonho Chicken Soup',
+'오징어포차': 'Squid Pocha',
+'풀팬': 'Full Pan',
+'군산식당': 'Gunsan Restaurant',
+'천호돈': 'Cheonho Don',
+'푸지미곱창': 'Pujimi Gopchang',
+'천호대팔이네': 'Cheonho Daepaline',
+'로니로티천호점': 'Loni Lottie Cheonho',
+'안녕식당': 'Annyeong Restaurant',
+'헤르츠로그': 'Herzlog',
+'천호하츠베이커리': 'Cheonho Hatz Bakery',
+'썸머러너': 'Summer Runner',
+'오뜨르베이커리': 'Autre Bakery',
+'천호블랑제리': 'Cheonho Boulangerie',
+'아이스베리 천호점': 'Iceberry Cheonho',
+'설빙 천호로데오점': 'Sulbing Cheonho Rodeo',
+'베스킨라빈스 풍납점': 'Baskin Robbins Pungnap',
+'브랜뉴하이몬드': 'Brand New Hi-Mond',
+'카페알마': 'Cafe Alma',
+'교보문고 강남점': 'Kyobo Book Centre Gangnam',
+'뉴뉴 강남점 (NYUNYU)': 'NYUNYU Gangnam',
+'나이키 강남점': 'Nike Gangnam',
+'키이스케이프 우주라이크': 'Keyescape WouldULike',
+'무인양품 강남점': 'MUJI Gangnam',
+'스파오 강남점': 'SPAO Gangnam',
+'에잇세컨즈 강남대로점': '8 Seconds Gangnam-daero',
+'우주가챠 강남점': 'Uju Gacha Gangnam',
+'지오다노 강남점': 'Giordano Gangnam',
+'ZARA Gangnam Station': 'ZARA Gangnam Station',
+'강남진해장': 'Gangnam Jinhaejang',
+'하이디라오 서초지점': 'Haidilao Seocho',
+'강남떡도리탕': 'Gangnam Tteokdoritang',
+'알부자 강남본점': 'Albuja Gangnam Main Store',
+'땀땀': 'TamTam',
+'강남쿄코코': 'Gangnam Kyokoko',
+'다몽집 | damongzip': 'Damongzip',
+'강남소보키': 'Gangnam Soboki',
+'강남고메램': 'Gangnam Gourmet Lamb',
+'강남화기애애': 'Gangnam Hwagiaeae',
+'트리오드': 'Triode',
+'알베르 강남': 'Alver Gangnam',
+'퍼스트커피랩': 'First Coffee Lab',
+'썸띵어바웃커피': 'Something About Coffee',
+'강남호랑가시': 'Gangnam Horanggasi',
+'강남한과와락': 'Gangnam Hangwa Warak',
+'힉스커피(HIGGS COFFEE)': 'HIGGS COFFEE',
+'까치화방 카페 강남점 CACHI CAFE GANGNAM 江南駅カフェ 江南站咖啡厅': 'Cachi Cafe Gangnam',
+'라브리크': 'Labrique',
+'커피빈 강남대로점': 'The Coffee Bean & Tea Leaf Gangnam-daero',
+'롯데월드몰': 'Lotte World Mall',
+'롯데월드': 'Lotte World',
+'석촌호수': 'Seokchon Lake',
+'자라 롯데월드몰점': 'ZARA Lotte World Mall',
+'다이소 송파구청점': 'Daiso Songpa District Office',
+'진저베어': 'Ginger Bear',
+'롯데뮤지엄': 'Lotte Museum',
+'롯데월드타워': 'Lotte World Tower',
+'도토리숲 (지브리샵)': 'Ghibli Shop Dotori Forest',
+'COS': 'COS',
+'잠실바이킹스워프': 'Vikings Wharf Jamsil',
+'바이킹스워프': 'Vikings Wharf',
+'애슐리퀸즈 잠실롯데캐슬점': 'Ashley Queens Jamsil Lotte Castle',
+'잠실빌즈': 'Bills Jamsil',
+'잠실MIP': 'MIP Jamsil',
+'별미곱창': 'Byeolmi Gopchang',
+'잠실메밀집': 'Jamsil Memil-jip',
+'쌤쌤쌤 롯데월드몰점': 'Sam Sam Sam Lotte World Mall',
+'잠실아그라': 'Agra Jamsil',
+'잠실오레노라멘': 'Oreno Ramen Jamsil',
+'단디': 'Dandi',
+'잠실우프': 'Oof Jamsil',
+'잠실미크': 'Meak Jamsil',
+'잠실봉땅': 'Bontemps Jamsil',
+'잠실터틀힙': 'Turtlehip Jamsil',
+'잠실뷰클런즈': 'Viewclanz Jamsil',
+'잠실키친205': 'Kitchen 205 Jamsil',
+'잠실디저티스트': 'Dessertist Jamsil',
+'잠실로얄테라스가든': 'Royal Terrace Garden Jamsil',
+'노티드 잠실롯데월드몰 ❘ Cafe Knotted Jamsil Lotte World Mall ❘ カフェ ノーティッド 蚕室ロッテワールドモール店': 'Cafe Knotted Jamsil Lotte World Mall',
+'잠실이성당': 'Lee Sung Dang Jamsil',
+'파티클': 'Particle',
+'스튜디오 더수트': 'Studio The Suit',
+'K현대미술관': 'K Museum of Contemporary Art',
+'피규어뮤지엄w': 'Figure Museum W',
+'위글위글집 도산': 'Wiggle Wiggle Zip Dosan',
+'도산 안창호 기념관 & 기념사업회': 'Dosan Ahn Chang-ho Memorial Hall',
+'호림박물관 신사분관': 'Horim Museum Sinsa Annex',
+'쎄덱 강남점': 'SEDEC Gangnam',
+'갤러리원': 'Gallery Won',
+'수트서플라이 청담점': 'Suitsupply Cheongdam',
+'압구정하루': 'Apgujung Haru',
+'묵전': 'Mukjeon',
+'신미식당': 'Sinmi Restaurant',
+'압구정제주집': 'Apgujung Jeju-jip',
+'까폼 ครับผม Krappom': 'Krappom',
+'압구정연탄공장': 'Apgujung Yeontan Gongjang',
+'닭으로가 압구정 본점': 'Dakuroga Apgujung Main Store',
+'한일관 압구정점': 'Hanilkwan Apgujung',
+'압구정도슬박': 'Apgujung Doseulbak',
+'어성일식': 'Eoseong Ilsik',
+'부케 드 뺑': 'Bouquet de Pain',
+'압구정투아투아': 'Apgujung Tua Tua',
+'압구정이웃집통통이': 'Apgujung Tonton',
+'커피빈 압구정로데오점': 'The Coffee Bean & Tea Leaf Apgujung Rodeo',
+'노아베이커리 압구정점': 'Noah Bakery Apgujung',
+'블루보틀 압구정 카페': 'Blue Bottle Coffee Apgujung',
+'플링크 압구정 Flink Apgujung': 'Flink Apgujung',
+'무니 압구정본점': 'Moonee Apgujung Main Store',
+'카멜커피 도산점': 'Camel Coffee Dosan',
+'폴바셋 현대모터스튜디오서울점': 'Paul Bassett Hyundai Motorstudio Seoul',
+'마인띵스': 'Mind Things',
+'광장시장': 'Gwangjang Market',
+'뉴뉴 명동점': 'NYUNYU Myeongdong',
+'남산골한옥마을': 'Namsangol Hanok Village',
+'한국의 집': 'Korea House',
+'믹순 플래그십 스토어 명동 (Mixsoon Flagship Store)': 'Mixsoon Flagship Store Myeongdong',
+'BALBAL VINTAGE': 'BALBAL VINTAGE',
+'명동관광정보센터': 'Myeongdong Tourist Information Center',
+'코닥 광장마켓점': 'Kodak Gwangjang Market',
+'사뿐 명동스테이지': 'Sappun Myeongdong Stage',
+'을지다락': 'Euljidarak',
+'을지깐깐': 'Euljikankan',
+'진작': 'Jinjak',
+'을지로오덕장': 'Euljiro Odeokjang',
+'전주집': 'Jeonju-jip',
+'오봉집 종로점': 'Obong-jip Jongno',
+'빠삼': 'Bbassam',
+'이남장 명동점': 'Inamjang Myeongdong',
+'을지로다케오호르몬': 'Euljiro Takeo Hormone',
+'청기와타운 을지로점': 'Cheonggiwa Town Euljiro',
+'커피한약방': 'Coffee Hanyakbang',
+'혜민당': 'Hyemindang',
+'을지로공간갑': 'Euljiro Gonggangap',
+'을지로빠우': 'Euljiro Ppau',
+'아소토베이커리': 'Asoto Bakery',
+'을지로콘티뉴이티': 'Euljiro Continuity',
+'그라츠 과자점': 'Gratz Confectionery',
+'챔프커피 을지로': 'Champ Coffee Euljiro',
+'아티제 센터원점': 'Artisee Center1',
+'카페 느티': 'Cafe Neuti',
+'이태원시장': 'Itaewon Market',
+'노스비치 (NORTH BEACH)': 'NORTH BEACH',
+'현대카드 바이닐 앤 플라스틱': 'Hyundai Card Vinyl & Plastic',
+'리움미술관': 'Leeum Museum of Art',
+'이태원관광특구': 'Itaewon Special Tourist Zone',
+'비이커 한남플래그십스토어': 'Beaker Hannam Flagship Store',
+'이태원 만물상': 'Itaewon Manmulsang',
+'TWL Shop': 'TWL Shop',
+'COS': 'COS',
+'맥슬러': 'Maxler',
+'이태원사랑방': 'Itaewon Sarangbang',
+'이태원맛집 이태원화로 | korean bbq | レストラン | korean bbq restaurant | 焼肉': 'Itaewon hwaro',
+'야상해': 'Yasanghae',
+'이태원주식': 'Itaewon Jusik',
+'바다식당': 'Bada Restaurant',
+'바토스 이태원점': 'Vatos Itaewon',
+'한우물 | HANWOOMOOL Itaewon | Korean Beef Omakase | 韓国 和牛 オマカセ | 韩国 韩牛套餐': 'Hanwoomool Itaewon',
+'샘라이언스 이태원': 'Sam Ryans Itaewon',
+'Tapasbar Itaewon 타파스바': 'Tapasbar Itaewon',
+'이태원천상 이태원본점': 'Itaewon Cheonsang',
+'KYERI 키에리': 'KYERI',
+'알페도': 'Alpedo',
+'Côté jardin (꾸띠자르당)': 'Côté Jardin',
+'미니마이즈': 'Minimize',
+'도나르': 'Donar',
+'더미쓰리(The Mi Three)': 'The Mi Three',
+'패션5': 'Passion 5',
+'챔프커피 이태원': 'Champ Coffee Itaewon',
+'레인리포트 경리단': 'Rain Report Gyeongnidan',
+'오월의종 한남점': 'Mays Bell Hannam',
+'성수무신사': 'Seongsu Musinsa',
+'성수디올': 'Seongsu Dior',
+'29CM KIDS': '29CM KIDS',
+'EQL SEONGSU GROVE': 'EQL SEONGSU GROVE',
+'POINT OF VIEW, 포인트 오브 뷰': 'Point of View',
+'키스 서울': 'Kith Seoul',
+'아더에러 성수 스페이스': 'Ader Error Seongsu Space',
+'LCDC Seoul': 'LCDC Seoul',
+'성수마뗑킴': 'Seongsu Matin Kim',
+'아도르 성수': 'Adoir Seongsu',
+'성수족발': 'Seongsu Jokbal',
+'성수미키스시': 'Seongsu Miki Sushi',
+'마리오네': 'Marione',
+'죠죠': 'Jojo',
+'스케줄성수': 'Schedule Seongsu',
+'성수싹쓰리곱창': 'Seongsu Ssak-sseuri Gopchang',
+'탐광': 'Tamkwang',
+'안목 성수': 'Anmok Seongsu',
+'꿉당 성수점': 'Kkupdang Seongsu',
+'문화식당 성수점': 'Munhwa Restaurant Seongsu',
+'베통': 'Betton',
+'한정선 성수점': 'Hanjeongseon Seongsu',
+'성수연방': 'Seongsu Yeonbang',
+'성수동 대림창고 갤러리': 'Daelim Warehouse Gallery',
+'마망젤라또 성수점': 'Maman Gelato Seongsu',
+'성수테니': 'Seongsu Tenne',
+'어니언 성수점': 'Onion Seongsu',
+'성수본지르르': 'Seongsu Bonzirirr',
+'로우키 성수': 'Lowkey Seongsu',
+'코끼리베이글 성수': 'Kokkiri Bagel Seongsu',
+'홍대무신사': 'Hongdae Musinsa',
+'애니메이트 홍대점': 'Animate Hongdae',
+'올리브영 홍대 타운': 'Olive Young Hongdae Town',
+'나이키 스타일 홍대': 'Nike Style Hongdae',
+'스파오 홍대점': 'SPAO Hongdae',
+'MODEMAN 모드맨': 'MODEMAN',
+'오브젝트 서교점': 'Object Seogyo',
+'언플러그드 홍대 (Unplugged Hongdae)': 'Unplugged Hongdae',
+'수바코 홍대점': 'Subako Hongdae',
+'착한구두 홍대 플래그쉽 스토어': 'Chakhan Gudu Hongdae Flagship Store',
+'육지 홍대': 'Yukji Hongdae',
+'홍대하이디라오': 'Haidilao Hongdae',
+'홍대돈부리 본점': 'Hongdae Donburi Main Store',
+'도적 홍대 본점': 'Dojeok Hongdae Main Store',
+'삿뽀로 홍대점': 'Sapporo Hongdae',
+'홍대카미야': 'Hongdae Kamiya',
+'육몽 홍대본점': 'Yukmong Hongdae Main Store',
+'홍스쭈꾸미 홍대본점': 'Hongs Jjukkumi Hongdae Main Store',
+'홍대도마': 'Hongdae Doma',
+'연하동': 'Yeonhadong',
+'아오이토리': 'Aoi Tori',
+'피오니': 'Peony',
+'홍대신이도가': 'Hongdae Shinidoga',
+'이미커피': 'Imi Coffee',
+'콜린 서교동점': 'Colline Seogyo',
+'코코로카라 kokorokara': 'Kokorokara',
+'베니케이크': 'Benny Cake',
+'홍대공명': 'Hongdae Gongmyeong',
+'베이글랜드 홍대점': 'Bagel Land Hongdae',
+'허밍벨라': 'Humming Bella',
+'유니클로 롯데백화점노원점': 'Uniqlo Lotte Department Store Nowon',
+'나이키 롯데노원점': 'Nike Lotte Nowon',
+'샤넬 롯데백화점 노원점': 'Chanel Lotte Department Store Nowon',
+'노원쭈꾸미달인': 'Nowon Jjukkumi Dalin',
+'노원목고기집': 'Nowon Mokgogijip',
+'노원위안바오': 'Nowon Yuanbao',
+'털보고된이 노원본점': 'Teolbo Godeny Nowon Main Store',
+'또와순두부': 'Ttowa Sundubu',
+'노원돈부리': 'Nowon Donburi',
+'노원동선식당': 'Nowon Dongseon Restaurant',
+'감동식당': 'Gamdong Restaurant',
+'로니로티 노원점': 'Loni Lottie Nowon',
+'제임스키친': 'James Kitchen',
+'빈스링': 'Beans Ring',
+'샛별제과': 'Saetbyeol Bakery',
+'스윗레시피': 'Sweet Recipe',
+'감각 커피전문점': 'Gamgak Coffee',
+'물레': 'Mulle',
+'오피커피': 'Offy Coffee',
+'베스코': 'Besco',
+'시드누아노원본점': 'Seednoir Nowon Main Store',
+'시즌': 'Season',
+'커피나무': 'Coffee Tree',
+
+            
+            // --- 아래 예시처럼 CSV 데이터를 복사해서 넣어주세요 ---
+            // '부케 드 뺑': 'Bouquet de pain',
+            // '압구정연탄공장': 'Apgujeong Yeontan Factory',
+            // '잠실오레노라멘': 'Oreno Ramen Jamsil',
+        };
+
+        function getEnglishName(text) {
+            // 1. CSV 기반 사전에 완벽히 일치하는 상호명이 있으면 최우선 반환
+            if (EN_NAME_DICT[text]) {
+                return EN_NAME_DICT[text];
+            }
+
+            // 2. 부분 일치 치환
+            let result = text;
+            for (const [ko, en] of Object.entries(EN_NAME_DICT)) {
+                result = result.replace(new RegExp(ko, 'g'), en + ' ');
+            }
+            
+            // 3. 딕셔너리에 없는 한글은 기존의 로마자 표기법으로 자동 변환
+            const cho = ["g","kk","n","d","tt","r","m","b","pp","s","ss","","j","jj","ch","k","t","p","h"];
+            const jung = ["a","ae","ya","yae","eo","e","yeo","ye","o","wa","wae","oe","yo","u","wo","we","wi","yu","eu","ui","i"];
+            const jong = ["","k","kk","gs","n","nj","nh","d","l","lg","lm","lb","ls","lt","lp","lh","m","b","bs","s","ss","ng","j","ch","k","t","p","h"];
+            
+            let romanized = "";
+            for (let i = 0; i < result.length; i++) {
+                let code = result.charCodeAt(i);
+                if (code >= 44032 && code <= 55203) {
+                    code -= 44032;
+                    let choIdx = Math.floor(code / 588);
+                    let jungIdx = Math.floor((code - (choIdx * 588)) / 28);
+                    let jongIdx = code % 28;
+                    let syllable = cho[choIdx] + jung[jungIdx] + jong[jongIdx];
+                    romanized += syllable;
+                } else {
+                    romanized += result.charAt(i);
+                }
+            }
+            
+            return romanized.replace(/\b[a-z]/g, char => char.toUpperCase()).replace(/\s+/g, ' ').trim();
+        }
 
         const ALL_CATEGORIES = ['식당/맛집', '카페/베이커리', '쇼핑/문화'];
         let activeCategories = [...ALL_CATEGORIES];
@@ -341,61 +697,24 @@
         };
         let subwayMarker = null;
 
-        function romanizeKorean(text) {
-            const cho = ["g","kk","n","d","tt","r","m","b","pp","s","ss","","j","jj","ch","k","t","p","h"];
-            const jung = ["a","ae","ya","yae","eo","e","yeo","ye","o","wa","wae","oe","yo","u","wo","we","wi","yu","eu","ui","i"];
-            const jong = ["","k","kk","gs","n","nj","nh","d","l","lg","lm","lb","ls","lt","lp","lh","m","b","bs","s","ss","ng","j","ch","k","t","p","h"];
-            
-            const dict = { 
-                '크리스찬 디올': 'Christian Dior', '크리스찬디올': 'Christian Dior',
-                '포인트 오브 뷰': 'Point of View', '포인트오브뷰': 'Point of View',
-                '미키스시': 'Miki Sushi', '카페씨떼': 'Cafe Cite',
-                '허밍벨라': 'Humming Bella', '마망젤라또': 'Maman Gelato',
-                '카페시떼': 'Cafe Cite', '블루보틀': 'Blue Bottle', '뷰티플레이': 'Beauty Play',
-                '세스크멘슬': 'CESK MNSL', '카카오프렌즈': 'Kakao Friends', '아더에러': 'ADERERROR',
-                '에그타르트': 'Egg Tart', 'abc마트': 'ABC Mart', 'ABC마트': 'ABC Mart',
-                '애니메이트': 'animate', '올리브영': 'Olive Young', '커피랩': 'Coffee Lab',
-                '무신사': 'Musinsa', '스탠다드': 'Standard', '스파오': 'SPAO',
-                '팝마트': 'POP MART', '콜린': 'Colline', '콤마': 'Comma', '꼼마': 'Comma', '피오니': 'Peony',
-                '오브젝트': 'Object', '플래그십': 'Flagship', '언플러그드': 'Unplugged',
-                '베통': 'Beton', '테니': 'Tenne', '로우키': 'Lowkey', '베이글': 'Bagel',
-                '키스': 'KITH', '트리츠': 'Treats', '시떼': 'Cite', '타운': 'Town',
-                '스토어': 'Store', '베이커리': 'Bakery', '제과': 'Bakery', '디저트': 'Dessert', 
-                '팝업': 'Pop-up', '본점': 'Main Store', '성수점': 'Seongsu', '홍대점': 'Hongdae', '노원점': 'Nowon',
-                '카페': 'Cafe', '식당': 'Restaurant', '맛집': 'Eatery'
-            };
-            
-            let result = text;
-            for (const [ko, en] of Object.entries(dict)) {
-                result = result.replace(new RegExp(ko, 'g'), en + ' ');
-            }
-            
-            let romanized = "";
-            for (let i = 0; i < result.length; i++) {
-                let code = result.charCodeAt(i);
-                if (code >= 44032 && code <= 55203) {
-                    code -= 44032;
-                    let choIdx = Math.floor(code / 588);
-                    let jungIdx = Math.floor((code - (choIdx * 588)) / 28);
-                    let jongIdx = code % 28;
-                    let syllable = cho[choIdx] + jung[jungIdx] + jong[jongIdx];
-                    romanized += syllable;
-                } else {
-                    romanized += result.charAt(i);
-                }
-            }
-            
-            return romanized.replace(/\b[a-z]/g, char => char.toUpperCase()).replace(/\s+/g, ' ').trim();
-        }
-
         function setLanguage(lang) {
             currentLang = lang;
             
+            // 1. 지역 선택 버튼 번역 적용
             if (currentRegion) {
                 document.getElementById('current-region-label').innerHTML = i18n[currentLang]['region_' + currentRegion];
+            } else {
+                document.getElementById('current-region-label').innerHTML = i18n[currentLang]['region_select'];
             }
+            
             document.getElementById('desc-1').innerHTML = i18n[currentLang].desc_1;
             document.getElementById('desc-2-label').innerHTML = i18n[currentLang].desc_2;
+            
+            // 2. 플로팅 배너 번역 적용
+            const guideBanner = document.getElementById('overview-guide');
+            if(guideBanner) {
+                guideBanner.innerText = i18n[currentLang].overview_guide;
+            }
             
             document.getElementById('dd-hongdae').innerText = i18n[currentLang]['region_홍대'];
             document.getElementById('dd-seongsu').innerText = i18n[currentLang]['region_성수'];
@@ -408,13 +727,29 @@
             document.getElementById('dd-gangnam').innerText = i18n[currentLang]['region_강남'];
             document.getElementById('dd-cheonho').innerText = i18n[currentLang]['region_천호'];
 
-            if (map && !isOverview) {
-                renderSubwayMarker();
+            // 3. 지도 마커 영문화 재렌더링 처리
+            if (map) {
+                if (isOverview) {
+                    renderOverviewMarkers();
+                } else {
+                    renderSubwayMarker();
+                }
             }
 
             if (activeCategories.length > 0 && allPlacesData.length > 0 && !isOverview) {
                 renderCategoryTabs();
                 switchTab(currentSelectedCategory || activeCategories[0]);
+            }
+        }
+
+        function toggleLanguage(event) {
+            if (event) event.stopPropagation();
+            if (currentLang === 'KR') {
+                setLanguage('EN');
+                document.getElementById('lang-toggle-btn').innerText = 'KR';
+            } else {
+                setLanguage('KR');
+                document.getElementById('lang-toggle-btn').innerText = 'EN';
             }
         }
 
@@ -716,7 +1051,7 @@
                 const displayName = i18n[currentLang]['cat_' + cat] || cat;
                 
                 container.innerHTML += `
-                    <button onclick="switchTab('${cat}')" id="${safeId}" class="btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap text-gray-500 border transition-colors cursor-pointer">
+                    <button onclick="switchTab('${cat}')" id="${safeId}" class="btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap text-gray-500 border transition-colors cursor-pointer shrink-0">
                         ${icon} ${displayName}
                     </button>
                 `;
@@ -773,9 +1108,9 @@
                 const tabEl = document.getElementById(safeId);
                 if (tabEl) {
                     if (cat === selectedCategory) {
-                        tabEl.className = 'btn-tab btn-active px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap bg-navy text-white shadow-md border-transparent transition-colors';
+                        tabEl.className = 'btn-tab btn-active px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap bg-navy text-white shadow-md border-transparent transition-colors shrink-0';
                     } else {
-                        tabEl.className = 'btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap text-gray-500 border border-gray-200 transition-colors hover:bg-gray-50';
+                        tabEl.className = 'btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap text-gray-500 border border-gray-200 transition-colors hover:bg-gray-50 shrink-0';
                     }
                 }
             });
@@ -797,14 +1132,16 @@
                 const el = document.createElement('div');
                 const isTop3 = index < 3;
                 el.className = `rank-marker ${isTop3 ? 'top-rank' : ''}`;
-                el.innerHTML = `${index + 1}위`;
+                el.innerHTML = i18n[currentLang].rank_format(index + 1);
                 
                 const rankBadge = isTop3 ? 'bg-point text-white' : 'bg-navy text-white';
                 const searchKw = place.extracted_kw ? place.extracted_kw : `${currentRegion} ${place.name}`;
                 const blogLink = place.youtube_vid ? place.youtube_vid : `https://search.naver.com/search.naver?where=blog&query=${encodeURIComponent(searchKw)}`;
                 const imageSrc = place.custom_img ? place.custom_img : `https://picsum.photos/seed/${place.id}/400/300`;
                 const rankText = i18n[currentLang].rank_format(index + 1);
-                const displayName = currentLang === 'EN' ? romanizeKorean(place.name) : place.name;
+                
+                // --- 새롭게 업데이트된 영문명 치환 로직 적용 ---
+                const displayName = currentLang === 'EN' ? getEnglishName(place.name) : place.name;
 
                 const popupHtml = `
                     <div class="w-[180px] bg-white flex flex-col pointer-events-auto cursor-pointer" onclick="document.getElementById('card-${index}').scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); map.flyTo({ center: [${place.lng}, ${place.lat}], zoom: 17.5 });">
@@ -893,7 +1230,8 @@
 
                 const rankText = i18n[currentLang].rank_format(index + 1);
                 
-                const displayName = currentLang === 'EN' ? romanizeKorean(place.name) : place.name;
+                // --- 새롭게 업데이트된 영문명 치환 로직 적용 ---
+                const displayName = currentLang === 'EN' ? getEnglishName(place.name) : place.name;
 
                 const cardHtml = `
                     <div id="card-${index}" onclick="panToMap(${place.lat}, ${place.lng})" class="snap-center shrink-0 w-[80%] sm:w-72 bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex flex-col cursor-pointer transform transition hover:-translate-y-1 relative">
@@ -1107,7 +1445,7 @@
             });
             
             const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
+            const 일link = document.createElement("a");
             link.setAttribute("href", URL.createObjectURL(blob));
             link.setAttribute("download", `spottr_ranking_${currentRegion}_${new Date().toISOString().slice(0, 10)}.csv`);
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
