@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta name="naver-site-verification" content="426f304846a65a7b2a32020e1259d68c0ce07a7b" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>이태원 맛집·카페·쇼핑 핫플 실시간 순위 | spottr</title>
+    <meta name="description" content="이태원역 반경 1km 맛집, 카페, 쇼핑 핫플레이스를 네이버 실시간 검색량 기준으로 순위를 매긴 데이터 기반 가이드">
+    <link rel="canonical" href="https://spottr.kr/itaewon.html">
+<meta property="og:title" content="spottr.kr | 실시간 핫플 순위">
+<meta property="og:description" content="데이터가 뽑은 진짜 맛집, 여기서 확인하세요!">
+<meta property="og:image" content="https://mdpqzcwamhzxybldvctr.supabase.co/storage/v1/object/public/popup-photos/sticker.png">
+
+    
+    <link rel="icon" type="image/svg+xml" href="symbol-spottr-navy.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { navy: '#1A1F71', point: '#007BFF', main: '#333333', sub: '#888888', base: '#F8F9FA' },
+                    fontFamily: { sans: ['Montserrat', 'Pretendard', '-apple-system', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KF8QQD5NZN"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-KF8QQD5NZN');
+    </script>
+
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "w3g2sxr0nn");
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/v2.0.3/maptiler-sdk.umd.js"></script>
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v2.0.3/maptiler-sdk.css" rel="stylesheet" />
+    
+    <style>
+        :root { --color-primary-navy: #1A1F71; --color-point-blue: #007BFF; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #F8F9FA; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .brand-title { letter-spacing: -0.02em; }
+        
+        .rank-marker {
+            min-width: 38px; height: 32px; padding: 0 8px;
+            background-color: var(--color-primary-navy); color: white;
+            border: 2px solid white; border-radius: 9999px; 
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 13px; font-family: 'Pretendard', sans-serif;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.2s;
+            z-index: 10;
+        }
+        .rank-marker.top-rank { background-color: var(--color-point-blue); }
+        .rank-marker:hover { transform: scale(1.1); z-index: 50; }
+        
+        .maplibregl-ctrl-bottom-left, .maplibregl-ctrl-bottom-right { display: none !important; }
+        .select-none { user-select: none; -webkit-user-select: none; }
+
+        .text-halo {
+            text-shadow: 
+                -1.5px -1.5px 0 #ffffff,  
+                 1.5px -1.5px 0 #ffffff,
+                -1.5px  1.5px 0 #ffffff,
+                 1.5px  1.5px 0 #ffffff,
+                 0px -1.5px 0 #ffffff,
+                 0px  1.5px 0 #ffffff,
+                -1.5px  0px 0 #ffffff,
+                 1.5px  0px 0 #ffffff;
+        }
+
+        .maplibregl-popup {
+            z-index: 9999 !important;
+        }
+        
+        .maplibregl-popup-content {
+            padding: 0 !important;
+            border-radius: 0.75rem !important;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+            border: 1px solid #f3f4f6 !important;
+        }
+        .maplibregl-popup-close-button { display: none; }
+
+        @keyframes glow-pulse {
+            0%, 100% { background-color: #ffffff; border-color: #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+            50% { background-color: #e0f0ff; border-color: #4da3ff; box-shadow: 0 0 12px 0 rgba(0, 123, 255, 0.5); }
+        }
+        .btn-inactive {
+            animation: glow-pulse 2.5s infinite ease-in-out;
+        }
+        .btn-active {
+            animation: none;
+        }
+    </style>
+</head>
+<body class="relative text-main font-sans antialiased">
+
+<main style="display:none">
+  <h1>이태원 실시간 핫플 순위</h1>
+  <h2>맛집 순위</h2>
+  <p>이태원역 주변 인기 맛집을 네이버 실시간 검색량 기준으로 선정한 순위입니다.</p>
+  <h2>카페·베이커리 순위</h2>
+  <p>이태원역 주변 인기 카페와 베이커리 순위입니다.</p>
+  <h2>쇼핑·문화 순위</h2>
+  <p>이태원역 주변 인기 쇼핑 및 문화공간 순위입니다.</p>
+</main>
+
+    <div id="map" class="absolute inset-0 z-0"></div>
+
+    <div id="overview-guide" class="hidden absolute top-[76px] inset-x-0 mx-auto w-fit max-w-[90%] z-[100] bg-navy text-white text-[12px] sm:text-[13px] font-bold py-1.5 sm:py-2 px-4 sm:px-5 rounded-full shadow-lg pointer-events-auto cursor-pointer animate-bounce border-2 border-white text-center break-keep" onclick="this.classList.add('hidden')">
+        지도의 역을 클릭하여 핫플 순위를 확인하세요 👇
+    </div>
+
+    <div class="absolute inset-0 z-[200] pointer-events-none flex flex-col justify-between">
+        <div>
+            <header class="pointer-events-auto h-[64px] bg-navy flex items-center justify-between px-4 shadow-md w-full relative z-[9999]">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <img src="logo-spottr-header.svg" alt="스포터 spottr | 광고 없는 실시간 지역별 맛집 핫플 순위" class="h-6 sm:h-8 object-contain cursor-pointer shrink-0" onclick="window.location.href='/'">
+                    
+                    <div class="flex flex-col justify-center border-l border-white/20 pl-2 sm:pl-3 shrink-0">
+                        <div class="relative">
+                            <button onclick="toggleRegionMenu(event)" class="flex items-center gap-1 sm:gap-1.5 text-white text-[12px] sm:text-[13px] font-bold bg-white/15 hover:bg-white/25 px-2 sm:px-2.5 py-1.5 rounded-full border border-white/20 shadow-sm transition-all focus:outline-none whitespace-nowrap shrink-0">
+                                <svg class="w-3.5 h-3.5 text-white/90 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <span id="current-region-label" class="whitespace-nowrap">지역 선택</span>
+                                <svg class="w-3 h-3 text-white/80 shrink-0 ml-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="region-dropdown" class="absolute top-[110%] left-0 mt-1 w-28 bg-white rounded-lg shadow-2xl hidden border border-gray-200 overflow-hidden z-[9999] pointer-events-auto">
+                                <button id="dd-hongdae" onclick="changeRegion('홍대', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">홍대입구</button>
+                                <button id="dd-seongsu" onclick="changeRegion('성수', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">성수동</button>
+                                <button id="dd-itaewon" onclick="changeRegion('이태원', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">이태원</button>
+                                <button id="dd-euljiro" onclick="changeRegion('을지로', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">을지로</button>
+                                <button id="dd-apgujeong" onclick="changeRegion('압구정', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">압구정</button>
+                                <button id="dd-jamsil" onclick="changeRegion('잠실', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">잠실</button>
+                                <button id="dd-magok" onclick="changeRegion('마곡', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">마곡</button>
+                                <button id="dd-nowon" onclick="changeRegion('노원', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">노원역</button>
+                                <button id="dd-gangnam" onclick="changeRegion('강남', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">강남역</button>
+                                <button id="dd-cheonho" onclick="changeRegion('천호', event)" class="w-full text-left px-4 py-3 text-[13px] font-extrabold text-navy hover:bg-gray-50 border-b border-gray-100">천호역</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 mt-0.5 text-[10px] text-white/70 font-bold brand-title tracking-wide shrink-0">
+                            <span class="text-point animate-pulse text-[8px]">●</span> LIVE
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3 sm:gap-4 select-none pointer-events-auto">
+                    <button id="lang-toggle-btn" onclick="toggleLanguage(event)" class="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 text-white text-[11px] sm:text-[12px] font-bold shadow-sm transition-all focus:outline-none shrink-0">
+                        EN
+                    </button>
+                    
+                    <div class="flex flex-col items-end justify-center pr-1 cursor-pointer" onclick="handleAdminClick()">
+                        <div class="text-white text-[11px] sm:text-[13px] leading-[1.15] text-right tracking-tight" style="font-family: 'Montserrat', sans-serif; font-weight: bold;">
+                            No Ads. Real Trends
+                        </div>
+                        <div class="flex items-center gap-1 mt-1">
+                            <div class="w-3 sm:w-3.5 h-3 sm:h-3.5 bg-point rounded-full flex items-center justify-center">
+                                <svg class="w-2 sm:w-2.5 h-2 sm:h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="text-white text-[8px] sm:text-[9px] tracking-tight" style="font-family: 'Pretendard', sans-serif; font-weight: bold;">
+                                DATA-VERIFIED
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-3 w-full max-w-md mx-auto pointer-events-auto relative z-40">
+                <div id="tab-container" class="flex gap-2 overflow-x-auto no-scrollbar pb-1 select-none"></div>
+                <div id="error-msg" class="hidden mt-2 bg-red-50 text-red-600 text-xs font-bold p-2 rounded-md border border-red-100 shadow-sm text-center"></div>
+            </div>
+        </div>
+
+        <div class="w-full pb-4 pointer-events-auto flex flex-col items-center select-none relative z-40">
+            <button id="swipe-left" class="hidden absolute left-2 top-[40%] -translate-y-1/2 z-50 bg-black/30 hover:bg-black/50 text-white font-black rounded-full p-2.5 transition-opacity opacity-0 backdrop-blur-sm shadow-md" onclick="swipeCards('left')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            <button id="swipe-right" class="hidden absolute right-2 top-[40%] -translate-y-1/2 z-50 bg-black/30 hover:bg-black/50 text-white font-black rounded-full p-2.5 transition-opacity opacity-0 backdrop-blur-sm shadow-md" onclick="swipeCards('right')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+
+            <div id="cards-container" class="flex gap-3 px-4 w-full overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2">
+                </div>
+            <div class="px-5 text-center mt-0.5 w-full max-w-md pointer-events-auto">
+                <p id="desc-1" class="text-[12px] text-gray-600 font-semibold tracking-tight leading-snug bg-white/80 backdrop-blur-md py-1.5 px-3 rounded-lg shadow-sm border border-white/50">
+                    구글맵 평점과 네이버 실시간 검색량을 교차 검증하는 자동 로직으로,<br>
+                    광고와 어뷰징이 배제된 <span class="text-point font-black">100% 리얼 핫플</span>만을 실시간 업데이트합니다.
+                </p>
+                <p class="text-[9px] text-gray-500 font-medium mt-1.5 pb-0.5">
+                    <span id="desc-2-label">제휴 및 문의:</span> <a href="mailto:admin@spottr.kr" class="font-bold text-navy hover:underline">admin@spottr.kr</a>
+                </p>
+                <p class="text-[9px] text-gray-500 font-medium pb-1">Last Updated: April 7</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-dashboard" class="hidden absolute inset-0 z-[10000] bg-base flex flex-col pointer-events-auto overflow-hidden">
+        
+        <div class="bg-navy px-6 py-4 flex justify-between items-center shadow-md shrink-0">
+            <div>
+                <h2 class="text-xl font-black text-white brand-title">spottr ADMIN DASHBOARD</h2>
+                <p class="text-xs text-white/70 mt-1"><span id="admin-region-badge" class="bg-point text-white px-2 py-0.5 rounded mr-1">전체</span> 실시간 데이터 수동 보정</p>
+            </div>
+            <button onclick="document.getElementById('admin-dashboard').classList.add('hidden')" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded text-sm font-bold transition-colors">
+                닫기 ✕
+            </button>
+        </div>
+
+        <div class="px-6 py-3 bg-gray-100 border-b border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shrink-0">
+            <div class="flex items-center gap-5 text-sm font-bold text-gray-700">
+                <span class="text-navy">노출 카테고리 설정:</span>
+                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" value="식당/맛집" class="cat-checkbox w-4 h-4 text-point accent-point"> 식당/맛집</label>
+                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" value="카페/베이커리" class="cat-checkbox w-4 h-4 text-point accent-point"> 카페/베이커리</label>
+                <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" value="쇼핑/문화" class="cat-checkbox w-4 h-4 text-point accent-point"> 쇼핑/문화</label>
+            </div>
+            <button onclick="saveCategoryConfig(this)" class="bg-gray-800 text-white text-xs px-4 py-2 rounded shadow-sm hover:bg-black transition-colors w-full sm:w-auto">설정 저장</button>
+        </div>
+
+        <div class="p-6 shrink-0 bg-white border-b border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="text-sm font-bold text-gray-800">
+                수집 상태: <span id="admin-status" class="text-point">DB 연결 대기 중</span>
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <button id="btn-download-csv" onclick="downloadCSVFile()" class="hidden bg-green-600 text-white font-bold py-2.5 px-4 rounded shadow-sm hover:bg-green-700 transition-colors text-sm flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    CSV 다운로드
+                </button>
+                <button id="admin-update-btn" onclick="runBackendUpdate()" class="flex-1 sm:flex-none bg-point text-white font-bold py-2.5 px-6 rounded shadow-sm hover:bg-blue-600 transition-colors text-sm flex items-center justify-center gap-2">
+                    선택 지역 데이터 재수집
+                </button>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-auto p-6">
+            <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">분류</th>
+                            <th scope="col" class="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">순위</th>
+                            <th scope="col" class="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">상호명</th>
+                            <th scope="col" class="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">적용 키워드</th>
+                            <th scope="col" class="px-6 py-3 text-right font-bold text-gray-500 uppercase tracking-wider">검색량</th>
+                            <th scope="col" class="px-6 py-3 text-left font-bold text-gray-500 uppercase tracking-wider">대표 이미지 URL</th>
+                            <th scope="col" class="px-6 py-3 text-center font-bold text-gray-500 uppercase tracking-wider">수동 관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table-body" class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-500 font-medium">
+                                데이터를 불러오고 있습니다...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://mdpqzcwamhzxybldvctr.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_cBvE70DY9IG5SrNf01chWA_Yxn4pKSx';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        maptilersdk.config.apiKey = '0MQk1Z9FONFMeu7MkCDh';
+
+        let currentLang = 'KR';
+        const i18n = {
+            'KR': {
+                'region_select': '지역 선택',
+                'overview_guide': '지도의 역을 클릭하여 핫플 순위를 확인하세요 👇',
+                'region_홍대': '홍대입구',
+                'region_성수': '성수동',
+                'region_노원': '노원',
+                'region_마곡': '마곡',
+                'region_잠실': '잠실',
+                'region_이태원': '이태원',
+                'region_을지로': '을지로',
+                'region_압구정': '압구정',
+                'region_강남': '강남역',
+                'region_천호': '천호역',
+                'desc_1': '구글맵 평점과 네이버 실시간 검색량을 교차 검증하는 자동 로직으로,<br>광고와 어뷰징이 배제된 <span class="text-point font-black">100% 리얼 핫플</span>만을 실시간 업데이트합니다.',
+                'desc_2': '제휴 및 문의:',
+                'loading': '데이터를 불러오는 중입니다...',
+                'no_data': '데이터가 없습니다. 우측 상단 번개 로고를 5번 눌러 수집해주세요.',
+                'no_cat': '활성화된 카테고리가 없습니다.',
+                'search_vol': '최근 30일 검색량',
+                'blog_link': '네이버 블로그 ↗',
+                'cat_식당/맛집': '식당/맛집',
+                'cat_카페/베이커리': '카페/베이커리',
+                'cat_쇼핑/문화': '쇼핑/문화',
+                'rank_format': (rank) => `${rank}위`
+            },
+            'EN': {
+                'region_select': 'Region Select',
+                'overview_guide': 'Click a station on the map to check hotspot rankings 👇',
+                'region_홍대': 'Hongdae',
+                'region_성수': 'Seongsu',
+                'region_노원': 'Nowon',
+                'region_마곡': 'Magok',
+                'region_잠실': 'Jamsil',
+                'region_이태원': 'Itaewon',
+                'region_을지로': 'Euljiro',
+                'region_압구정': 'Apgujeong',
+                'region_강남': 'Gangnam',
+                'region_천호': 'Cheonho',
+                'desc_1': 'Using cross-validation of Google Maps ratings and real-time search volume,<br>we curate <span class="text-point font-black">100% authentic hotspots</span> free from ads every weekend.',
+                'desc_2': 'Contact:',
+                'loading': 'Loading data...',
+                'no_data': 'No data available. Please refresh or update.',
+                'no_cat': 'No active categories.',
+                'search_vol': '30-Day Search Vol.',
+                'blog_link': 'Naver Blog ↗',
+                'cat_식당/맛집': 'Food/Dining',
+                'cat_카페/베이커리': 'Cafe/Bakery',
+                'cat_쇼핑/문화': 'Shopping/Culture',
+                'rank_format': (rank) => `No.${rank}`
+            }
+        };
+
+        // =====================================================================
+        // CSV 데이터 연동 딕셔너리
+        // (첨부하신 CSV 파일의 C열:상호명, G열:영문명 데이터를 여기에 매핑해주시면 됩니다)
+        // =====================================================================
+        const EN_NAME_DICT = {
+            '크리스찬 디올': 'Christian Dior', '크리스찬디올': 'Christian Dior',
+            '포인트 오브 뷰': 'Point of View', '포인트오브뷰': 'Point of View',
+            '미키스시': 'Miki Sushi', '카페씨떼': 'Cafe Cite',
+            '허밍벨라': 'Humming Bella', '마망젤라또': 'Maman Gelato',
+            '카페시떼': 'Cafe Cite', '블루보틀': 'Blue Bottle', '뷰티플레이': 'Beauty Play',
+            '세스크멘슬': 'CESK MNSL', '카카오프렌즈': 'Kakao Friends', '아더에러': 'ADERERROR',
+            '에그타르트': 'Egg Tart', 'abc마트': 'ABC Mart', 'ABC마트': 'ABC Mart',
+            '애니메이트': 'animate', '올리브영': 'Olive Young', '커피랩': 'Coffee Lab',
+            '무신사': 'Musinsa', '스탠다드': 'Standard', '스파오': 'SPAO',
+            '팝마트': 'POP MART', '콜린': 'Colline', '콤마': 'Comma', '꼼마': 'Comma', '피오니': 'Peony',
+            '오브젝트': 'Object', '플래그십': 'Flagship', '언플러그드': 'Unplugged',
+            '베통': 'Beton', '테니': 'Tenne', '로우키': 'Lowkey', '베이글': 'Bagel',
+            '키스': 'KITH', '트리츠': 'Treats', '시떼': 'Cite', '타운': 'Town',
+            '스토어': 'Store', '베이커리': 'Bakery', '제과': 'Bakery', '디저트': 'Dessert', 
+            '팝업': 'Pop-up', '본점': 'Main Store', '성수점': 'Seongsu', '홍대점': 'Hongdae', '노원점': 'Nowon',
+            '카페': 'Cafe', '식당': 'Restaurant', '맛집': 'Eatery',
+
+            '스페이스K 서울': 'Space K Seoul',
+'방구방구문방구': 'Banggu Banggu Stationery',
+'산청숯불가든 마곡': 'Sancheong Charcoal Garden Magok',
+'거궁 마곡점': 'Geogung Magok',
+'일품 마곡점': 'Ilpum Magok',
+'마곡돈탐구소': 'Magok Don Tamguso',
+'마곡금고깃집': 'Magok Gold Meat House',
+'마곡상해루': 'Magok Shanghairu',
+'마곡숙성도': 'Magok Suksungdo',
+'로마옥 마곡': 'Romaok Magok',
+'라우라': 'Laura',
+'목로': 'Mokro',
+'어나더사이드': 'Another Side',
+'베이글리스트': 'Bagel List',
+'타르데마 베이커리 우장산점': 'Tardema Bakery Ujangsan',
+'Bakery LUNE (베이커리룬)': 'Bakery LUNE',
+'고드니': 'Godny',
+'파리크라상 이대서울병원점': 'Paris Croissant Ewha Womans Univ. Seoul Hospital',
+'르와조': 'Loiseau',
+'라크루뜨서울 본점': 'La Croute Seoul Main Store',
+'브릭샌드 원그로브점 Bricksand Onegrove': 'Bricksand Onegrove',
+'마곡 카페 디프커피': 'Magok Cafe Deep Coffee',
+'뉴발란스 키즈 2001아울렛 천호점': 'New Balance Kids 2001 Outlet Cheonho',
+'현대백화점 천호점': 'Hyundai Department Store Cheonho',
+'서울 풍납동 토성': 'Seoul Pungnap-dong Fortress',
+'파크랜드': 'Parkland',
+'송포어스': 'Song For Us',
+'천호경송': 'Cheonho Gyeongsong',
+'천호닭곰탕': 'Cheonho Chicken Soup',
+'오징어포차': 'Squid Pocha',
+'풀팬': 'Full Pan',
+'군산식당': 'Gunsan Restaurant',
+'천호돈': 'Cheonho Don',
+'푸지미곱창': 'Pujimi Gopchang',
+'천호대팔이네': 'Cheonho Daepaline',
+'로니로티천호점': 'Loni Lottie Cheonho',
+'안녕식당': 'Annyeong Restaurant',
+'헤르츠로그': 'Herzlog',
+'천호하츠베이커리': 'Cheonho Hatz Bakery',
+'썸머러너': 'Summer Runner',
+'오뜨르베이커리': 'Autre Bakery',
+'천호블랑제리': 'Cheonho Boulangerie',
+'아이스베리 천호점': 'Iceberry Cheonho',
+'설빙 천호로데오점': 'Sulbing Cheonho Rodeo',
+'베스킨라빈스 풍납점': 'Baskin Robbins Pungnap',
+'브랜뉴하이몬드': 'Brand New Hi-Mond',
+'카페알마': 'Cafe Alma',
+'교보문고 강남점': 'Kyobo Book Centre Gangnam',
+'뉴뉴 강남점 (NYUNYU)': 'NYUNYU Gangnam',
+'나이키 강남점': 'Nike Gangnam',
+'키이스케이프 우주라이크': 'Keyescape WouldULike',
+'무인양품 강남점': 'MUJI Gangnam',
+'스파오 강남점': 'SPAO Gangnam',
+'에잇세컨즈 강남대로점': '8 Seconds Gangnam-daero',
+'우주가챠 강남점': 'Uju Gacha Gangnam',
+'지오다노 강남점': 'Giordano Gangnam',
+'ZARA Gangnam Station': 'ZARA Gangnam Station',
+'강남진해장': 'Gangnam Jinhaejang',
+'하이디라오 서초지점': 'Haidilao Seocho',
+'강남떡도리탕': 'Gangnam Tteokdoritang',
+'알부자 강남본점': 'Albuja Gangnam Main Store',
+'땀땀': 'TamTam',
+'강남쿄코코': 'Gangnam Kyokoko',
+'다몽집 | damongzip': 'Damongzip',
+'강남소보키': 'Gangnam Soboki',
+'강남고메램': 'Gangnam Gourmet Lamb',
+'강남화기애애': 'Gangnam Hwagiaeae',
+'트리오드': 'Triode',
+'알베르 강남': 'Alver Gangnam',
+'퍼스트커피랩': 'First Coffee Lab',
+'썸띵어바웃커피': 'Something About Coffee',
+'강남호랑가시': 'Gangnam Horanggasi',
+'강남한과와락': 'Gangnam Hangwa Warak',
+'힉스커피(HIGGS COFFEE)': 'HIGGS COFFEE',
+'까치화방 카페 강남점 CACHI CAFE GANGNAM 江南駅カフェ 江南站咖啡厅': 'Cachi Cafe Gangnam',
+'라브리크': 'Labrique',
+'커피빈 강남대로점': 'The Coffee Bean & Tea Leaf Gangnam-daero',
+'롯데월드몰': 'Lotte World Mall',
+'롯데월드': 'Lotte World',
+'석촌호수': 'Seokchon Lake',
+'자라 롯데월드몰점': 'ZARA Lotte World Mall',
+'다이소 송파구청점': 'Daiso Songpa District Office',
+'진저베어': 'Ginger Bear',
+'롯데뮤지엄': 'Lotte Museum',
+'롯데월드타워': 'Lotte World Tower',
+'도토리숲 (지브리샵)': 'Ghibli Shop Dotori Forest',
+'COS': 'COS',
+'잠실바이킹스워프': 'Vikings Wharf Jamsil',
+'바이킹스워프': 'Vikings Wharf',
+'애슐리퀸즈 잠실롯데캐슬점': 'Ashley Queens Jamsil Lotte Castle',
+'잠실빌즈': 'Bills Jamsil',
+'잠실MIP': 'MIP Jamsil',
+'별미곱창': 'Byeolmi Gopchang',
+'잠실메밀집': 'Jamsil Memil-jip',
+'쌤쌤쌤 롯데월드몰점': 'Sam Sam Sam Lotte World Mall',
+'잠실아그라': 'Agra Jamsil',
+'잠실오레노라멘': 'Oreno Ramen Jamsil',
+'단디': 'Dandi',
+'잠실우프': 'Oof Jamsil',
+'잠실미크': 'Meak Jamsil',
+'잠실봉땅': 'Bontemps Jamsil',
+'잠실터틀힙': 'Turtlehip Jamsil',
+'잠실뷰클런즈': 'Viewclanz Jamsil',
+'잠실키친205': 'Kitchen 205 Jamsil',
+'잠실디저티스트': 'Dessertist Jamsil',
+'잠실로얄테라스가든': 'Royal Terrace Garden Jamsil',
+'노티드 잠실롯데월드몰 ❘ Cafe Knotted Jamsil Lotte World Mall ❘ カフェ ノーティッド 蚕室ロッテワールドモール店': 'Cafe Knotted Jamsil Lotte World Mall',
+'잠실이성당': 'Lee Sung Dang Jamsil',
+'파티클': 'Particle',
+'스튜디오 더수트': 'Studio The Suit',
+'K현대미술관': 'K Museum of Contemporary Art',
+'피규어뮤지엄w': 'Figure Museum W',
+'위글위글집 도산': 'Wiggle Wiggle Zip Dosan',
+'도산 안창호 기념관 & 기념사업회': 'Dosan Ahn Chang-ho Memorial Hall',
+'호림박물관 신사분관': 'Horim Museum Sinsa Annex',
+'쎄덱 강남점': 'SEDEC Gangnam',
+'갤러리원': 'Gallery Won',
+'수트서플라이 청담점': 'Suitsupply Cheongdam',
+'압구정하루': 'Apgujung Haru',
+'묵전': 'Mukjeon',
+'신미식당': 'Sinmi Restaurant',
+'압구정제주집': 'Apgujung Jeju-jip',
+'까폼 ครับผม Krappom': 'Krappom',
+'압구정연탄공장': 'Apgujung Yeontan Gongjang',
+'닭으로가 압구정 본점': 'Dakuroga Apgujung Main Store',
+'한일관 압구정점': 'Hanilkwan Apgujung',
+'압구정도슬박': 'Apgujung Doseulbak',
+'어성일식': 'Eoseong Ilsik',
+'부케 드 뺑': 'Bouquet de Pain',
+'압구정투아투아': 'Apgujung Tua Tua',
+'압구정이웃집통통이': 'Apgujung Tonton',
+'커피빈 압구정로데오점': 'The Coffee Bean & Tea Leaf Apgujung Rodeo',
+'노아베이커리 압구정점': 'Noah Bakery Apgujung',
+'블루보틀 압구정 카페': 'Blue Bottle Coffee Apgujung',
+'플링크 압구정 Flink Apgujung': 'Flink Apgujung',
+'무니 압구정본점': 'Moonee Apgujung Main Store',
+'카멜커피 도산점': 'Camel Coffee Dosan',
+'폴바셋 현대모터스튜디오서울점': 'Paul Bassett Hyundai Motorstudio Seoul',
+'마인띵스': 'Mind Things',
+'광장시장': 'Gwangjang Market',
+'뉴뉴 명동점': 'NYUNYU Myeongdong',
+'남산골한옥마을': 'Namsangol Hanok Village',
+'한국의 집': 'Korea House',
+'믹순 플래그십 스토어 명동 (Mixsoon Flagship Store)': 'Mixsoon Flagship Store Myeongdong',
+'BALBAL VINTAGE': 'BALBAL VINTAGE',
+'명동관광정보센터': 'Myeongdong Tourist Information Center',
+'코닥 광장마켓점': 'Kodak Gwangjang Market',
+'사뿐 명동스테이지': 'Sappun Myeongdong Stage',
+'을지다락': 'Euljidarak',
+'을지깐깐': 'Euljikankan',
+'진작': 'Jinjak',
+'을지로오덕장': 'Euljiro Odeokjang',
+'전주집': 'Jeonju-jip',
+'오봉집 종로점': 'Obong-jip Jongno',
+'빠삼': 'Bbassam',
+'이남장 명동점': 'Inamjang Myeongdong',
+'을지로다케오호르몬': 'Euljiro Takeo Hormone',
+'청기와타운 을지로점': 'Cheonggiwa Town Euljiro',
+'커피한약방': 'Coffee Hanyakbang',
+'혜민당': 'Hyemindang',
+'을지로공간갑': 'Euljiro Gonggangap',
+'을지로빠우': 'Euljiro Ppau',
+'아소토베이커리': 'Asoto Bakery',
+'을지로콘티뉴이티': 'Euljiro Continuity',
+'그라츠 과자점': 'Gratz Confectionery',
+'챔프커피 을지로': 'Champ Coffee Euljiro',
+'아티제 센터원점': 'Artisee Center1',
+'카페 느티': 'Cafe Neuti',
+'이태원시장': 'Itaewon Market',
+'노스비치 (NORTH BEACH)': 'NORTH BEACH',
+'현대카드 바이닐 앤 플라스틱': 'Hyundai Card Vinyl & Plastic',
+'리움미술관': 'Leeum Museum of Art',
+'이태원관광특구': 'Itaewon Special Tourist Zone',
+'비이커 한남플래그십스토어': 'Beaker Hannam Flagship Store',
+'이태원 만물상': 'Itaewon Manmulsang',
+'TWL Shop': 'TWL Shop',
+'COS': 'COS',
+'맥슬러': 'Maxler',
+'이태원사랑방': 'Itaewon Sarangbang',
+'이태원맛집 이태원화로 | korean bbq | レストラン | korean bbq restaurant | 焼肉': 'Itaewon hwaro',
+'야상해': 'Yasanghae',
+'이태원주식': 'Itaewon Jusik',
+'바다식당': 'Bada Restaurant',
+'바토스 이태원점': 'Vatos Itaewon',
+'한우물 | HANWOOMOOL Itaewon | Korean Beef Omakase | 韓国 和牛 オマカセ | 韩国 韩牛套餐': 'Hanwoomool Itaewon',
+'샘라이언스 이태원': 'Sam Ryans Itaewon',
+'Tapasbar Itaewon 타파스바': 'Tapasbar Itaewon',
+'이태원천상 이태원본점': 'Itaewon Cheonsang',
+'KYERI 키에리': 'KYERI',
+'알페도': 'Alpedo',
+'Côté jardin (꾸띠자르당)': 'Côté Jardin',
+'미니마이즈': 'Minimize',
+'도나르': 'Donar',
+'더미쓰리(The Mi Three)': 'The Mi Three',
+'패션5': 'Passion 5',
+'챔프커피 이태원': 'Champ Coffee Itaewon',
+'레인리포트 경리단': 'Rain Report Gyeongnidan',
+'오월의종 한남점': 'Mays Bell Hannam',
+'성수무신사': 'Seongsu Musinsa',
+'성수디올': 'Seongsu Dior',
+'29CM KIDS': '29CM KIDS',
+'EQL SEONGSU GROVE': 'EQL SEONGSU GROVE',
+'POINT OF VIEW, 포인트 오브 뷰': 'Point of View',
+'키스 서울': 'Kith Seoul',
+'아더에러 성수 스페이스': 'Ader Error Seongsu Space',
+'LCDC Seoul': 'LCDC Seoul',
+'성수마뗑킴': 'Seongsu Matin Kim',
+'아도르 성수': 'Adoir Seongsu',
+'성수족발': 'Seongsu Jokbal',
+'성수미키스시': 'Seongsu Miki Sushi',
+'마리오네': 'Marione',
+'죠죠': 'Jojo',
+'스케줄성수': 'Schedule Seongsu',
+'성수싹쓰리곱창': 'Seongsu Ssak-sseuri Gopchang',
+'탐광': 'Tamkwang',
+'안목 성수': 'Anmok Seongsu',
+'꿉당 성수점': 'Kkupdang Seongsu',
+'문화식당 성수점': 'Munhwa Restaurant Seongsu',
+'베통': 'Betton',
+'한정선 성수점': 'Hanjeongseon Seongsu',
+'성수연방': 'Seongsu Yeonbang',
+'성수동 대림창고 갤러리': 'Daelim Warehouse Gallery',
+'마망젤라또 성수점': 'Maman Gelato Seongsu',
+'성수테니': 'Seongsu Tenne',
+'어니언 성수점': 'Onion Seongsu',
+'성수본지르르': 'Seongsu Bonzirirr',
+'로우키 성수': 'Lowkey Seongsu',
+'코끼리베이글 성수': 'Kokkiri Bagel Seongsu',
+'홍대무신사': 'Hongdae Musinsa',
+'애니메이트 홍대점': 'Animate Hongdae',
+'올리브영 홍대 타운': 'Olive Young Hongdae Town',
+'나이키 스타일 홍대': 'Nike Style Hongdae',
+'스파오 홍대점': 'SPAO Hongdae',
+'MODEMAN 모드맨': 'MODEMAN',
+'오브젝트 서교점': 'Object Seogyo',
+'언플러그드 홍대 (Unplugged Hongdae)': 'Unplugged Hongdae',
+'수바코 홍대점': 'Subako Hongdae',
+'착한구두 홍대 플래그쉽 스토어': 'Chakhan Gudu Hongdae Flagship Store',
+'육지 홍대': 'Yukji Hongdae',
+'홍대하이디라오': 'Haidilao Hongdae',
+'홍대돈부리 본점': 'Hongdae Donburi Main Store',
+'도적 홍대 본점': 'Dojeok Hongdae Main Store',
+'삿뽀로 홍대점': 'Sapporo Hongdae',
+'홍대카미야': 'Hongdae Kamiya',
+'육몽 홍대본점': 'Yukmong Hongdae Main Store',
+'홍스쭈꾸미 홍대본점': 'Hongs Jjukkumi Hongdae Main Store',
+'홍대도마': 'Hongdae Doma',
+'연하동': 'Yeonhadong',
+'아오이토리': 'Aoi Tori',
+'피오니': 'Peony',
+'홍대신이도가': 'Hongdae Shinidoga',
+'이미커피': 'Imi Coffee',
+'콜린 서교동점': 'Colline Seogyo',
+'코코로카라 kokorokara': 'Kokorokara',
+'베니케이크': 'Benny Cake',
+'홍대공명': 'Hongdae Gongmyeong',
+'베이글랜드 홍대점': 'Bagel Land Hongdae',
+'허밍벨라': 'Humming Bella',
+'유니클로 롯데백화점노원점': 'Uniqlo Lotte Department Store Nowon',
+'나이키 롯데노원점': 'Nike Lotte Nowon',
+'샤넬 롯데백화점 노원점': 'Chanel Lotte Department Store Nowon',
+'노원쭈꾸미달인': 'Nowon Jjukkumi Dalin',
+'노원목고기집': 'Nowon Mokgogijip',
+'노원위안바오': 'Nowon Yuanbao',
+'털보고된이 노원본점': 'Teolbo Godeny Nowon Main Store',
+'또와순두부': 'Ttowa Sundubu',
+'노원돈부리': 'Nowon Donburi',
+'노원동선식당': 'Nowon Dongseon Restaurant',
+'감동식당': 'Gamdong Restaurant',
+'로니로티 노원점': 'Loni Lottie Nowon',
+'제임스키친': 'James Kitchen',
+'빈스링': 'Beans Ring',
+'샛별제과': 'Saetbyeol Bakery',
+'스윗레시피': 'Sweet Recipe',
+'감각 커피전문점': 'Gamgak Coffee',
+'물레': 'Mulle',
+'오피커피': 'Offy Coffee',
+'베스코': 'Besco',
+'시드누아노원본점': 'Seednoir Nowon Main Store',
+'시즌': 'Season',
+'커피나무': 'Coffee Tree',
+
+            
+            // --- 아래 예시처럼 CSV 데이터를 복사해서 넣어주세요 ---
+            // '부케 드 뺑': 'Bouquet de pain',
+            // '압구정연탄공장': 'Apgujeong Yeontan Factory',
+            // '잠실오레노라멘': 'Oreno Ramen Jamsil',
+        };
+
+        function getEnglishName(text) {
+            // 1. CSV 기반 사전에 완벽히 일치하는 상호명이 있으면 최우선 반환
+            if (EN_NAME_DICT[text]) {
+                return EN_NAME_DICT[text];
+            }
+
+            // 2. 부분 일치 치환
+            let result = text;
+            for (const [ko, en] of Object.entries(EN_NAME_DICT)) {
+                result = result.replace(new RegExp(ko, 'g'), en + ' ');
+            }
+            
+            // 3. 딕셔너리에 없는 한글은 기존의 로마자 표기법으로 자동 변환
+            const cho = ["g","kk","n","d","tt","r","m","b","pp","s","ss","","j","jj","ch","k","t","p","h"];
+            const jung = ["a","ae","ya","yae","eo","e","yeo","ye","o","wa","wae","oe","yo","u","wo","we","wi","yu","eu","ui","i"];
+            const jong = ["","k","kk","gs","n","nj","nh","d","l","lg","lm","lb","ls","lt","lp","lh","m","b","bs","s","ss","ng","j","ch","k","t","p","h"];
+            
+            let romanized = "";
+            for (let i = 0; i < result.length; i++) {
+                let code = result.charCodeAt(i);
+                if (code >= 44032 && code <= 55203) {
+                    code -= 44032;
+                    let choIdx = Math.floor(code / 588);
+                    let jungIdx = Math.floor((code - (choIdx * 588)) / 28);
+                    let jongIdx = code % 28;
+                    let syllable = cho[choIdx] + jung[jungIdx] + jong[jongIdx];
+                    romanized += syllable;
+                } else {
+                    romanized += result.charAt(i);
+                }
+            }
+            
+            return romanized.replace(/\b[a-z]/g, char => char.toUpperCase()).replace(/\s+/g, ' ').trim();
+        }
+
+        const ALL_CATEGORIES = ['식당/맛집', '카페/베이커리', '쇼핑/문화'];
+        let activeCategories = [...ALL_CATEGORIES];
+        let currentSelectedCategory = null; 
+        
+        let allPlacesData = []; 
+        let map;
+        let currentMarkers = [];
+        let isDraggingCard = false;
+        
+        let currentRegion = null; 
+        let isOverview = false;
+        let overviewMarkers = [];
+
+        let adminClickCount = 0;
+        let adminClickTimer = null;
+        let adminAccessToken = '';
+
+        const SUBWAY_DATA = {
+            '성수': { name: '성수역', nameEn: 'Seongsu', lat: 37.5445888, lng: 127.0559664, color: '#00A84D' }, 
+            '홍대': { name: '홍대입구역', nameEn: 'Hongik Univ.', lat: 37.556037, lng: 126.922974, color: '#00A84D' },
+            '노원': { name: '노원역', nameEn: 'Nowon', lat: 37.656201, lng: 127.062820, color: '#00A4E3' },
+            '마곡': { name: '마곡역', nameEn: 'Magok', lat: 37.558891, lng: 126.836867, color: '#996CAC' },
+            '잠실': { name: '잠실역', nameEn: 'Jamsil', lat: 37.514430, lng: 127.104568, color: '#00A84D' },
+            '이태원': { name: '이태원역', nameEn: 'Itaewon', lat: 37.534508, lng: 126.993914, color: '#C6841D' },
+            '을지로': { name: '을지로3가역', nameEn: 'Euljiro 3-ga', lat: 37.566251, lng: 126.992219, color: '#00A84D' },
+            '압구정': { name: '압구정로데오역', nameEn: 'Apgujeong Rodeo', lat: 37.527431, lng: 127.040561, color: '#F5A200' },
+            '강남': { name: '강남역', nameEn: 'Gangnam', lat: 37.497942, lng: 127.027621, color: '#00A84D' },
+            '천호': { name: '천호역', nameEn: 'Cheonho', lat: 37.538397, lng: 127.123532, color: '#E6186C' }
+        };
+        let subwayMarker = null;
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            // 1. 지역 선택 버튼 번역 적용
+            if (currentRegion) {
+                document.getElementById('current-region-label').innerHTML = i18n[currentLang]['region_' + currentRegion];
+            } else {
+                document.getElementById('current-region-label').innerHTML = i18n[currentLang]['region_select'];
+            }
+            
+            document.getElementById('desc-1').innerHTML = i18n[currentLang].desc_1;
+            document.getElementById('desc-2-label').innerHTML = i18n[currentLang].desc_2;
+            
+            // 2. 플로팅 배너 번역 적용
+            const guideBanner = document.getElementById('overview-guide');
+            if(guideBanner) {
+                guideBanner.innerText = i18n[currentLang].overview_guide;
+            }
+            
+            document.getElementById('dd-hongdae').innerText = i18n[currentLang]['region_홍대'];
+            document.getElementById('dd-seongsu').innerText = i18n[currentLang]['region_성수'];
+            document.getElementById('dd-nowon').innerText = i18n[currentLang]['region_노원'];
+            document.getElementById('dd-magok').innerText = i18n[currentLang]['region_마곡'];
+            document.getElementById('dd-jamsil').innerText = i18n[currentLang]['region_잠실'];
+            document.getElementById('dd-itaewon').innerText = i18n[currentLang]['region_이태원'];
+            document.getElementById('dd-euljiro').innerText = i18n[currentLang]['region_을지로'];
+            document.getElementById('dd-apgujeong').innerText = i18n[currentLang]['region_압구정'];
+            document.getElementById('dd-gangnam').innerText = i18n[currentLang]['region_강남'];
+            document.getElementById('dd-cheonho').innerText = i18n[currentLang]['region_천호'];
+
+            // 3. 지도 마커 영문화 재렌더링 처리
+            if (map) {
+                if (isOverview) {
+                    renderOverviewMarkers();
+                } else {
+                    renderSubwayMarker();
+                }
+            }
+
+            if (activeCategories.length > 0 && allPlacesData.length > 0 && !isOverview) {
+                renderCategoryTabs();
+                switchTab(currentSelectedCategory || activeCategories[0]);
+            }
+        }
+
+        function toggleLanguage(event) {
+            if (event) event.stopPropagation();
+            if (currentLang === 'KR') {
+                setLanguage('EN');
+                document.getElementById('lang-toggle-btn').innerText = 'KR';
+            } else {
+                setLanguage('KR');
+                document.getElementById('lang-toggle-btn').innerText = 'EN';
+            }
+        }
+
+        function handleAdminClick() {
+            adminClickCount++;
+            if (adminClickCount === 1) adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 2000);
+            if (adminClickCount === 5) {
+                clearTimeout(adminClickTimer);
+                adminClickCount = 0;
+                openAdminAuth();
+            }
+        }
+
+        async function openAdminAuth() {
+            if (adminAccessToken) {
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                return;
+            }
+            const adminId = prompt('[ADMIN] 관리자 ID(이메일):');
+            if (!adminId) return;
+            const adminPwd = prompt('[ADMIN] 관리자 비밀번호:');
+            if (!adminPwd) return;
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email: adminId, password: adminPwd });
+            if (error) return alert('인증 실패');
+            adminAccessToken = data.session.access_token;
+            document.getElementById('admin-dashboard').classList.remove('hidden');
+        }
+
+        function toggleRegionMenu(event) {
+            event.stopPropagation();
+            document.getElementById('region-dropdown').classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('region-dropdown');
+            if (!dropdown.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        function changeRegion(region, event) {
+            if(event) event.stopPropagation();
+            currentRegion = region;
+            isOverview = false;
+            
+            document.getElementById('region-dropdown').classList.add('hidden');
+            document.getElementById('overview-guide').classList.add('hidden');
+            document.getElementById('current-region-label').innerText = i18n[currentLang]['region_' + region];
+            document.getElementById('admin-region-badge').innerText = region;
+            
+            if (map) {
+                if (map.getLayer('seoul-boundary-fill')) {
+                    map.setLayoutProperty('seoul-boundary-fill', 'visibility', 'none');
+                }
+
+                const coords = region === '성수' ? [127.0570, 37.5425] : 
+                               region === '홍대' ? [126.922974, 37.556037] : 
+                               region === '마곡' ? [126.836867, 37.558891] : 
+                               region === '잠실' ? [127.104568, 37.514430] : 
+                               region === '이태원' ? [126.993914, 37.534508] :
+                               region === '을지로' ? [126.992219, 37.566251] :
+                               region === '압구정' ? [127.040561, 37.527431] :
+                               region === '강남' ? [127.027621, 37.497942] :
+                               region === '천호' ? [127.123532, 37.538397] :
+                               [127.063338, 37.656367];
+                map.flyTo({ center: coords, zoom: 15.5, duration: 1200 });
+                
+                overviewMarkers.forEach(m => m.remove());
+                overviewMarkers = [];
+                
+                renderSubwayMarker();
+            }
+
+            document.getElementById('admin-status').innerText = `[${region}] DB 로딩 중...`;
+            document.getElementById('admin-status').className = 'text-point';
+            document.getElementById('btn-download-csv').classList.add('hidden');
+
+            allPlacesData = [];
+            currentSelectedCategory = null;
+            document.getElementById('cards-container').innerHTML = `<div class="w-full text-center text-[12px] font-bold text-sub bg-white py-4 rounded-xl shadow-sm border border-gray-100">${i18n[currentLang].loading}</div>`;
+            document.getElementById('admin-table-body').innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500 font-medium">${i18n[currentLang].loading}</td></tr>`;
+
+            fetchPlaces();
+        }
+
+        function renderOverviewMarkers() {
+            overviewMarkers.forEach(m => m.remove());
+            overviewMarkers = [];
+            const bounds = new maptilersdk.LngLatBounds();
+
+            Object.entries(SUBWAY_DATA).forEach(([regionKey, data]) => {
+                const el = document.createElement('div');
+                el.className = 'flex flex-col items-center select-none cursor-pointer z-50 transition-transform hover:scale-110';
+                
+                const shortName = currentLang === 'EN' ? data.nameEn : data.name;
+
+                const iconHtml = `
+                    <div class="relative w-[32px] h-[32px] flex items-center justify-center drop-shadow-md bg-navy rounded-full border-[1.5px] border-white shadow-lg">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM15.5 16L14 14.5H10L8.5 16H6.5L8.5 13.5V10C8.5 8.62 9.62 7.5 11 7.5H13C14.38 7.5 15.5 8.62 15.5 10V13.5L17.5 16H15.5ZM12 13.5C11.17 13.5 10.5 12.83 10.5 12C10.5 11.17 11.17 10.5 12 10.5C12.83 10.5 13.5 11.17 13.5 12C13.5 12.83 12.83 13.5 12 13.5Z" fill="white"/>
+                        </svg>
+                        <div class="absolute -bottom-0.5 -right-0.5 w-[10px] h-[10px] rounded-full border-[1.5px] border-white shadow-sm" style="background-color: ${data.color};"></div>
+                    </div>
+                `;
+
+                const textHtmlTop = `
+                    <div class="mb-1 flex flex-col items-center leading-tight">
+                        <span class="text-[12px] font-bold text-[#333333] text-halo tracking-tight">${shortName}</span>
+                    </div>
+                `;
+
+                const textHtmlBottom = `
+                    <div class="mt-1 flex flex-col items-center leading-tight">
+                        <span class="text-[12px] font-bold text-[#333333] text-halo tracking-tight">${shortName}</span>
+                    </div>
+                `;
+
+                if (regionKey === '성수') {
+                    el.innerHTML = textHtmlTop + iconHtml;
+                } else {
+                    el.innerHTML = iconHtml + textHtmlBottom;
+                }
+                
+                el.onclick = (e) => {
+                    e.stopPropagation();
+                    changeRegion(regionKey);
+                };
+
+                const marker = new maptilersdk.Marker({ element: el, anchor: 'center' })
+                    .setLngLat([data.lng, data.lat])
+                    .addTo(map);
+                overviewMarkers.push(marker);
+                bounds.extend([data.lng, data.lat]);
+            });
+
+            if (map && overviewMarkers.length > 0) {
+                const isMobile = window.innerWidth < 640;
+                const padding = isMobile 
+                    ? { top: 80, bottom: 240, left: 40, right: 40 }
+                    : { top: 100, bottom: 200, left: 150, right: 150 };
+                
+                map.fitBounds(bounds, { padding: padding, duration: 800, maxZoom: 13.5 });
+            }
+        }
+
+        function renderSubwayMarker() {
+            if (subwayMarker) subwayMarker.remove();
+            
+            const data = SUBWAY_DATA[currentRegion];
+            if (!data || !map) return;
+
+            const el = document.createElement('div');
+            el.className = 'flex flex-col items-center select-none pointer-events-none z-0 opacity-90';
+            
+            el.innerHTML = `
+                <div class="relative w-[28px] h-[28px] flex items-center justify-center drop-shadow-sm bg-navy rounded-full border border-white">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM15.5 16L14 14.5H10L8.5 16H6.5L8.5 13.5V10C8.5 8.62 9.62 7.5 11 7.5H13C14.38 7.5 15.5 8.62 15.5 10V13.5L17.5 16H15.5ZM12 13.5C11.17 13.5 10.5 12.83 10.5 12C10.5 11.17 11.17 10.5 12 10.5C12.83 10.5 13.5 11.17 13.5 12C13.5 12.83 12.83 13.5 12 13.5Z" fill="white"/>
+                    </svg>
+                    <div class="absolute -bottom-0.5 -right-0.5 w-[9px] h-[9px] rounded-full border-[1.5px] border-white shadow-sm" style="background-color: ${data.color};"></div>
+                </div>
+                <div class="mt-1 flex flex-col items-center leading-tight">
+                    <span class="text-[12px] font-bold text-[#333333] text-halo tracking-tight">${currentLang === 'EN' ? data.nameEn : data.name}</span>
+                </div>
+            `;
+
+            subwayMarker = new maptilersdk.Marker({ element: el, anchor: 'center' })
+                .setLngLat([data.lng, data.lat])
+                .addTo(map);
+        }
+
+        function initMap() {
+            let coords, zoomLevel;
+            if (isOverview) {
+                coords = [126.985, 37.55]; 
+                zoomLevel = 10.5;
+            } else {
+                coords = currentRegion === '성수' ? [127.0570, 37.5425] : 
+                         currentRegion === '홍대' ? [126.922974, 37.556037] : 
+                         currentRegion === '마곡' ? [126.836867, 37.558891] : 
+                         currentRegion === '잠실' ? [127.104568, 37.514430] : 
+                         currentRegion === '이태원' ? [126.993914, 37.534508] :
+                         currentRegion === '을지로' ? [126.992219, 37.566251] :
+                         currentRegion === '압구정' ? [127.040561, 37.527431] :
+                         currentRegion === '강남' ? [127.027621, 37.497942] :
+                         currentRegion === '천호' ? [127.123532, 37.538397] :
+                         [127.063338, 37.656367];
+                zoomLevel = 15.5;
+            }
+
+            map = new maptilersdk.Map({
+                container: 'map',
+                style: "dataviz-light",
+                center: coords,
+                zoom: zoomLevel,
+                controls: false
+            });
+
+            map.on('style.load', () => {
+                const layers = map.getStyle().layers;
+                layers.forEach(layer => {
+                    if (layer.id.toLowerCase().includes('water') && layer.type === 'fill') {
+                        map.setPaintProperty(layer.id, 'fill-color', '#B2D8E5');
+                    }
+                });
+
+                if (!map.getSource('seoul-boundary')) {
+                    map.addSource('seoul-boundary', {
+                        'type': 'geojson',
+                        'data': 'https://raw.githubusercontent.com/southkorea/seoul-maps/master/juso/2015/json/seoul_municipalities_geo_simple.json'
+                    });
+                    
+                    map.addLayer({
+                        'id': 'seoul-boundary-fill',
+                        'type': 'fill',
+                        'source': 'seoul-boundary',
+                        'paint': {
+                            'fill-color': '#7FB3D5', 
+                            'fill-opacity': 0.15
+                        }
+                    });
+                }
+
+                if (isOverview) {
+                    renderOverviewMarkers();
+                } else {
+                    renderSubwayMarker();
+                    if (map.getLayer('seoul-boundary-fill')) {
+                        map.setLayoutProperty('seoul-boundary-fill', 'visibility', 'none');
+                    }
+                }
+            });
+        }
+
+        async function fetchPlaces() {
+            if (isOverview) return; 
+            
+            try {
+                if(!map) initMap();
+                
+                const { data, error } = await supabaseClient
+                    .from('places')
+                    .select('*')
+                    .eq('region', currentRegion);
+
+                if (error) throw error;
+                
+                if (!data || data.length === 0 || data.filter(d => d.no !== 0).length === 0) {
+                     document.getElementById('cards-container').innerHTML = `<div class="w-full text-center text-[12px] font-bold text-sub bg-white py-4 rounded-xl shadow-sm border border-gray-100">${i18n[currentLang].no_data}</div>`;
+                     allPlacesData = [];
+                     updateMapMarkers([]);
+                     renderAdminTableFromData(); 
+                     return;
+                }
+
+                const configRow = data.find(d => d.no === 0 && d.name === 'CONFIG');
+                if (configRow && configRow.extracted_kw) {
+                    activeCategories = configRow.extracted_kw.split(',').map(s => s.trim());
+                } else {
+                    activeCategories = [...ALL_CATEGORIES];
+                }
+
+                allPlacesData = data.filter(d => d.no !== 0).sort((a, b) => {
+                    if (a.type < b.type) return -1;
+                    if (a.type > b.type) return 1;
+                    return b.trend_score - a.trend_score;
+                });
+
+                renderCategoryTabs();
+                updateAdminCategoryCheckboxes();
+                renderAdminTableFromData(); 
+                document.getElementById('admin-status').innerText = `[${currentRegion}] DB 로드 완료`;
+                document.getElementById('admin-status').className = 'text-green-600 font-bold';
+
+                if (allPlacesData.length > 0) {
+                    document.getElementById('btn-download-csv').classList.remove('hidden');
+                }
+
+                if (activeCategories.length > 0) {
+                    switchTab(currentSelectedCategory || activeCategories[0]);
+                } else {
+                    document.getElementById('cards-container').innerHTML = `<div class="w-full text-center text-[12px] font-bold text-sub bg-white py-4 rounded-xl shadow-sm border border-gray-100">${i18n[currentLang].no_cat}</div>`;
+                    updateMapMarkers([]);
+                }
+            } catch (error) {
+                console.error('Data Error:', error.message);
+                document.getElementById('cards-container').innerHTML = `<div class="w-full text-center text-[12px] font-bold text-red-500 bg-white py-4 rounded-xl shadow-sm border border-red-100">오류가 발생했습니다: ${error.message}</div>`;
+            }
+        }
+
+        function renderCategoryTabs() {
+            const container = document.getElementById('tab-container');
+            container.innerHTML = '';
+            
+            activeCategories.forEach(cat => {
+                const icon = cat.includes('식당') ? '🍔' : cat.includes('카페') ? '☕' : '🛍️';
+                const safeId = 'tab-' + cat.replace(/[\/\s]/g, '');
+                const displayName = i18n[currentLang]['cat_' + cat] || cat;
+                
+                container.innerHTML += `
+                    <button onclick="switchTab('${cat}')" id="${safeId}" class="btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap text-gray-500 border transition-colors cursor-pointer shrink-0">
+                        ${icon} ${displayName}
+                    </button>
+                `;
+            });
+        }
+
+        function updateAdminCategoryCheckboxes() {
+            document.querySelectorAll('.cat-checkbox').forEach(cb => {
+                cb.checked = activeCategories.includes(cb.value);
+            });
+        }
+
+        async function saveCategoryConfig(btnElement) {
+            btnElement.innerText = '저장 중...';
+            btnElement.disabled = true;
+
+            const checkboxes = document.querySelectorAll('.cat-checkbox:checked');
+            const selectedCats = Array.from(checkboxes).map(cb => cb.value).join(',');
+
+            const { data } = await supabaseClient.from('places').select('id').eq('no', 0).eq('region', currentRegion);
+            let opError;
+
+            if (data && data.length > 0) {
+                const { error } = await supabaseClient.from('places').update({ extracted_kw: selectedCats }).eq('no', 0).eq('region', currentRegion);
+                opError = error;
+            } else {
+                const { error } = await supabaseClient.from('places').insert({
+                    no: 0, region: currentRegion, name: 'CONFIG', extracted_kw: selectedCats, 
+                    trend_score: 0, lat: 0, lng: 0, type: 'config', status: 'config'
+                });
+                opError = error;
+            }
+
+            if (opError) {
+                alert('설정 저장 실패: ' + opError.message);
+                btnElement.disabled = false;
+                btnElement.innerText = '설정 저장';
+            } else {
+                btnElement.innerText = '완료 ✔';
+                btnElement.classList.replace('bg-gray-800', 'bg-green-600');
+                setTimeout(() => {
+                    btnElement.innerText = '설정 저장';
+                    btnElement.classList.replace('bg-green-600', 'bg-gray-800');
+                    btnElement.disabled = false;
+                }, 2000);
+                fetchPlaces(); 
+            }
+        }
+
+        function switchTab(selectedCategory) {
+            currentSelectedCategory = selectedCategory; 
+            activeCategories.forEach(cat => {
+                const safeId = 'tab-' + cat.replace(/[\/\s]/g, '');
+                const tabEl = document.getElementById(safeId);
+                if (tabEl) {
+                    if (cat === selectedCategory) {
+                        tabEl.className = 'btn-tab btn-active px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap bg-navy text-white shadow-md border-transparent transition-colors shrink-0';
+                    } else {
+                        tabEl.className = 'btn-tab btn-inactive px-4 py-2 rounded-full text-[12px] font-bold flex items-center gap-1 whitespace-nowrap text-gray-500 border border-gray-200 transition-colors hover:bg-gray-50 shrink-0';
+                    }
+                }
+            });
+
+            const filteredPlaces = allPlacesData.filter(p => p.type === selectedCategory).slice(0, 10);
+            updateMapMarkers(filteredPlaces);
+            renderBottomCards(filteredPlaces);
+        }
+
+        function updateMapMarkers(places) {
+            if (!map) return;
+            currentMarkers.forEach(marker => marker.remove());
+            currentMarkers = [];
+            if (places.length === 0) return;
+
+            const bounds = new maptilersdk.LngLatBounds();
+
+            places.forEach((place, index) => {
+                const el = document.createElement('div');
+                const isTop3 = index < 3;
+                el.className = `rank-marker ${isTop3 ? 'top-rank' : ''}`;
+                el.innerHTML = i18n[currentLang].rank_format(index + 1);
+                
+                const rankBadge = isTop3 ? 'bg-point text-white' : 'bg-navy text-white';
+                const searchKw = place.extracted_kw ? place.extracted_kw : `${currentRegion} ${place.name}`;
+                const blogLink = place.youtube_vid ? place.youtube_vid : `https://search.naver.com/search.naver?where=blog&query=${encodeURIComponent(searchKw)}`;
+                const imageSrc = place.custom_img ? place.custom_img : `https://picsum.photos/seed/${place.id}/400/300`;
+                const rankText = i18n[currentLang].rank_format(index + 1);
+                
+                // --- 새롭게 업데이트된 영문명 치환 로직 적용 ---
+                const displayName = currentLang === 'EN' ? getEnglishName(place.name) : place.name;
+
+                const popupHtml = `
+                    <div class="w-[180px] bg-white flex flex-col pointer-events-auto cursor-pointer" onclick="document.getElementById('card-${index}').scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); map.flyTo({ center: [${place.lng}, ${place.lat}], zoom: 17.5 });">
+                        <div class="h-24 bg-gray-200 relative">
+                            <img src="${imageSrc}" class="absolute inset-0 w-full h-full object-cover">
+                            <div class="absolute top-1.5 left-1.5 ${rankBadge} brand-title px-2 py-0.5 rounded text-[11px] font-bold shadow-md">
+                                ${rankText}
+                            </div>
+                            <button onclick="sharePlace(event, '${place.name.replace(/'/g, "\\'")}', '${currentRegion}', ${index + 1})" class="absolute top-1.5 right-1.5 w-6 h-6 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md z-10 hover:bg-white transition-colors" title="공유하기">
+                                <svg class="w-3.5 h-3.5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                            </button>
+                        </div>
+                        <div class="px-2.5 py-2 flex flex-col gap-1">
+                            <h3 class="font-extrabold text-[13px] text-gray-900 truncate">${displayName}</h3>
+                            <div class="flex justify-between items-end mt-0.5">
+                                <span class="text-[10px] text-gray-900 font-black tracking-tight"><span class="text-point font-bold">검색량</span> ${Number(place.trend_score).toLocaleString()}</span>
+                                <a href="${blogLink}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="text-[10px] font-bold bg-[#03C75A] text-white px-2 py-1 rounded hover:bg-[#02b350] shadow-sm transition-colors">블로그 ↗</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const popup = new maptilersdk.Popup({ closeButton: false, closeOnClick: true, offset: 15, maxWidth: '200px' })
+                    .setLngLat([place.lng, place.lat])
+                    .setHTML(popupHtml);
+
+                const marker = new maptilersdk.Marker({ element: el })
+                    .setLngLat([place.lng, place.lat])
+                    .addTo(map);
+
+                let popupTimeout;
+                const handleMouseEnter = () => {
+                    clearTimeout(popupTimeout);
+                    if (window.innerWidth >= 640 && !popup.isOpen()) popup.addTo(map);
+                };
+                const handleMouseLeave = () => {
+                    if (window.innerWidth >= 640) {
+                        popupTimeout = setTimeout(() => popup.remove(), 250); 
+                    }
+                };
+
+                el.addEventListener('mouseenter', handleMouseEnter);
+                el.addEventListener('mouseleave', handleMouseLeave);
+
+                popup.on('open', () => {
+                    const popupEl = popup.getElement();
+                    if (popupEl) {
+                        popupEl.addEventListener('mouseenter', handleMouseEnter);
+                        popupEl.addEventListener('mouseleave', handleMouseLeave);
+                    }
+                });
+
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const card = document.getElementById(`card-${index}`);
+                    
+                    if (window.innerWidth >= 640) {
+                        if (card) {
+                            card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                            map.flyTo({ center: [place.lng, place.lat], zoom: 17.5 });
+                        }
+                    } else {
+                        document.querySelectorAll('.maplibregl-popup').forEach(p => p.remove()); 
+                        if (card) {
+                            card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        }
+                    }
+                });
+
+                currentMarkers.push(marker);
+                bounds.extend([place.lng, place.lat]);
+            });
+            map.fitBounds(bounds, { padding: { top: 150, bottom: 250, left: 50, right: 50 }, maxZoom: 16.5, duration: 1000 });
+        }
+
+        function renderBottomCards(places) {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = '';
+            if (places.length === 0) return;
+
+            places.forEach((place, index) => {
+                const rankBadge = index < 3 ? 'bg-point text-white' : 'bg-navy text-white';
+                const searchKw = place.extracted_kw ? place.extracted_kw : `${currentRegion} ${place.name}`;
+                const blogLink = place.youtube_vid ? place.youtube_vid : `https://search.naver.com/search.naver?where=blog&query=${encodeURIComponent(searchKw)}`;
+                const imageSrc = place.custom_img ? place.custom_img : `https://picsum.photos/seed/${place.id}/400/300`;
+
+                const rankText = i18n[currentLang].rank_format(index + 1);
+                
+                // --- 새롭게 업데이트된 영문명 치환 로직 적용 ---
+                const displayName = currentLang === 'EN' ? getEnglishName(place.name) : place.name;
+
+                const cardHtml = `
+                    <div id="card-${index}" onclick="panToMap(${place.lat}, ${place.lng})" class="snap-center shrink-0 w-[80%] sm:w-72 bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex flex-col cursor-pointer transform transition hover:-translate-y-1 relative">
+                        <div class="h-24 bg-gray-200 relative">
+                            <img src="${imageSrc}" alt="${displayName}" class="absolute inset-0 w-full h-full object-cover">
+                            <div class="absolute top-2 left-2 ${rankBadge} brand-title px-2.5 py-1 rounded-md text-[12px] font-bold shadow-md">
+                                ${rankText}
+                            </div>
+                            <button onclick="sharePlace(event, '${place.name.replace(/'/g, "\\'")}', '${currentRegion}', ${index + 1})" class="absolute top-2 right-2 w-7 h-7 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md z-10 hover:bg-white transition-colors" title="공유하기">
+                                <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                            </button>
+                        </div>
+                        
+                        <div class="px-3 py-2.5 flex flex-col gap-1">
+                            <h3 class="font-extrabold text-[15px] text-gray-900 truncate">${displayName}</h3>
+                            <div class="flex justify-between items-end mt-1">
+                                <div class="text-[10px] font-semibold text-sub">
+                                    <span class="text-point font-bold brand-title mr-0.5">${i18n[currentLang].search_vol}</span> <span class="text-gray-900 font-black">${Number(place.trend_score).toLocaleString()}</span>
+                                </div>
+                                <a href="${blogLink}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();"
+                                   class="text-[10px] font-bold bg-[#03C75A] text-white px-2.5 py-1.5 rounded hover:bg-[#02b350] transition-colors shadow-sm">
+                                   ${i18n[currentLang].blog_link}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', cardHtml);
+            });
+            initDragScroll(container);
+            if (typeof updateSwipeArrows === 'function') setTimeout(updateSwipeArrows, 50);
+        }
+
+        function sharePlace(event, placeName, region, rank) {
+            if (event) event.stopPropagation(); 
+
+            if (typeof gtag === 'function') {
+                gtag('event', 'share', {
+                    'method': 'Web Share API',
+                    'content_type': 'hotspot',
+                    'item_id': placeName,
+                    'region': region
+                });
+            }
+
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${baseUrl}?region=${encodeURIComponent(region)}&utm_source=user_share&utm_medium=social&utm_campaign=viral_loop`;
+            
+            const shareTitle = 'Spottr 실시간 핫플';
+            const shareText = `🔥 [${region}] 실시간 핫플 ${rank}위: '${placeName}'\n지금 뜨고 있는 ${region} 핫플 순위를 확인해보세요!`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: shareTitle,
+                    text: shareText,
+                    url: shareUrl,
+                }).catch((error) => console.log('공유 취소 또는 오류:', error));
+            } else {
+                navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+                alert('링크가 클립보드에 복사되었습니다. 친구에게 공유해보세요!');
+            }
+        }
+
+        function panToMap(lat, lng) {
+            if (isDraggingCard) return; 
+            if (!map) return;
+            map.flyTo({ center: [lng, lat], zoom: 17.5, essential: true, offset: [0, 80] });
+        }
+
+        function initDragScroll(slider) {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true; isDraggingCard = false; slider.classList.add('cursor-grabbing');
+                startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft;
+            });
+            slider.addEventListener('mouseleave', () => { isDown = false; slider.classList.remove('cursor-grabbing'); });
+            slider.addEventListener('mouseup', () => {
+                isDown = false; slider.classList.remove('cursor-grabbing');
+                setTimeout(() => isDraggingCard = false, 50);
+            });
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault(); isDraggingCard = true; 
+                const x = e.pageX - slider.offsetLeft;
+                slider.scrollLeft = scrollLeft - (x - startX) * 1.5; 
+            });
+
+            slider.addEventListener('scroll', () => {
+                if (typeof updateSwipeArrows === 'function') updateSwipeArrows();
+            });
+        }
+
+        function swipeCards(direction) {
+            const container = document.getElementById('cards-container');
+            if (!container) return;
+            const cardWidth = container.querySelector('.snap-center')?.offsetWidth || 288; 
+            const scrollAmount = cardWidth + 12; 
+            
+            if (direction === 'left') {
+                container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        function updateSwipeArrows() {
+            const container = document.getElementById('cards-container');
+            const leftArrow = document.getElementById('swipe-left');
+            const rightArrow = document.getElementById('swipe-right');
+            if (!container || !leftArrow || !rightArrow) return;
+
+            const places = allPlacesData.filter(p => p.type === currentSelectedCategory).slice(0, 10);
+            if (places.length === 0) {
+                leftArrow.classList.add('hidden', 'opacity-0');
+                rightArrow.classList.add('hidden', 'opacity-0');
+                return;
+            }
+
+            const isAtStart = container.scrollLeft <= 5;
+            const isAtEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 10;
+
+            if (isAtStart) {
+                leftArrow.classList.add('opacity-0');
+                setTimeout(() => { if(container.scrollLeft <= 5) leftArrow.classList.add('hidden') }, 300);
+            } else {
+                leftArrow.classList.remove('hidden');
+                setTimeout(() => leftArrow.classList.remove('opacity-0'), 10);
+            }
+
+            if (isAtEnd) {
+                rightArrow.classList.add('opacity-0');
+                setTimeout(() => { if(container.scrollLeft + container.clientWidth >= container.scrollWidth - 10) rightArrow.classList.add('hidden') }, 300);
+            } else {
+                rightArrow.classList.remove('hidden');
+                setTimeout(() => rightArrow.classList.remove('opacity-0'), 10);
+            }
+        }
+
+        async function runBackendUpdate() {
+            const btn = document.getElementById('admin-update-btn');
+            const statusLabel = document.getElementById('admin-status');
+            const tbody = document.getElementById('admin-table-body');
+            const btnCsv = document.getElementById('btn-download-csv');
+            
+            btn.disabled = true;
+            btn.classList.replace('bg-point', 'bg-gray-400');
+            btnCsv.classList.add('hidden');
+            statusLabel.innerText = `[${currentRegion}] 수집 및 분석 중... (최대 2분 소요)`;
+            statusLabel.className = 'text-orange-500 animate-pulse font-bold';
+            tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500 font-medium">${currentRegion} 데이터를 수집 중입니다...</td></tr>`;
+
+            try {
+                const response = await fetch('https://mdpqzcwamhzxybldvctr.supabase.co/functions/v1/update-hotspots', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ region: currentRegion })
+                });
+                if (!response.ok) throw new Error((await response.json()).error);
+                
+                statusLabel.innerText = `[${currentRegion}] 데이터 수집 완료`;
+                statusLabel.className = 'text-green-600 font-bold';
+                
+                fetchPlaces();
+            } catch (error) {
+                alert('🚨 업데이트 실패: ' + error.message);
+                statusLabel.innerText = '오류 발생';
+                statusLabel.className = 'text-red-600 font-bold';
+            } finally {
+                btn.disabled = false; btn.classList.replace('bg-gray-400', 'bg-point');
+            }
+        }
+
+        function renderAdminTableFromData() {
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = '';
+            
+            if (allPlacesData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500 font-medium">${currentRegion} 데이터가 없습니다. 우측 상단의 '선택 지역 데이터 재수집' 버튼을 누르세요.</td></tr>`;
+                return;
+            }
+
+            allPlacesData.forEach(place => {
+                const trHtml = `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-3 whitespace-nowrap text-gray-900 font-medium">${place.type}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-gray-900 font-bold">${place.no}위</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-gray-900 truncate max-w-[120px]">${place.name}</td>
+                        <td class="px-6 py-3 whitespace-nowrap"><input type="text" class="kw-input border border-gray-300 rounded px-2 py-1 w-28 text-sm text-blue-600 font-semibold focus:outline-none focus:border-point" value="${place.extracted_kw || ''}"></td>
+                        <td class="px-6 py-3 whitespace-nowrap text-right"><input type="number" class="search-input border border-gray-300 rounded px-2 py-1 w-20 text-sm text-right font-bold text-point focus:outline-none focus:border-point" value="${place.trend_score || 0}"></td>
+                        <td class="px-6 py-3 whitespace-nowrap"><input type="text" class="img-input border border-gray-300 rounded px-2 py-1 w-48 text-sm text-gray-600 focus:outline-none focus:border-point" value="${place.custom_img || ''}" placeholder="URL 붙여넣기"></td>
+                        <td class="px-6 py-3 whitespace-nowrap text-center"><button onclick="saveManualEdits('${place.name.replace(/'/g, "\\'")}', this)" class="bg-gray-700 text-white text-xs px-3 py-1.5 rounded shadow-sm hover:bg-black transition-colors">DB 반영</button></td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', trHtml);
+            });
+        }
+
+        function downloadCSVFile() {
+            if (allPlacesData.length === 0) return;
+            
+            const sortedData = [...allPlacesData].sort((a, b) => {
+                if (a.type < b.type) return -1;
+                if (a.type > b.type) return 1;
+                return a.no - b.no;
+            });
+
+            let csv = "분류,카테고리별 순위,상호명,적용키워드,검색량,대표이미지URL\n";
+            sortedData.forEach(p => {
+                csv += `${p.type},${p.type} ${p.no}위,"${p.name}","${p.extracted_kw || ''}",${p.trend_score},"${p.custom_img || ''}"\n`;
+            });
+            
+            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+            const 일link = document.createElement("a");
+            link.setAttribute("href", URL.createObjectURL(blob));
+            link.setAttribute("download", `spottr_ranking_${currentRegion}_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedRegion = urlParams.get('region');
+            const validRegions = ['홍대', '성수', '노원', '마곡', '잠실', '이태원', '을지로', '압구정', '강남', '천호'];
+
+            if (sharedRegion && validRegions.includes(sharedRegion)) {
+                console.log('if 실행됨', sharedRegion);
+                currentRegion = sharedRegion;
+                isOverview = false;
+                setLanguage('KR');
+                document.getElementById('current-region-label').innerText = i18n['KR']['region_' + currentRegion] || currentRegion;
+                document.getElementById('admin-region-badge').innerText = currentRegion;
+                fetchPlaces();
+            } else {
+                console.log('else 실행됨');
+                currentRegion = '이태원';
+                isOverview = false;
+                setLanguage('KR');
+                initMap();
+                fetchPlaces();
+            }
+        });
+    </script>
+</body>
+</html>
