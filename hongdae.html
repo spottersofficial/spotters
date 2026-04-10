@@ -1468,6 +1468,7 @@
             const validRegions = ['홍대', '성수', '노원', '마곡', '잠실', '이태원', '을지로', '압구정', '강남', '천호'];
 
             if (sharedRegion && validRegions.includes(sharedRegion)) {
+                console.log('if 실행됨', sharedRegion);
                 currentRegion = sharedRegion;
                 isOverview = false;
                 setLanguage('KR');
