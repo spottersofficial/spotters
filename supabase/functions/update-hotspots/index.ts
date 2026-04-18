@@ -70,71 +70,30 @@ serve(async (req) => {
     }
     
     const currentRegion = reqBody.region || '성수';
-    
-    let TARGET_LAT = 37.5425;
-    let TARGET_LNG = 127.0570;
-    let REGION_PREFIX = '성수';
-    let STOP_WORDS_REGEX = /seongsu|seoul|서울|성수동|성수점|성수|본점|1호점|2호점|지점|보드게임카페|카페|맛집|점/i;
-    let SEARCH_RADIUS = 800;
 
-    let MAX_PAGES = 3;
-    let PAGE_DELAY = 1500;
-    let MAX_CANDIDATES = 150;
-    let NAVER_AD_DELAY = 250;
-    let NAVER_SEARCH_DELAY = 400;
+    // stations 테이블에서 지역 설정 조회
+    const { data: stationData, error: stationError } = await supabase
+      .from('stations')
+      .select('lat, lng, region_prefix, stop_words, radius')
+      .eq('name', currentRegion)
+      .eq('active', true)
+      .single();
 
-    if (currentRegion === '노원') {
-      TARGET_LAT = 37.656367;
-      TARGET_LNG = 127.063338;
-      REGION_PREFIX = '노원';
-      STOP_WORDS_REGEX = /nowon|seoul|서울|노원역|노원구|노원점|노원|본점|1호점|2호점|지점|보드게임카페|카페|맛집|점/i;
-    } else if (currentRegion === '홍대') {
-      TARGET_LAT = 37.556037;
-      TARGET_LNG = 126.922974;
-      REGION_PREFIX = '홍대';
-      STOP_WORDS_REGEX = /hongdae|seoul|서울|홍대입구|홍대역|홍대점|홍대|마포구|서교동|연남동|본점|1호점|2호점|지점|보드게임카페|카페|맛집|점/i;
-      
-      MAX_PAGES = 3;
-      PAGE_DELAY = 1500;
-      MAX_CANDIDATES = 150;
-      NAVER_AD_DELAY = 250;
-      NAVER_SEARCH_DELAY = 400;
-    } else if (currentRegion === '마곡') {
-      TARGET_LAT = 37.558891;
-      TARGET_LNG = 126.836867;
-      REGION_PREFIX = '마곡';
-      STOP_WORDS_REGEX = /magok|balsan|seoul|서울|마곡역|발산역|강서구|마곡동|발산동|마곡점|발산점|마곡|발산|본점|1호점|2호점|지점|보드게임카페|카페|맛집|점/i;
-    } else if (currentRegion === '잠실') {
-      TARGET_LAT = 37.514430;
-      TARGET_LNG = 127.104568;
-      REGION_PREFIX = '잠실';
-      STOP_WORDS_REGEX = /jamsil|bangi|seoul|서울|잠실역|방이역|송파구|잠실동|방이동|에비뉴엘|월드타워점|먹자골목|잠실점|방이점|잠실|방이|본점|1호점|2호점|지점|보드게임카페|카페|맛집|점/i;
-    } else if (currentRegion === '이태원') {
-      TARGET_LAT = 37.534508;
-      TARGET_LNG = 126.993914;
-      REGION_PREFIX = '이태원';
-      STOP_WORDS_REGEX = /itaewon|seoul|서울|이태원역|용산구|이태원동|한남동|이태원점|이태원|본점|1호점|2호점|지점|보드게임카페|카페|맛집|점/i;
-    } else if (currentRegion === '을지로') {
-      TARGET_LAT = 37.566251;
-      TARGET_LNG = 126.992219;
-      REGION_PREFIX = '을지로';
-      STOP_WORDS_REGEX = /euljiro|seoul|서울|중구|종로|본점|1호점|2호점|지점|보드게임카페|카페|맛집/i;
-    } else if (currentRegion === '압구정') {
-      TARGET_LAT = 37.527431;
-      TARGET_LNG = 127.040561;
-      REGION_PREFIX = '압구정';
-      STOP_WORDS_REGEX = /apgujeong|seoul|서울|압구정역|압구정로데오역|압구정로데오|강남구|신사동|압구정동|청담동|압구정점|압구정로데오점|도산공원점|도산공원|압구정|도산|신사|청담|본점|1호점|2호점|지점|보드게임카페|카페|맛집|한우|전문점|점/i;
-    } else if (currentRegion === '강남') {
-      TARGET_LAT = 37.497942;
-      TARGET_LNG = 127.027621;
-      REGION_PREFIX = '강남';
-      STOP_WORDS_REGEX = /gangnam|seoul|서울|강남역|강남구|역삼동|서초동|강남점|강남|본점|1호점|2호점|지점|보드게임카페|카페|맛집|점/i;
-    } else if (currentRegion === '천호') {
-      TARGET_LAT = 37.538397;
-      TARGET_LNG = 127.123532;
-      REGION_PREFIX = '천호';
-      STOP_WORDS_REGEX = /cheonho|seoul|서울|천호역|강동구|천호동|천호점|천호|본점|1호점|2호점|지점|보드게임카페|카페|맛집|점/i;
+    if (stationError || !stationData) {
+      throw new Error(`'${currentRegion}' 지역 설정을 찾을 수 없습니다. stations 테이블을 확인하세요.`);
     }
+
+    const TARGET_LAT       = stationData.lat;
+    const TARGET_LNG       = stationData.lng;
+    const REGION_PREFIX    = stationData.region_prefix;
+    const STOP_WORDS_REGEX = new RegExp(stationData.stop_words, 'i');
+    const SEARCH_RADIUS    = stationData.radius ?? 800;
+
+    const MAX_PAGES        = 3;
+    const PAGE_DELAY       = 1500;
+    const MAX_CANDIDATES   = 150;
+    const NAVER_AD_DELAY   = 250;
+    const NAVER_SEARCH_DELAY = 400;
 
     const searchQueries = [
       { category: '식당/맛집', type: 'restaurant', keyword: '맛집' },
@@ -179,44 +138,59 @@ serve(async (req) => {
     ];
 
     let allPlaces: any[] = [];
-    
-    const googlePromises = searchQueries.map(async (q) => {
+
+    // 400m 오프셋 (위도 1도 ≈ 111,000m / 경도 1도 ≈ 111,000m × cos(lat))
+    const LAT_OFFSET = 400 / 111000;
+    const LNG_OFFSET = 400 / (111000 * Math.cos((TARGET_LAT * Math.PI) / 180));
+    const OFFSET_RADIUS = 500;
+
+    // 5개 중심점: 원래 중심 + 북/남/동/서 400m 오프셋
+    const searchCenters = [
+      { lat: TARGET_LAT,              lng: TARGET_LNG,              radius: SEARCH_RADIUS },
+      { lat: TARGET_LAT + LAT_OFFSET, lng: TARGET_LNG,              radius: OFFSET_RADIUS },
+      { lat: TARGET_LAT - LAT_OFFSET, lng: TARGET_LNG,              radius: OFFSET_RADIUS },
+      { lat: TARGET_LAT,              lng: TARGET_LNG + LNG_OFFSET, radius: OFFSET_RADIUS },
+      { lat: TARGET_LAT,              lng: TARGET_LNG - LNG_OFFSET, radius: OFFSET_RADIUS },
+    ];
+
+    // 단일 중심점으로 검색하는 함수
+    async function searchFromCenter(q: any, center: { lat: number; lng: number; radius: number }) {
       let results: any[] = [];
       let pageToken = '';
-      
+
       for (let page = 0; page < MAX_PAGES; page++) {
-        let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${TARGET_LAT},${TARGET_LNG}&radius=${SEARCH_RADIUS}&language=ko&key=${GOOGLE_API_KEY}`;
+        let url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${center.lat},${center.lng}&radius=${center.radius}&language=ko&key=${GOOGLE_API_KEY}`;
         if (q.type) url += `&type=${q.type}`;
         if (q.keyword) url += `&keyword=${encodeURIComponent(q.keyword)}`;
-        
+
         let data: any = null;
         let success = false;
 
         for (let retry = 0; retry < 3; retry++) {
-            let fetchUrl = url;
-            if (pageToken) fetchUrl += `&pagetoken=${pageToken}`;
-            
-            try {
-                const res = await fetch(fetchUrl);
-                data = await res.json();
-                
-                if (data.status === 'OK' || data.status === 'ZERO_RESULTS') {
-                    success = true;
-                    break;
-                } else if (data.status === 'INVALID_REQUEST' && pageToken) {
-                    await new Promise(r => setTimeout(r, 2000));
-                } else if (data.status === 'OVER_QUERY_LIMIT') {
-                    await new Promise(r => setTimeout(r, 2000));
-                } else {
-                    await new Promise(r => setTimeout(r, 1000));
-                }
-            } catch (err) {
-                await new Promise(r => setTimeout(r, 1000));
+          let fetchUrl = url;
+          if (pageToken) fetchUrl += `&pagetoken=${pageToken}`;
+
+          try {
+            const res = await fetch(fetchUrl);
+            data = await res.json();
+
+            if (data.status === 'OK' || data.status === 'ZERO_RESULTS') {
+              success = true;
+              break;
+            } else if (data.status === 'INVALID_REQUEST' && pageToken) {
+              await new Promise(r => setTimeout(r, 2000));
+            } else if (data.status === 'OVER_QUERY_LIMIT') {
+              await new Promise(r => setTimeout(r, 2000));
+            } else {
+              await new Promise(r => setTimeout(r, 1000));
             }
+          } catch (err) {
+            await new Promise(r => setTimeout(r, 1000));
+          }
         }
 
         if (!success || !data) break;
-        
+
         const filtered = (data.results || []).filter((p: any) => {
           const invalidTypes = ['locality', 'political', 'neighborhood', 'route', 'park', 'subway_station', 'bus_station', 'place_of_worship', 'government_office'];
           const invalidNameKeywords = ['거리', '길', '역', '공원', '출구', '사거리', '교차로', '카페거리', '나들목'];
@@ -237,7 +211,7 @@ serve(async (req) => {
         }).map((p: any) => ({ ...p, primary_category: q.category })); 
 
         results = results.concat(filtered);
-        
+
         if (data.next_page_token) {
           pageToken = data.next_page_token;
           await new Promise(r => setTimeout(r, PAGE_DELAY));
@@ -246,6 +220,14 @@ serve(async (req) => {
         }
       }
       return results;
+    }
+
+    // 각 쿼리 × 5개 중심점으로 병렬 검색
+    const googlePromises = searchQueries.map(async (q) => {
+      const centerResults = await Promise.all(
+        searchCenters.map(center => searchFromCenter(q, center))
+      );
+      return centerResults.flat();
     });
 
     const resultsArray = await Promise.all(googlePromises);
@@ -1073,6 +1055,12 @@ serve(async (req) => {
 
     const { error: dbError } = await supabase.from('places').insert(finalHotspots);
     if (dbError) throw dbError;
+
+    // stations 테이블 last_updated 갱신
+    await supabase
+      .from('stations')
+      .update({ last_updated: new Date().toISOString() })
+      .eq('name', currentRegion);
 
     return new Response(JSON.stringify({ success: true, count: finalHotspots.length, data: finalHotspots, debug_csv: csvData }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
