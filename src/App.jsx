@@ -54,6 +54,8 @@ function App() {
   const [secretCount, setSecretCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [editedScores, setEditedScores] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => { if (session) setIsAdminMode(true); });
@@ -85,6 +87,26 @@ function App() {
   const handleAdminLogout = async () => {
     await supabase.auth.signOut();
     setIsAdminMode(false);
+    setEditedScores({});
+  };
+
+  const handleSaveScores = async () => {
+    const entries = Object.entries(editedScores);
+    if (entries.length === 0) { alert('변경된 항목이 없습니다.'); return; }
+    setIsSaving(true);
+    try {
+      for (const [no, score] of entries) {
+        const { error } = await supabase.from('places').update({ trend_score: Number(score) }).eq('no', Number(no));
+        if (error) throw error;
+      }
+      alert(`✅ ${entries.length}개 항목이 DB에 반영되었습니다.`);
+      setEditedScores({});
+      fetchPlaces();
+    } catch (err) {
+      alert(`[오류] 저장 실패: ${err.message}`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // 🚀 핵심: 방금 배포한 Edge Function을 호출하는 버튼 로직
@@ -154,15 +176,35 @@ function App() {
                </div>
 
                <div className="mt-4">
-                 <h3 className="text-xs font-bold text-neutral-500 mb-2">현재 저장된 핫스팟 ({placesData.length}개)</h3>
-                 <div className="flex flex-col gap-2 h-[300px] overflow-y-auto">
+                 <div className="flex justify-between items-center mb-2">
+                   <h3 className="text-xs font-bold text-neutral-500">현재 저장된 핫스팟 ({placesData.length}개)</h3>
+                   {Object.keys(editedScores).length > 0 && (
+                     <span className="text-[10px] text-orange-500 font-bold">{Object.keys(editedScores).length}개 변경됨</span>
+                   )}
+                 </div>
+                 <div className="flex flex-col gap-2 h-[260px] overflow-y-auto">
                    {placesData.map(p => (
-                     <div key={p.no} className="bg-white p-3 rounded-lg border border-neutral-200 flex justify-between items-center">
-                       <span className="font-bold text-sm truncate w-2/3">{p.name}</span>
-                       <span className="text-[10px] bg-neutral-100 px-2 py-1 rounded text-neutral-500">트렌드: {p.trend_score}</span>
+                     <div key={p.no} className={`bg-white p-3 rounded-lg border flex justify-between items-center ${editedScores[p.no] !== undefined ? 'border-orange-300' : 'border-neutral-200'}`}>
+                       <span className="font-bold text-sm truncate w-1/2">{p.name}</span>
+                       <div className="flex items-center gap-1.5">
+                         <span className="text-[10px] text-neutral-400">트렌드</span>
+                         <input
+                           type="number"
+                           value={editedScores[p.no] !== undefined ? editedScores[p.no] : p.trend_score}
+                           onChange={(e) => setEditedScores(prev => ({ ...prev, [p.no]: e.target.value }))}
+                           className="w-[70px] text-center text-xs font-bold border border-neutral-300 rounded-lg px-2 py-1 outline-none focus:border-[#5E2A8C]"
+                         />
+                       </div>
                      </div>
                    ))}
                  </div>
+                 <button
+                   onClick={handleSaveScores}
+                   disabled={isSaving || Object.keys(editedScores).length === 0}
+                   className={`mt-3 w-full py-3 rounded-xl font-black text-white text-[14px] shadow transition-all ${isSaving || Object.keys(editedScores).length === 0 ? 'bg-neutral-300' : 'bg-[#5E2A8C]'}`}
+                 >
+                   {isSaving ? '저장 중...' : `DB 반영 (${Object.keys(editedScores).length}개)`}
+                 </button>
                </div>
              </div>
           ) : (
