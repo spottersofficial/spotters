@@ -1430,6 +1430,42 @@
             });
         }
 
+        async function saveManualEdits(placeName, btn) {
+            const row = btn.closest('tr');
+            const newScore = Number(row.querySelector('.search-input').value);
+            const newKw = row.querySelector('.kw-input').value.trim();
+            const newImg = row.querySelector('.img-input').value.trim();
+
+            btn.disabled = true;
+            btn.innerText = '저장 중...';
+
+            try {
+                const { error } = await supabaseClient
+                    .from('places')
+                    .update({ trend_score: newScore, extracted_kw: newKw, custom_img: newImg })
+                    .eq('name', placeName)
+                    .eq('region', currentRegion);
+
+                if (error) throw error;
+
+                btn.innerText = '✅ 완료';
+                btn.classList.replace('bg-gray-700', 'bg-green-600');
+                setTimeout(() => {
+                    btn.innerText = 'DB 반영';
+                    btn.classList.replace('bg-green-600', 'bg-gray-700');
+                    btn.disabled = false;
+                }, 2000);
+
+                const target = allPlacesData.find(p => p.name === placeName);
+                if (target) { target.trend_score = newScore; target.extracted_kw = newKw; target.custom_img = newImg; }
+
+            } catch (err) {
+                alert('저장 실패: ' + err.message);
+                btn.innerText = 'DB 반영';
+                btn.disabled = false;
+            }
+        }
+
         function downloadCSVFile() {
             if (allPlacesData.length === 0) return;
             
@@ -1445,7 +1481,7 @@
             });
             
             const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-            const 일link = document.createElement("a");
+            const link = document.createElement("a");
             link.setAttribute("href", URL.createObjectURL(blob));
             link.setAttribute("download", `spottr_ranking_${currentRegion}_${new Date().toISOString().slice(0, 10)}.csv`);
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
