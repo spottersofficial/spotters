@@ -200,7 +200,7 @@ serve(async (req) => {
             '파스쿠찌', '파리바게뜨', '뚜레쥬르', '김밥천국', '맥도날드', '버거킹', '롯데리아', 'KFC', '고깃집',
             '맘스터치', '도미노피자', '피자헛', 'BBQ', 'BHC', 'bhc', '배스킨라빈스', '던킨', '방탈출',
             '명륜진사갈비', '새마을식당', '역전할머니맥주', '백소정', '써브웨이', '고봉민','슈펜', '마곡초밥', '압구정곱창', '을지로 노가리골목',
-            'exup', '전자담배', '성수미술관','서울맛집','성수 맛집','셜록홈즈','홍대맛집','홍대 맛집','홍대 고기집','메이드카페','홍대합정','합정맛집','마트','호텔','소망교회'
+            'exup', '전자담배', '성수미술관','서울맛집','성수 맛집','셜록홈즈','홍대맛집','홍대 맛집','홍대 고기집','메이드카페','홍대합정','합정맛집','마트','호텔','소망교회','홍대향수공방'
           ];
           
           const hasInvalidType = p.types?.some((t: string) => invalidTypes.includes(t));
@@ -369,6 +369,13 @@ serve(async (req) => {
           name: '홍대하이디라오',
           geometry: { location: { lat: 37.557216, lng: 126.924912 } },
           place_id: 'manual_hongdae_musinsa',
+          primary_category: '식당/맛집',
+          user_ratings_total: 9999
+        },
+        {
+          name: '홍대삿뽀로',
+          geometry: { location: { lat: 37.556372, lng: 126.920518 } },
+          place_id: 'manual_hongdae_sapporo',
           primary_category: '식당/맛집',
           user_ratings_total: 9999
         },
