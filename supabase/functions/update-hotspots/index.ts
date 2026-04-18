@@ -819,7 +819,30 @@ serve(async (req) => {
           primary_category: '식당/맛집',
           user_ratings_total: 999
         },
-      ]
+      ],
+      '이태원': [
+        // ── 카페/베이커리 (저번주 1~10위) ──────────────────────────────
+        // 주소 기반 추정 좌표 (이태원로26길 16-8)
+        { name: '이태원키에리',    geometry: { location: { lat: 37.5362, lng: 126.9904 } }, place_id: 'manual_itaewon_kyeri',     primary_category: '카페/베이커리', user_ratings_total: 999 },
+        // 이태원로 174
+        { name: '이태원알페도',    geometry: { location: { lat: 37.5343, lng: 126.9897 } }, place_id: 'manual_itaewon_alpedo',    primary_category: '카페/베이커리', user_ratings_total: 999 },
+        // 보광로 122-1
+        { name: '이태원꾸띠자르당', geometry: { location: { lat: 37.5323, lng: 126.9968 } }, place_id: 'manual_itaewon_cotejardin', primary_category: '카페/베이커리', user_ratings_total: 999 },
+        // 녹사평대로32길 21
+        { name: '이태원미니마이즈', geometry: { location: { lat: 37.5388, lng: 126.9855 } }, place_id: 'manual_itaewon_minimize',  primary_category: '카페/베이커리', user_ratings_total: 999 },
+        // 녹사평대로26가길 9
+        { name: '이태원도나르',    geometry: { location: { lat: 37.5370, lng: 126.9880 } }, place_id: 'manual_itaewon_donar',     primary_category: '카페/베이커리', user_ratings_total: 999 },
+        // 녹사평대로40길 31
+        { name: '이태원더미쓰리',  geometry: { location: { lat: 37.5404, lng: 126.9878 } }, place_id: 'manual_itaewon_themisery', primary_category: '카페/베이커리', user_ratings_total: 999 },
+        // 이태원로 272 (한강진역 근처)
+        { name: '이태원패션5',     geometry: { location: { lat: 37.5281, lng: 127.0026 } }, place_id: 'manual_itaewon_passion5',  primary_category: '카페/베이커리', user_ratings_total: 999 },
+        // 녹사평대로26가길 24
+        { name: '이태원챔프커피',  geometry: { location: { lat: 37.5372, lng: 126.9870 } }, place_id: 'manual_itaewon_champ',     primary_category: '카페/베이커리', user_ratings_total: 999 },
+        // 소월로40길 85 (경리단길)
+        { name: '이태원레인리포트', geometry: { location: { lat: 37.5396, lng: 126.9831 } }, place_id: 'manual_itaewon_rainreport', primary_category: '카페/베이커리', user_ratings_total: 999 },
+        // 이태원로45길 34
+        { name: '이태원오월의종',  geometry: { location: { lat: 37.5334, lng: 126.9976 } }, place_id: 'manual_itaewon_maybell',   primary_category: '카페/베이커리', user_ratings_total: 999 },
+      ],
     };
 
     if (MANUAL_CANDIDATES[currentRegion]) {
